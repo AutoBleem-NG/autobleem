@@ -1,7 +1,9 @@
 #include "util.h"
 #include "main.h"
 
+#include <array>
 #include <fstream>
+#include <memory>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <iomanip>
