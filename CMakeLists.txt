@@ -45,7 +45,7 @@ else()
 			# memory sanitizer with compiler warning for not returning a value from a function and uninitialized vars
 #			SET(CMAKE_C_FLAGS "-fsanitize=address -fno-omit-frame-pointer -fsanitize=undefined -ggdb -Wreturn-type -Wuninitialized")
 #			SET(CMAKE_CXX_FLAGS "-fsanitize=address -fno-omit-frame-pointer -fsanitize=undefined -ggdb -Wreturn-type -Wuninitialized")
-			
+
 			# memory sanitizer with no additonal compiler warnings
 #			SET(CMAKE_C_FLAGS "-fsanitize=address -fno-omit-frame-pointer")
 #			SET(CMAKE_CXX_FLAGS "-fsanitize=address -fno-omit-frame-pointer")
@@ -61,7 +61,14 @@ endif()
 find_package(Threads REQUIRED
              SDL2 REQUIRED)
 
-add_library(sqlite3 STATIC libs/sqlite/sqlite3ab.c )
+# Bundled sqlite3 library
+add_library(sqlite3 STATIC libs/sqlite/sqlite3ab.c)
+
+# Bundled libchdr for CHD file support (local builds only)
+if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+    add_subdirectory(libs/libchdr EXCLUDE_FROM_ALL)
+endif()
 
 add_executable(
         autobleem-gui
@@ -136,7 +143,7 @@ add_executable(
         src/code/gui/menus/gui_menuBase.h
         src/code/gui/menus/gui_optionsMenu.cpp
         src/code/gui/menus/gui_optionsMenu.h
-        src/code/gui/menus/gui_optionsMenuBase.cpp 
+        src/code/gui/menus/gui_optionsMenuBase.cpp
         src/code/gui/menus/gui_optionsMenuBase.h
         src/code/gui/menus/gui_playlistsMenu.h
         src/code/gui/menus/gui_stringMenu.h
@@ -144,39 +151,39 @@ add_executable(
         src/code/gui/starfx.cpp
         src/code/gui/starfx.h
         src/code/lang.cpp
-        src/code/lang.h 
+        src/code/lang.h
         src/code/launcher/emu_interceptor.cpp
         src/code/launcher/emu_interceptor.h
-        src/code/launcher/gui_app_start.cpp 
-        src/code/launcher/gui_app_start.h 
+        src/code/launcher/gui_app_start.cpp
+        src/code/launcher/gui_app_start.h
         src/code/launcher/gui_btn_guide.cpp
         src/code/launcher/gui_btn_guide.h
         src/code/launcher/gui_launcher.cpp
-        src/code/launcher/gui_launcher.h 
+        src/code/launcher/gui_launcher.h
         src/code/launcher/gui_launcher_loop.cpp
         src/code/launcher/gui_mc_manager.cpp
         src/code/launcher/gui_mc_manager.h
         src/code/launcher/gui_NotificationLine.cpp
         src/code/launcher/gui_NotificationLine.h
-        src/code/launcher/launch_interceptor.cpp 
-        src/code/launcher/launch_interceptor.h 
+        src/code/launcher/launch_interceptor.cpp
+        src/code/launcher/launch_interceptor.h
         src/code/launcher/pcsx_interceptor.cpp
         src/code/launcher/pcsx_interceptor.h
         src/code/launcher/ps_carousel.cpp
         src/code/launcher/ps_carousel.h
         src/code/launcher/ps_centerlabel.cpp
         src/code/launcher/ps_centerlabel.h
-        src/code/launcher/ps_game.cpp 
-        src/code/launcher/ps_game.h 
+        src/code/launcher/ps_game.cpp
+        src/code/launcher/ps_game.h
         src/code/launcher/ps_menu.cpp
         src/code/launcher/ps_menu.h
         src/code/launcher/ps_meta.cpp
         src/code/launcher/ps_meta.h
         src/code/launcher/ps_move_bnt.cpp
-        src/code/launcher/ps_move_bnt.h 
+        src/code/launcher/ps_move_bnt.h
         src/code/launcher/ps_obj.cpp
         src/code/launcher/ps_obj.h
-        src/code/launcher/ps_settings_back.cpp 
+        src/code/launcher/ps_settings_back.cpp
         src/code/launcher/ps_settings_back.h
         src/code/launcher/ps_stateselector.cpp
         src/code/launcher/ps_stateselector.h
@@ -201,14 +208,13 @@ add_executable(
 		src/code/gui/abl.h
 		src/code/LightgunGames.h
 		src/code/LightgunGames.cpp
-		src/code/gui/menus/gui_gameEditorMenu_RA.h 
+		src/code/gui/menus/gui_gameEditorMenu_RA.h
 		src/code/gui/menus/gui_gameEditorMenu_RA.cpp)
 
 target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/sqlite>
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/nlohmann>
-		# comment this line if it causes a problem on another system
-		$<BUILD_INTERFACE:/home/steve/libmamecd_local/include>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/libchdr/include>
 		)
 
 add_executable(starter
@@ -223,16 +229,40 @@ add_executable(starter
 		src/code/environment.cpp
 		)
 
-target_link_libraries(autobleem-gui
-         Threads::Threads
-         SDL2
-         SDL2_image
-         SDL2_mixer
-         SDL2_ttf
-		 sqlite3
-         mamecd
-         ${CMAKE_DL_LIBS}
-)
+# Link libraries for autobleem-gui
+#
+# libchdr provides CHD (Compressed Hunks of Data) disc image support.
+# Compression libraries (zlib, lzma, zstd) are required by libchdr.
+#
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+    set(CROSS_LIB_DIR "/usr/local/cross-tools/arm-linux-gnueabihf/lib")
+    target_link_libraries(autobleem-gui
+             Threads::Threads
+             SDL2
+             SDL2_image
+             SDL2_mixer
+             SDL2_ttf
+             sqlite3
+             ${CROSS_LIB_DIR}/libchdr-static.a
+             ${CROSS_LIB_DIR}/libz.a
+             ${CROSS_LIB_DIR}/liblzma.a
+             ${CROSS_LIB_DIR}/libzstd.a
+             ${CMAKE_DL_LIBS}
+    )
+else()
+    # Link against bundled libchdr (chdr-static target from libs/libchdr)
+    # The chdr-static target already links its internal deps (lzma, zlib, zstd)
+    target_link_libraries(autobleem-gui
+             Threads::Threads
+             SDL2
+             SDL2_image
+             SDL2_mixer
+             SDL2_ttf
+             sqlite3
+             chdr-static
+             ${CMAKE_DL_LIBS}
+    )
+endif()
 
 
 #add_custom_command(TARGET autobleem-gui PRE_BUILD
