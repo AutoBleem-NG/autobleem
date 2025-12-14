@@ -33,7 +33,7 @@ arm:
 	@echo "Building for ARM using local toolchain..."
 	rm -rf build_arm
 	mkdir -p build_arm
-	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../PSCtoolchainV8.cmake ..
+	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/PSCtoolchainV8.cmake ..
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
@@ -42,7 +42,7 @@ mac:
 	@echo "Building for ARM using Mac toolchain..."
 	rm -rf build_arm
 	mkdir -p build_arm
-	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../MacToolchain.cmake ..
+	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/MacToolchain.cmake ..
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
