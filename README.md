@@ -11,6 +11,7 @@ AutoBleem-NG (Next Generation) is a custom firmware for the PlayStation Classic,
 - Shared memory cards across games
 - RetroArch integration for multi-system emulation
 - Multi-disc game support
+- Docker-based ARM build (no toolchain installation required)
 
 ## Project Structure
 

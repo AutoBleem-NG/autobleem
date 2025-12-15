@@ -1,0 +1,44 @@
+# Build outputs (will be created inside container)
+build_arm/
+build_sys/
+cmake-build*/
+out/
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# IDE files
+.idea/
+.vscode/
+.vs/
+.run/
+*.user
+
+# OS files
+.DS_Store
+
+# Backup files
+backup/
+
+# Docker files (don't copy into container)
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Documentation and project files
+*.md
+docs/
+
+# GitHub specific
+.github/
+
+# Tests (x86_64 only, not needed for ARM build)
+tests/
+
+# Database files (regenerated during build)
+db/
+
+# Payload structure (USB deployment files, not needed for build)
+payload/

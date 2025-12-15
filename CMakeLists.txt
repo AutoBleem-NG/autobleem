@@ -31,8 +31,12 @@ if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" )
 		SET(CMAKE_CXX_FLAGS "-mfloat-abi=hard -march=armv7ve -s -Os")
 	endif()
 
-	include_directories(src/include "/opt/toolchain/armv8-sony-linux-gnueabihf/sysroot/usr/include")
-	link_directories(/opt/toolchain/armv8-sony-linux-gnueabihf/sysroot/usr/lib)
+	include_directories(src/include
+		"/opt/toolchain/armv8-sony-linux-gnueabihf/sysroot/usr/include"
+		"/usr/local/cross-tools/arm-linux-gnueabihf/include")
+	link_directories(/opt/toolchain/armv8-sony-linux-gnueabihf/sysroot/usr/lib
+		/usr/local/cross-tools/arm-linux-gnueabihf/lib
+		/usr/lib/arm-linux-gnueabihf)
 
 else()
 

@@ -47,13 +47,40 @@ Output binaries are placed in `build_sys/`:
 
 ## Building for PlayStation Classic
 
+### Option 1: Docker Build (Recommended)
+
+The easiest way to build for PlayStation Classic without installing toolchains:
+
+```bash
+# Build Docker image and extract binaries
+make build extract
+```
+
+Output binaries are placed in `build_arm/`:
+- `autobleem-gui` - Main UI application
+- `starter` - PCSX launcher wrapper
+- UI assets (fonts, images, configs) and language files
+
+**Prerequisites:**
+- Docker installed ([docker.com](https://docs.docker.com/get-docker/))
+
+**Available commands:**
+```bash
+make build         # Build Docker image
+make extract       # Extract binaries from image
+make shell         # Interactive shell in container
+make clean-build   # Remove build artifacts
+```
+
+### Option 2: Native ARM Cross-Compilation
+
 ```bash
 make arm
 ```
 
 Output binaries are placed in `build_arm/`.
 
-This requires the ARM cross-compilation toolchain. The toolchain file is located at `cmake/PSCtoolchainV8.cmake`.
+Requires the PSC ARM toolchain installed at `/opt/toolchain/armv8-sony-linux-gnueabihf/`. The toolchain file is located at `cmake/PSCtoolchainV8.cmake`.
 
 ## Build Output Structure
 
@@ -73,8 +100,9 @@ build_arm/              # ARM build (same structure)
 
 The following libraries are bundled in `libs/`:
 
-- **sqlite3** - Database engine
+- **libchdr** - CHD (Compressed Hunks of Data) disc image format support
 - **nlohmann/json** - JSON parsing
+- **sqlite3** - Database engine
 
 ## Toolchain Files
 

@@ -1,23 +1,86 @@
 # AutoBleem Build System
 #
 # This Makefile provides targets for building AutoBleem:
+# - Docker builds (recommended for ARM - no toolchain installation required)
 # - Native ARM cross-compilation (requires local toolchain)
 # - Native x86_64 builds for development/testing
 #
 # Usage:
 #   make              - Build for ARM and local system
+#   make build        - Build Docker image for ARM
+#   make extract      - Extract ARM binaries from Docker image
 #   make sys          - Build for local system (x86_64)
 #   make arm          - Build for ARM using local toolchain
 #   make clean        - Remove all build artifacts
 #   make help         - Show this help
 
-.PHONY: all sys arm mac english lint test clean help
+.PHONY: all sys arm mac docker-build docker-extract docker-shell docker-clean english lint test clean clean-build help
+
+# Docker image name
+DOCKER_IMAGE := autobleem-builder
 
 # Number of parallel jobs for make
 JOBS := 4
 
 # Default target: build both ARM and local system
 all: arm sys
+
+# Docker build targets for ARM (recommended - no toolchain installation required)
+
+# Build Docker image with ARM cross-compilation environment
+build: docker-build
+
+docker-build:
+	@echo "Building Docker image for ARM cross-compilation..."
+	@if ! command -v docker >/dev/null 2>&1; then \
+		echo "ERROR: Docker not found!"; \
+		echo "Install from: https://docs.docker.com/get-docker/"; \
+		exit 1; \
+	fi
+	docker build -t $(DOCKER_IMAGE) .
+	@echo "Docker image built successfully: $(DOCKER_IMAGE)"
+
+# Extract built ARM binaries from Docker image
+extract: docker-extract
+
+docker-extract:
+	@echo "Extracting ARM binaries from Docker image..."
+	@if ! docker image inspect $(DOCKER_IMAGE) >/dev/null 2>&1; then \
+		echo "ERROR: Docker image '$(DOCKER_IMAGE)' not found!"; \
+		echo "Run 'make build' first to create the image."; \
+		exit 1; \
+	fi
+	@echo "Creating temporary container..."
+	docker create --name autobleem-temp $(DOCKER_IMAGE)
+	@echo "Copying build_arm/ directory..."
+	docker cp autobleem-temp:/build/build_arm ./
+	@echo "Cleaning up temporary container..."
+	docker rm autobleem-temp
+	@echo "Extraction complete: build_arm/"
+	@echo ""
+	@echo "Binaries:"
+	@ls -lh build_arm/autobleem-gui build_arm/starter 2>/dev/null || echo "  (binaries not found)"
+
+# Open interactive shell in Docker container
+shell: docker-shell
+
+docker-shell:
+	@echo "Opening interactive shell in Docker container..."
+	@if ! docker image inspect $(DOCKER_IMAGE) >/dev/null 2>&1; then \
+		echo "ERROR: Docker image '$(DOCKER_IMAGE)' not found!"; \
+		echo "Run 'make build' first to create the image."; \
+		exit 1; \
+	fi
+	docker run --rm -it $(DOCKER_IMAGE) /bin/bash
+
+# Clean Docker build artifacts (keeps image)
+clean-build: docker-clean
+
+docker-clean:
+	@echo "Removing Docker build artifacts..."
+	rm -rf build_arm
+	@echo "Clean complete (Docker image preserved)"
+	@echo "To remove Docker image, run: docker rmi $(DOCKER_IMAGE)"
 
 # Native build for local system (x86_64) - for development/testing
 sys:
@@ -99,12 +162,22 @@ test:
 clean:
 	@echo "Cleaning build directories..."
 	rm -rf build_arm build_sys
+	@if docker image inspect $(DOCKER_IMAGE) >/dev/null 2>&1; then \
+		echo "Removing Docker image $(DOCKER_IMAGE)..."; \
+		docker rmi $(DOCKER_IMAGE); \
+	fi
 
 # Show help
 help:
 	@echo "AutoBleem Build System"
 	@echo ""
-	@echo "Build Targets:"
+	@echo "Docker Build Targets (Recommended for ARM):"
+	@echo "  make build        Build Docker image for ARM cross-compilation"
+	@echo "  make extract      Extract ARM binaries from Docker image"
+	@echo "  make shell        Open interactive shell in Docker container"
+	@echo "  make clean-build  Remove build artifacts (keeps Docker image)"
+	@echo ""
+	@echo "Native Build Targets:"
 	@echo "  make              Build for ARM and local system"
 	@echo "  make sys          Build for local system (x86_64)"
 	@echo "  make arm          Build for ARM (requires PSCtoolchainV8)"
@@ -114,5 +187,5 @@ help:
 	@echo "  make english      Generate English.txt from source strings"
 	@echo "  make lint         Run clang-tidy static analysis"
 	@echo "  make test         Run unit tests (requires 'make sys' first)"
-	@echo "  make clean        Remove all build artifacts"
+	@echo "  make clean        Remove all build artifacts and Docker image"
 	@echo "  make help         Show this help"
