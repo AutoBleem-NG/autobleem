@@ -6,6 +6,7 @@
 #include "util.h"
 #include <fstream>
 #include <iostream>
+#include "log.h"
 #include "DirEntry.h"
 #include "environment.h"
 
@@ -85,7 +86,7 @@ void Lang::dump(string fileName) {
 
     ofstream os(fileSave);
     for (string data : newData) {
-        cout << data << endl;
+        PLOG_DEBUG << data;
         os << data << endl << data << endl;
     }
     os.flush();

@@ -5,6 +5,7 @@
 #include "inifile.h"
 #include "../main.h"
 #include <iostream>
+#include "../log.h"
 #include <fstream>
 #include "../util.h"
 
@@ -15,13 +16,13 @@ using namespace std;
 //*******************************
 void Inifile::load(const string &_path) {
     this->path = _path;
-    // cout << "Reading ini file: " << path << endl;
+    // PLOG_DEBUG << "Reading ini file: " << path ;
     ifstream file;
     string iniLine;
     file.open(path);
 
     if (!file.good()) {
-        cout << "Error opening ini file: " << path << endl;
+        PLOG_ERROR << "Error opening ini file: " << path;
         return;
     }
 
@@ -67,7 +68,7 @@ void Inifile::OverwriteAndAppend(const string &_path) { load(_path); }
 // Inifile::save
 //*******************************
 void Inifile::save(const string &_path) {
-    cout << "Writing ini file: " << _path << endl;
+    PLOG_DEBUG << "Writing ini file: " << _path;
     ofstream os;
     os.open(_path);
     os << "[" << section << "]" << endl;
@@ -89,11 +90,11 @@ void Inifile::save(const string &_path) {
 // Inifile::print
 //*******************************
 void Inifile::print() {
-    cout << "section = " << section << '\n';
-    cout << "path = " << path << '\n';
-    cout << "entry = " << entry << '\n';
+    PLOG_DEBUG << "section = " << section << '\n';
+    PLOG_DEBUG << "path = " << path << '\n';
+    PLOG_DEBUG << "entry = " << entry << '\n';
 
     for (auto &item : values)
-        cout << item.first << " = " << item.second << '\n';
-    cout << flush;
+        PLOG_DEBUG << item.first << " = " << item.second << '\n';
+    PLOG_DEBUG << flush;
 }

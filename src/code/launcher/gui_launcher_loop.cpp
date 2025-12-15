@@ -8,6 +8,7 @@
 #include "gui_btn_guide.h"
 #include <algorithm>
 #include <iostream>
+#include "../log.h"
 #include "../gui/menus/gui_playlistsMenu.h"
 #include "gui_mc_manager.h"
 #include "../gui/menus/gui_gameDirMenu.h"
@@ -26,7 +27,7 @@ using namespace std;
 // event loop
 //*******************************
 void GuiLauncher::loop() {
-    cout << "Main Loop" << endl;
+    PLOG_DEBUG << "Main Loop";
     powerOffShift = false; // L2 shift used for power off and selecting game sub dir or RA playlist
 
     menuVisible = true;
@@ -460,8 +461,8 @@ void GuiLauncher::loop_chooseGameDir() {
             if (showInternalGames)
                 nextSel = currentPS1_SelectState; // SET_PS1_All_Games is on row 0, SET_PS1_Internal_Only is on row 1
             else {
-                cout << "Error: loop_chooseGameDir() called with \"origames\" off and currentPS1_SelectState = "
-                     << currentPS1_SelectState << endl;
+                PLOG_ERROR << "Error: loop_chooseGameDir() called with \"origames\" off and currentPS1_SelectState = "
+                           << currentPS1_SelectState << endl;
             }
         }
     }

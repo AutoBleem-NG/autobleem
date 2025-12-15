@@ -10,6 +10,7 @@
 #pragma once
 
 #include "../main.h"
+#include "../log.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -64,7 +65,7 @@ class CDReader {
                 string str = readString(5);
                 rev(5);
                 if (str == "CD001") {
-                    cout << "CD001 found in sector:" << curSectorNow << " at pos " << sectorPosNow << endl;
+                    PLOG_DEBUG << "CD001 found in sector:" << curSectorNow << " at pos " << sectorPosNow;
                     offset = (curSectorNow - 16) * SECTOR_SIZE + sectorPosNow - 1;
                     return 0;
                 } else {
@@ -132,7 +133,7 @@ class CDReader {
     int getSelSector() { return currentSector; }
     virtual int openImage(string imagePath) {
         buffer = new char[CD_FRAME_SIZE];
-        cout << "Opening ISO image" << endl;
+        PLOG_DEBUG << "Opening ISO image";
         offset = 0;
         opened = false;
         sectorpos = 0;
@@ -314,7 +315,7 @@ class CHDReader : public CDReader {
     //   5. Parse track metadata to get frame count and track type
     //   6. Calibrate to find ISO9660 volume descriptor (CD001 signature)
     int openImage(string imagePath) override {
-        cout << "Opening CHD image" << endl;
+        PLOG_DEBUG << "Opening CHD image";
         setOpen(false);
         setSectorpos(0);
         setCurrentSector(0);
@@ -322,14 +323,14 @@ class CHDReader : public CDReader {
         // Open the CHD file
         chd_error err = chd_open(imagePath.c_str(), CHD_OPEN_READ, nullptr, &chd);
         if (err != CHDERR_NONE) {
-            cout << "Error opening CHD file: " << chd_error_string(err) << endl;
+            PLOG_ERROR << "Error opening CHD file: " << chd_error_string(err);
             return -1;
         }
 
         // Get CHD header for size information
         const chd_header *header = chd_get_header(chd);
         if (header == nullptr) {
-            cout << "Error getting CHD header" << endl;
+            PLOG_ERROR << "Error getting CHD header";
             goto cleanup_chd;
         }
 
@@ -339,7 +340,7 @@ class CHDReader : public CDReader {
         // Validate this is a CD-ROM CHD: unitBytes should be frame size,
         // and hunkBytes should contain a whole number of frames
         if (unitBytes == 0 || hunkBytes % unitBytes != 0) {
-            cout << "Not a CD-ROM CHD (invalid unit size)" << endl;
+            PLOG_ERROR << "Not a CD-ROM CHD (invalid unit size)";
             goto cleanup_chd;
         }
 
@@ -351,20 +352,20 @@ class CHDReader : public CDReader {
 
         // Parse track metadata to get frame count and determine data offset
         if (!parseTrackMetadata()) {
-            cout << "Failed to parse CD track metadata" << endl;
+            PLOG_ERROR << "Failed to parse CD track metadata";
             goto cleanup_all;
         }
 
-        cout << "TOC found - track has " << trackFrames << " frames" << endl;
+        PLOG_DEBUG << "TOC found - track has " << trackFrames << " frames";
         if (trackFrames < 1) {
-            cout << "Track has no frames" << endl;
+            PLOG_ERROR << "Track has no frames";
             goto cleanup_all;
         }
 
         // Calibrate: find the ISO9660 primary volume descriptor (CD001)
         // This determines any additional offset needed for reading
         if (calibrate(MAX_OFFSET) != 0) {
-            cout << "Calibrate failed" << endl;
+            PLOG_ERROR << "Calibrate failed";
             goto cleanup_all;
         }
 

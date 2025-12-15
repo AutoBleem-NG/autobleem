@@ -7,6 +7,7 @@
 #include "cfgprocessor.h"
 #include "serialscanner.h"
 #include "../lang.h"
+#include "../log.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -49,12 +50,12 @@ void Scanner::updateRegionalDB(GamesHierarchy &gamesHierarchy, Database *db) {
         db->beginTransaction();
         for (int i = 0; i < gamesToAddToDB.size(); i++) {
             USBGamePtr data = gamesToAddToDB[i];
-            cout << "Inserting game ID: " << i + 1 << " - " << data->title << endl;
+            PLOG_INFO << "Inserting game ID: " << i + 1 << " - " << data->title;
             data->gameId = i + 1;
             db->insertGame(data->gameId, data->title, data->publisher, data->players, data->year, data->fullPath + sep,
                            data->saveStatePath + sep, data->memcard);
             if (data->discs.size() == 0)
-                cout << "No discs in game: " << data->title << endl;
+                PLOG_WARNING << "No discs in game: " << data->title;
             for (int j = 0; j < data->discs.size(); j++) {
                 db->insertDisc(i + 1, j + 1, data->discs[j].diskName);
             }
@@ -67,18 +68,19 @@ void Scanner::updateRegionalDB(GamesHierarchy &gamesHierarchy, Database *db) {
     outfile.flush();
     outfile.close();
 
-    // cout << "about to write hierarchy to DB" << endl;
+    // PLOG_DEBUG << "about to write hierarchy to DB" ;
     gamesHierarchy.printRowDisplayGameInfo(false);
 
     db->beginTransaction();
     for (auto &row : gamesHierarchy.gameSubDirRows) {
-        // cout << " write row: " << row->displayRowIndex << ", " << row->subDirName << ", " << row->displayIndentLevel
+        // PLOG_DEBUG << " write row: " << row->displayRowIndex << ", " << row->subDirName << ", " <<
+        // row->displayIndentLevel
         // << ", " << row->gamesToDisplay.size() << endl;
         db->insertSubDirRow(row->displayRowIndex, row->subDirName, row->displayIndentLevel, row->gamesToDisplay.size());
 
         for (auto &game : row->gamesToDisplay) {
-            // cout << " write game: " << game->gameDirName << ", " << row->displayRowIndex << ", " << game->gameId <<
-            // endl;
+            // PLOG_DEBUG << " write game: " << game->gameDirName << ", " << row->displayRowIndex << ", " <<
+            // game->gameId << endl;
             db->insertSubDirGames(row->displayRowIndex, game->gameId);
         }
     }
@@ -190,11 +192,11 @@ void Scanner::moveFolderIfNeeded(const std::string &gameDirName, string gameData
     bool gameDataExists = DirEntry::exists(gameDataPath);
 
     if (gameDataExists) {
-        cerr << "Game: " << gameDirName << " - Moving GameData to 0.5" << endl;
+        PLOG_INFO << "Game: " << gameDirName << " - Moving GameData to 0.5";
         for (const DirEntry &entryGame : DirEntry::diru(gameDataPath)) {
             string newName = path + sep + gameDirName + sep + entryGame.name;
             string oldName = gameDataPath + sep + entryGame.name;
-            cerr << "Moving: " << oldName << "  to: " << newName << endl;
+            PLOG_DEBUG << "Moving: " << oldName << " to: " << newName;
             DirEntry::renameFile(oldName, newName);
         }
     }
@@ -306,6 +308,7 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
     gamesToAddToDB.clear(); // clear games list
     complete = false;
 
+    PLOG_INFO << "Starting USB games directory scan";
     Gui::splash(_("Scanning..."));
 
     if (!DirEntry::exists(Env::getPathToSaveStatesDir())) {
@@ -325,20 +328,20 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
 #if 0
     int i = 0;
     for (auto game : gamesScanned) {
-        cout << i++ << ": ";
+        PLOG_DEBUG << i++ << ": ";
         if (game)
-            cout << game->pathName << ", " << game->fullPath << endl;
+            PLOG_DEBUG << game->pathName << ", " << game->fullPath ;
         else
-            cout << "NULL" << endl;
+            PLOG_DEBUG << "NULL" ;
     }
 #endif
 
     for (USBGamePtr game : allGames) {
         int i = 0;
         if (game)
-            cout << i++ << ": " << game->gameDirName << ", " << game->fullPath << endl;
+            PLOG_DEBUG << i++ << ": " << game->gameDirName << ", " << game->fullPath;
         else
-            cout << i++ << ": " << "NULL" << endl;
+            PLOG_DEBUG << i++ << ": NULL";
         repairBinCommaNames(game->fullPath);
 
         string saveStateDir = Env::getPathToSaveStatesDir() + sep + game->gameDirName;
@@ -389,9 +392,9 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                 }
             }
 
-            cout << "before calling recoverMissingFiles() automationUsed = " << game->automationUsed << endl;
+            PLOG_DEBUG << "before recoverMissingFiles() automationUsed=" << game->automationUsed;
             game->recoverMissingFiles();
-            cout << "after calling recoverMissingFiles() automationUsed = " << game->automationUsed << endl;
+            PLOG_DEBUG << "after recoverMissingFiles() automationUsed=" << game->automationUsed;
 
             if (game->gameIniFound)
                 game->readIni(gameIniPath); // read it in now in case we need to create or update the serial/region
@@ -406,12 +409,12 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                 if (game->automationUsed) {
                     game->serial = SerialScanner::scanSerial(game->imageType, game->fullPath + sep, game->firstBinPath);
                     game->region = SerialScanner::serialToRegion(game->serial);
-                    // cout << "serial: " << game->serial << ", region: " << game->region << ", " << game->title <<endl;
-                    // cout << "Last Played: " << Util::timeToDisplayTimeString(game->last_played) << endl;
+                    // PLOG_DEBUG << "serial: " << game->serial << ", region: " << game->region << ", " << game->title
+                    // <<endl; PLOG_DEBUG << "Last Played: " << Util::timeToDisplayTimeString(game->last_played) ;
                 }
 
                 if (!game->serial.empty()) {
-                    // cout << "Accessing metadata for serial: " << game->serial << endl;
+                    // PLOG_DEBUG << "Accessing metadata for serial: " << game->serial ;
                     Metadata md;
                     if (md.lookupBySerial(game->serial)) {
                         // at this stage we have more data;
@@ -428,7 +431,7 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                             // all recovered :)
                             if (!game->coverImageFound) {
                                 string newFilename = game->fullPath + sep + game->discs[0].cueName + EXT_PNG;
-                                cout << "Updating cover in scanUSBGamesDirectory()" << newFilename << endl;
+                                PLOG_DEBUG << "Updating cover: " << newFilename;
                                 ofstream pngFile;
                                 pngFile.open(newFilename, std::ios::out | std::ios::binary);
                                 pngFile.write(md.bytes, md.dataSize);
@@ -466,6 +469,9 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                 }
                 DirEntry::generateM3UForDirectory(game->fullPath, game->discs[0].cueName);
             } else {
+                PLOG_WARNING << "Game failed to verify: " << game->fullPath;
+                for (const auto &reason : failureReasons)
+                    PLOG_WARNING << "  Reason: " << reason;
                 Gui::splash(_("Game failed to verify:") + " " + game->fullPath);
                 sleep(3);
                 badGameFile << "Game failed to verify: " << game->fullPath << endl;
@@ -496,6 +502,7 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
 
     noGamesFoundDuringScan = (gamesToAddToDB.size() == 0);
     complete = true;
+    PLOG_INFO << "Scan complete: " << gamesToAddToDB.size() << " games found";
 }
 
 //*******************************

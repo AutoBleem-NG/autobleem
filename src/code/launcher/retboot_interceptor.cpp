@@ -11,6 +11,7 @@
 #include "../engine/cfgprocessor.h"
 #include <fstream>
 #include <iostream>
+#include "../log.h"
 #include <unistd.h>
 #include "../environment.h"
 
@@ -22,7 +23,7 @@
 #define PCSX_NEON "builtin_gpu"
 
 bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
-    cout << "calling RetroArchInterceptor::execute()" << endl;
+    PLOG_DEBUG << "calling RetroArchInterceptor::execute()";
 
     shared_ptr<Gui> gui(Gui::getInstance());
 
@@ -32,10 +33,10 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     std::vector<const char *> argvNew;
     string gameFile = "";
 
-    cout << "Starting RetroArch Emu" << endl;
+    PLOG_INFO << "Starting RetroArch Emu";
 
     if (game->foreign) {
-        cout << "RA FOREIGN MODE" << endl;
+        PLOG_DEBUG << "RA FOREIGN MODE";
     }
     string link = "/media/Autobleem/rc/launch_rb.sh";
     argvNew.push_back(link.c_str());
@@ -76,7 +77,7 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     } else {
         gpu = "NONE";
     }
-    cout << "Using GPU plugin: " << gpu << endl;
+    PLOG_DEBUG << "Using GPU plugin: " << gpu;
 
     string RACore = RA_NEON;
     if (gpu != PCSX_NEON) {
@@ -91,13 +92,13 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
 
     argvNew.push_back(nullptr);
 
-    cout << "CMD line to execute: ";
+    PLOG_DEBUG << "CMD line to execute: ";
     for (const char *s : argvNew) {
         if (s != nullptr) {
-            cout << s << " ";
+            PLOG_DEBUG << s << " ";
         }
     }
-    cout << endl;
+    PLOG_DEBUG << endl;
 
     // core config here - to be optional
     if (gui->cfg.inifile.values["raconfig"] == "true") {

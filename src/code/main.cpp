@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include "log.h"
 #include "engine/database.h"
 #include "engine/scanner.h"
 #include "gui/gui.h"
@@ -116,7 +117,7 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
 
     // create the db tables in case they don't already exist
     if (!db->createInitialDatabase()) {
-        cout << "Error creating db structure" << endl;
+        PLOG_ERROR << "Error creating db structure";
 
         return EXIT_FAILURE;
     };
@@ -210,6 +211,12 @@ void rewriteGamelistXml() {
 // main
 //*******************************
 int main(int argc, char *argv[]) {
+    Log::init();
+    PLOG_INFO << "AutoBleem starting, argc=" << argc;
+    for (int i = 0; i < argc; i++) {
+        PLOG_DEBUG << "  argv[" << i << "]=" << argv[i];
+    }
+
     SDL_Init(SDL_INIT_VIDEO);
     SDL_InitSubSystem(SDL_INIT_AUDIO);
     SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
@@ -235,7 +242,7 @@ int main(int argc, char *argv[]) {
         private_pathToGamesDir = argv[2];
         private_pathToUSBDrive = DirEntry::getDirNameFromPath(private_pathToGamesDir);
     } else {
-        cout << "USAGE: autobleem-gui /path/dbfilename.db /path/to/games" << endl;
+        PLOG_ERROR << "USAGE: autobleem-gui /path/dbfilename.db /path/to/games";
         return EXIT_FAILURE;
     }
 
@@ -244,6 +251,10 @@ int main(int argc, char *argv[]) {
     shared_ptr<Scanner> scanner(Scanner::getInstance());
     gui->mapper.init();
     lang->load(gui->cfg.inifile.values["language"]);
+
+    PLOG_DEBUG << "Path to USB: " << Env::getPathToUSBRoot();
+    PLOG_DEBUG << "Path to Games: " << Env::getPathToGamesDir();
+    PLOG_DEBUG << "Path to Regional DB: " << Env::getPathToRegionalDBFile();
 
     Coverdb *coverdb = new Coverdb();
     gui->coverdb = coverdb;
@@ -257,7 +268,7 @@ int main(int argc, char *argv[]) {
     db->createInitialDatabase();
 
     // if the /System/Databases/internal.db doesn't exist make a copy from the PSC
-    cout << "Importing internal games from PSC to USB" << endl;
+    PLOG_INFO << "Importing internal games from PSC to USB";
     Util::execUnixCommand("/media/Autobleem/rc/backup_internal.sh");
 
     // add favorites and history columns to internal.db if the column doesn't exist
@@ -322,7 +333,7 @@ int main(int argc, char *argv[]) {
         }
 
         if (gui->menuOption == MENU_OPTION_START) {
-            cout << "Starting game" << endl;
+            PLOG_INFO << "Starting game: " << gui->runningGame->title;
             gui->finish();
 
             int numtimesopened, frequency, channels;
@@ -391,6 +402,7 @@ int main(int argc, char *argv[]) {
     delete internalDB;
     internalDB = nullptr;
 
+    PLOG_INFO << "AutoBleem shutting down";
     Gui::splash(_("Loading ... Please Wait ..."));
     gui->finish();
     SDL_Quit();

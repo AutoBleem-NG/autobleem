@@ -10,6 +10,7 @@
 #include <string.h>
 #include <sstream>
 #include <iostream>
+#include "log.h"
 #include <stdio.h>
 
 using namespace std;
@@ -206,7 +207,7 @@ string Util::commaSep(const string &s, int pos) {
 string Util::execUnixCommand(const char *cmd) {
     array<char, 128> buffer;
     string result;
-    cout << "Exec:" << cmd << endl;
+    PLOG_DEBUG << "Exec:" << cmd;
     unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
     if (!pipe) {
         throw runtime_error("popen() failed!");
@@ -224,15 +225,15 @@ string Util::execUnixCommand(const char *cmd) {
 // Util::execFork
 //*******************************
 void Util::execFork(const char *cmd, vector<const char *> argvNew) {
-    cout << "calling Util::execFork()" << endl;
-    cout << "CMD line to execute: ";
-    cout << cmd << " ";
+    PLOG_DEBUG << "calling Util::execFork()";
+    PLOG_DEBUG << "CMD line to execute: ";
+    PLOG_DEBUG << cmd << " ";
     for (const char *s : argvNew) {
         if (s != nullptr) {
-            cout << s << " ";
+            PLOG_DEBUG << s << " ";
         }
     }
-    cout << endl;
+    PLOG_DEBUG << endl;
 
     string link = cmd;
 
@@ -330,7 +331,7 @@ void Util::dumpMemory(const char *p, int count) {
     for (int i = 0; i < count; ++i) {
         printf("%x, ", static_cast<unsigned int>(*p++));
         if (i % 16 == 15 || i == count - 1)
-            cout << endl;
+            PLOG_DEBUG << endl;
     }
 }
 
@@ -380,7 +381,7 @@ vector<string> Util::ReadTextFileAsAStringArray(const string &filePath, bool rem
 
     file.open(filePath);
     if (!file.good()) {
-        cout << "Error opening file: " << filePath << endl;
+        PLOG_ERROR << "Error opening file: " << filePath;
         return contents;
     }
 

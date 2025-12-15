@@ -8,6 +8,7 @@
 #include <SDL2/SDL_image.h>
 #include <string>
 #include <iostream>
+#include "../log.h"
 #include "../gui/gui.h"
 #include "../lang.h"
 #include "../gui/gui_confirm.h"
@@ -290,7 +291,7 @@ void GuiMcManager::loop() {
 
                             rightCardName = select->cardSelected;
                             card2path = cardPath;
-                            cout << "Card:" << cardPath << endl;
+                            PLOG_DEBUG << "Card:" << cardPath;
                             memcard2->load_file(card2path);
                         }
                         changes = false;

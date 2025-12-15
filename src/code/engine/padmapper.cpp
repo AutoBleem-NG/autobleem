@@ -5,6 +5,7 @@
 #include "padmapper.h"
 #include "../util.h"
 #include <iostream>
+#include "../log.h"
 #include "../DirEntry.h"
 #include "../environment.h"
 #include "../gui/abl.h"
@@ -31,9 +32,9 @@ void PadMapper::registerPad(int joy_idx) {
     if (controller == nullptr)
         return;
     string name = SDL_GameControllerName(controller);
-    cout << "New GameController name: " << name << endl;
+    PLOG_DEBUG << "New GameController name: " << name;
     char *mappingString = SDL_GameControllerMapping(controller);
-    cout << "New GameController mapping: " << mappingString << endl;
+    PLOG_DEBUG << "New GameController mapping: " << mappingString;
     ControllerInfo *info = new ControllerInfo();
     info->pad = controller;
     info->joy = SDL_GameControllerGetJoystick(controller);
@@ -41,13 +42,13 @@ void PadMapper::registerPad(int joy_idx) {
     info->name = name;
     info->index = joy_idx;
     connectedPads.push_back(info);
-    cout << "New GameController GUID: " << guid_str << "  Name:" << name << endl;
-    cout << "MAP: " << mappingString << endl;
+    PLOG_DEBUG << "New GameController GUID: " << guid_str << "  Name:" << name;
+    PLOG_DEBUG << "MAP: " << mappingString;
 }
 void PadMapper::handlePowerBtn(SDL_Event *event) {
     shared_ptr<Gui> gui(Gui::getInstance());
     if (event->type == SDL_KEYDOWN) {
-        cout << event->key.keysym.scancode << " " << event->key.keysym.sym << endl;
+        PLOG_DEBUG << event->key.keysym.scancode << " " << event->key.keysym.sym;
         if (event->key.keysym.scancode == SDL_SCANCODE_SLEEP || event->key.keysym.sym == SDLK_ESCAPE) {
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
             Util::powerOff();
@@ -79,7 +80,7 @@ void PadMapper::removePad(int joy_idx) {
         SDL_JoystickID instance_id = SDL_JoystickInstanceID(ci->joy);
         if (joy_idx == instance_id) {
             indexToRemove = i;
-            cout << "Pad disconnected: " << ci->index << ":" << ci->name << endl;
+            PLOG_DEBUG << "Pad disconnected: " << ci->index << ":" << ci->name;
             SDL_GameControllerClose(ci->pad);
             delete ci;
             break;
@@ -99,14 +100,14 @@ void PadMapper::probePads() {
     for (string controllerdbPath : gamedbpaths) {
         if (DirEntry::exists(controllerdbPath)) {
             int loadedMappings = SDL_GameControllerAddMappingsFromFile(controllerdbPath.c_str());
-            cout << "Loaded pad mappings " << loadedMappings << " from " << controllerdbPath << endl;
+            PLOG_DEBUG << "Loaded pad mappings " << loadedMappings << " from " << controllerdbPath;
             mappingsLoaded = true;
             currentControllerdb = controllerdbPath;
             break;
         }
     }
     if (!mappingsLoaded) {
-        cout << "Warning: Default mapping db in use - no gamecontrollerdb.txt file found" << endl;
+        PLOG_WARNING << "Warning: Default mapping db in use - no gamecontrollerdb.txt file found";
     }
 
     string zeroguid = "00000000000000000000000000000000";
@@ -114,15 +115,15 @@ void PadMapper::probePads() {
         SDL_JoystickGUID guid = SDL_JoystickGetDeviceGUID(i);
         char guid_cstr[1024];
         SDL_JoystickGetGUIDString(guid, guid_cstr, 1024);
-        cout << "Checking device with GUID:" << guid_cstr << endl;
+        PLOG_DEBUG << "Checking device with GUID:" << guid_cstr;
         if (guid_cstr == zeroguid) {
-            cout << "Invalid gamepad" << endl;
+            PLOG_DEBUG << "Invalid gamepad";
             continue;
         }
         if (SDL_IsGameController(i)) {
-            cout << "Device is gamepad.... checking JoystickAPI name" << endl;
+            PLOG_DEBUG << "Device is gamepad.... checking JoystickAPI name";
             string joyname = SDL_JoystickNameForIndex(i);
-            cout << "Name:" << joyname << endl;
+            PLOG_DEBUG << "Name:" << joyname;
             registerPad(i);
         }
     }

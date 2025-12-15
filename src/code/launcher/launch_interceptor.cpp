@@ -7,6 +7,7 @@
 #include "../util_time.h"
 #include "../gui/gui.h"
 #include <iostream>
+#include "../log.h"
 #include <unistd.h>
 #include "../environment.h"
 
@@ -16,10 +17,10 @@
 using namespace std;
 
 bool LaunchInterceptor::execute(PsGamePtr &game, int resumepoint) {
-    cout << "calling LaunchInterceptor::execute()" << endl;
+    PLOG_DEBUG << "calling LaunchInterceptor::execute()";
 
     shared_ptr<Gui> gui(Gui::getInstance());
-    cout << "Starting External App" << endl;
+    PLOG_INFO << "Starting External App";
 
     if (game->internal) {
         gui->internalDB->updateDatePlayed(game->gameId, UtilTime::getCurrentTime());
@@ -28,7 +29,7 @@ bool LaunchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     }
 
     if (game->foreign) {
-        cout << "FOREIGN MODE" << endl;
+        PLOG_DEBUG << "FOREIGN MODE";
     }
 
     gui->saveSelection();
@@ -38,13 +39,13 @@ bool LaunchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     argvNew.push_back(link.c_str());
     argvNew.push_back(nullptr);
 
-    cout << "CMD line to execute: ";
+    PLOG_DEBUG << "CMD line to execute: ";
     for (const char *s : argvNew) {
         if (s != nullptr) {
-            cout << s << " ";
+            PLOG_DEBUG << s << " ";
         }
     }
-    cout << endl;
+    PLOG_DEBUG << endl;
 
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     Gui::splash("I'm sorry Dave.  I'm afraid I can't do that.");

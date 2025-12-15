@@ -1,5 +1,6 @@
 #include "gui_font.h"
 #include <iostream>
+#include "../log.h"
 #include "../util.h"
 #include <cassert>
 #include "../DirEntry.h"
@@ -29,9 +30,9 @@ FC_Font_Shared Fonts::openNewSharedCachedFont(const string &filename, int fontSi
     FC_LoadFont(fc_font, renderer, filename.c_str(), fontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
     FC_Font_Shared font = FC_Font_Shared(fc_font);
     if (font) {
-        // cout << "Success opening font " << filename << " of size " << fontSize << endl;
+        // PLOG_DEBUG << "Success opening font " << filename << " of size " << fontSize ;
     } else {
-        cout << "FAILURE opening font " << filename << " of size " << fontSize << endl;
+        PLOG_DEBUG << "FAILURE opening font " << filename << " of size " << fontSize;
         font = nullptr;
         assert(false);
     }
@@ -58,9 +59,9 @@ FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) 
     FC_LoadFont(fc_font, renderer, fontPath.c_str(), fontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
     FC_Font_Shared font = FC_Font_Shared(fc_font);
     if (font) {
-        // cout << "Success opening font " << fontPath << " of size " << fontSize << endl;
+        // PLOG_DEBUG << "Success opening font " << fontPath << " of size " << fontSize ;
     } else {
-        cout << "FAILURE opening font " << fontPath << " of size " << fontSize << endl;
+        PLOG_DEBUG << "FAILURE opening font " << fontPath << " of size " << fontSize;
         font = nullptr;
         assert(false);
     }

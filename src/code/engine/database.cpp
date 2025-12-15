@@ -2,6 +2,7 @@
 #include "inifile.h"
 #include "../util.h"
 #include <iostream>
+#include "../log.h"
 #include <SDL2/SDL_ttf.h>
 #include "serialscanner.h"
 #include "../DirEntry.h"
@@ -217,7 +218,7 @@ int Database::getNumGames() {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, NUM_GAMES, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::getNumGames - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::getNumGames - " << sqlite3_errmsg(db);
         return 0;
     }
     int number = 0;
@@ -233,7 +234,7 @@ bool Database::updateYear(int id, int year) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, UPDATE_YEAR, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::updateYear - " << id << ", " << year << " - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::updateYear - " << id << ", " << year << " - " << sqlite3_errmsg(db);
         return false;
     }
     sqlite3_bind_int(res, 1, year);
@@ -247,7 +248,7 @@ bool Database::updateMemcard(int id, string memcard) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, UPDATE_MEMCARD, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::updateMemcard - " << id << ", " << memcard << " - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::updateMemcard - " << id << ", " << memcard << " - " << sqlite3_errmsg(db);
         return false;
     }
     sqlite3_bind_text(res, 1, memcard.c_str(), -1, nullptr);
@@ -261,7 +262,7 @@ bool Database::updateTitle(int id, string title) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, UPDATE_TITLE, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::updateTitle - " << id << ", " << title << " - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::updateTitle - " << id << ", " << title << " - " << sqlite3_errmsg(db);
         return false;
     }
     sqlite3_bind_text(res, 1, title.c_str(), -1, nullptr);
@@ -275,7 +276,7 @@ bool Database::updateFavorite(int id, int favorite) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, UPDATE_FAVORITE, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::updateFavorite - " << id << ", " << favorite << " - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::updateFavorite - " << id << ", " << favorite << " - " << sqlite3_errmsg(db);
         return false;
     }
     sqlite3_bind_int(res, 1, favorite);
@@ -289,8 +290,7 @@ bool Database::updatePlayUsingRA(int id, int play_using_ra) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, UPDATE_PLAY_USING_RA, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::updatePlayUsingRA - " << id << ", " << play_using_ra << " - " << sqlite3_errmsg(db)
-             << endl;
+        PLOG_ERROR << "Failed: db::updatePlayUsingRA - " << id << ", " << play_using_ra << " - " << sqlite3_errmsg(db);
         return false;
     }
     sqlite3_bind_int(res, 1, play_using_ra);
@@ -305,7 +305,7 @@ bool Database::updateHistory(int id, int rank) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, UPDATE_HISTORY, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::updateHistory - " << id << ", " << rank << " - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::updateHistory - " << id << ", " << rank << " - " << sqlite3_errmsg(db);
         return false;
     }
     sqlite3_bind_int(res, 1, rank);
@@ -320,8 +320,7 @@ bool Database::updateDatePlayed(int id, int date_in_seconds) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, UPDATE_LAST_PLAYED, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::updateDatePlayed - " << id << ", " << date_in_seconds << " - " << sqlite3_errmsg(db)
-             << endl;
+        PLOG_ERROR << "Failed: db::updateDatePlayed - " << id << ", " << date_in_seconds << " - " << sqlite3_errmsg(db);
         return false;
     }
     sqlite3_bind_int(res, 1, date_in_seconds);
@@ -335,7 +334,7 @@ bool Database::queryTitle(string title, Metadata *md) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, SELECT_TITLE, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::queryTitle - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::queryTitle - " << sqlite3_errmsg(db);
         return false;
     }
 
@@ -586,9 +585,9 @@ bool Database::getGameRowInfos(GameRowInfos *gameRowInfos) {
             subDirRowInfo.indentLevel = sqlite3_column_int(res, 2);
             subDirRowInfo.numGames = sqlite3_column_int(res, 3);
 
-            cout << "SubDirRowInfo: " << string(subDirRowInfo.indentLevel * 2, ' ') << subDirRowInfo.rowName
-                 << ", index: " << subDirRowInfo.subDirRowIndex << ", indent: " << subDirRowInfo.indentLevel
-                 << ", numGames: " << subDirRowInfo.numGames << endl;
+            PLOG_DEBUG << "SubDirRowInfo: " << string(subDirRowInfo.indentLevel * 2, ' ') << subDirRowInfo.rowName
+                       << ", index: " << subDirRowInfo.subDirRowIndex << ", indent: " << subDirRowInfo.indentLevel
+                       << ", numGames: " << subDirRowInfo.numGames << endl;
 
             gameRowInfos->emplace_back(subDirRowInfo);
         }
@@ -609,7 +608,7 @@ bool Database::getGameRowGameInfos(GameRowGames *gameRowGames) {
             gameRowGame.rowIndex = sqlite3_column_int(res, 0);
             gameRowGame.gameId = sqlite3_column_int(res, 1);
 
-            cout << "GameRowGame: " << gameRowGame.rowIndex << ", " << gameRowGame.gameId << endl;
+            PLOG_DEBUG << "GameRowGame: " << gameRowGame.rowIndex << ", " << gameRowGame.gameId;
 
             gameRowGames->emplace_back(gameRowGame);
         }
@@ -643,7 +642,7 @@ bool Database::querySerial(string serial, Metadata *md) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, SELECT_META, -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::querySerial - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::querySerial - " << sqlite3_errmsg(db);
         return false;
     }
 
@@ -686,7 +685,7 @@ bool Database::insertDisc(int id, int discNum, string discName) {
         sqlite3_bind_text(res, 3, discName.c_str(), -1, nullptr);
         sqlite3_step(res);
     } else {
-        cerr << "Failed to execute statement: " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::insertDisc - " << sqlite3_errmsg(db);
         sqlite3_finalize(res);
         return false;
     }
@@ -710,7 +709,7 @@ bool Database::insertGame(int id, string title, string publisher, int players, i
         sqlite3_bind_text(res, 8, memcard.c_str(), -1, nullptr);
         sqlite3_step(res);
     } else {
-        cerr << "Failed to execute statement: " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::insertGame - " << sqlite3_errmsg(db);
         sqlite3_finalize(res);
         return false;
     }
@@ -730,7 +729,7 @@ bool Database::subDirRowsTableIsEmpty() {
             return (number == 0); // true if no rows in table
         }
     } else {
-        cerr << "Failed to execute statement: " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::subDirRowsTableIsEmpty - " << sqlite3_errmsg(db);
         sqlite3_finalize(res);
         return true;
     }
@@ -748,7 +747,7 @@ bool Database::insertSubDirRow(int rowIndex, string rowName, int indentLevel, in
         sqlite3_bind_int(res, 4, numGames);
         sqlite3_step(res);
     } else {
-        cerr << "Failed to execute statement: " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::insertSubDirRow - " << sqlite3_errmsg(db);
         sqlite3_finalize(res);
         return false;
     }
@@ -765,7 +764,7 @@ bool Database::insertSubDirGames(int rowIndex, int gameId) {
         sqlite3_bind_int(res, 2, gameId);
         sqlite3_step(res);
     } else {
-        cerr << "Failed to execute statement: " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::insertSubDirGames - " << sqlite3_errmsg(db);
         sqlite3_finalize(res);
         return false;
     }
@@ -776,15 +775,13 @@ bool Database::insertSubDirGames(int rowIndex, int gameId) {
 
 bool Database::executeCreateStatement(const char *sql, string name) {
     char *errorReport = nullptr;
-    cout << "Creating " << name << " (if not exists)" << endl;
+    PLOG_DEBUG << "Creating " << name << " (if not exists)";
     int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errorReport);
     if (rc != SQLITE_OK) {
         string errMsg = sqlite3_errmsg(db);
         // "duplicate column name" is expected when adding columns that already exist
-        if (errMsg.find("duplicate column") != string::npos) {
-            // Not an error - column already exists
-        } else {
-            cerr << "Failed: db::executeCreateStatement - " << name << " - " << errMsg << endl;
+        if (errMsg.find("duplicate column") == string::npos) {
+            PLOG_ERROR << "Failed: db::executeCreateStatement - " << name << " - " << errMsg;
         }
         if (errorReport)
             sqlite3_free(errorReport);
@@ -795,10 +792,10 @@ bool Database::executeCreateStatement(const char *sql, string name) {
 
 bool Database::executeStatement(const char *sql, string outMsg, string errorMsg) {
     char *errorReport = nullptr;
-    cout << outMsg << endl;
+    PLOG_DEBUG << outMsg;
     int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errorReport);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::executeStatement - " << errorMsg << " - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::executeStatement - " << errorMsg << " - " << sqlite3_errmsg(db);
         if (errorReport)
             sqlite3_free(errorReport);
         return false;
@@ -809,18 +806,18 @@ bool Database::executeStatement(const char *sql, string outMsg, string errorMsg)
 bool Database::connect(string fileName) {
     int rc = sqlite3_open(fileName.c_str(), &db);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::connect - " << fileName << " - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::connect - " << fileName << " - " << sqlite3_errmsg(db);
         sqlite3_close(db);
         db = nullptr;
         return false;
     }
-    cout << "Connected to DB " << fileName << endl;
+    PLOG_DEBUG << "Connected to DB " << fileName;
     return true;
 }
 
 void Database::disconnect() {
     if (db != nullptr) {
-        cout << "Disconnecting DBs" << endl;
+        PLOG_DEBUG << "Disconnecting DBs";
         sqlite3_db_cacheflush(db);
         sqlite3_close(db);
         db = nullptr;
@@ -876,7 +873,7 @@ bool Database::deleteGameIdFromOneTable(int id, const string &cmd_str) {
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, cmd_str.c_str(), -1, &res, nullptr);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db::deleteGameIdFromOneTable - " << id << " - " << sqlite3_errmsg(db) << endl;
+        PLOG_ERROR << "Failed: db::deleteGameIdFromOneTable - " << id << " - " << sqlite3_errmsg(db);
         return false;
     }
     sqlite3_bind_int(res, 1, id);

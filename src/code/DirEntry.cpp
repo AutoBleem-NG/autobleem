@@ -10,6 +10,7 @@
 #include <dirent.h>
 #include <libgen.h>
 #include <iostream>
+#include "log.h"
 #include <algorithm>
 
 using namespace std;
@@ -58,7 +59,7 @@ void DirEntry::generateM3UForDirectory(std::string path, std::string basename) {
     if (DirEntry::isPBPFile(basename)) {
         basename = basename.substr(basename.length() - 4);
     }
-    cout << basename << endl;
+    PLOG_DEBUG << basename;
     vector<string> files;
     DirEntries filesInPath = DirEntry::diru_FilesOnly(path);
     for (const DirEntry &entry : filesInPath) {
@@ -531,7 +532,7 @@ DirEntries DirEntry::getFilesWithExtension(const string &path, const DirEntries 
 //*******************************
 // DirEntry::print
 //*******************************
-void DirEntry::print() const { cout << (isDir ? "Dir: " : "File: ") << name << std::endl; }
+void DirEntry::print() const { PLOG_DEBUG << (isDir ? "Dir: " : "File: ") << name << std::endl; }
 
 //*******************************
 // DirEntries::print(const DirEntries &entries)

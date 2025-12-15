@@ -9,6 +9,7 @@
 #include "engine/inifile.h"
 #include <fstream>
 #include <iostream>
+#include "log.h"
 using namespace std;
 
 string verFile = "/media/System/Logs/ver.txt";
@@ -59,7 +60,7 @@ void split(const string& s, char c,
 //*******************************
 void VerMigration::migrate04_05(Database * db)
 {
-    cout << "Migrating 0.4.0 to 0.5.0" << endl;
+    PLOG_INFO << "Migrating 0.4.0 to 0.5.0" ;
     // update game ini's with correct year (by title)
     int newYear = 2000; // initial value
     ifstream is(Env::getWorkingPath() + sep + "autobleem.list");
@@ -73,8 +74,8 @@ void VerMigration::migrate04_05(Database * db)
             string id = vect[0];
             string folder = vect[1];
 
-            cout << id << endl;
-            cout << folder << endl;
+            PLOG_DEBUG << id ;
+            PLOG_DEBUG << folder ;
 
             string gameIniLoc = folder + sep + "GameData" + sep + "Game.ini";
             if (!DirEntry::exists(gameIniLoc))
@@ -88,14 +89,14 @@ void VerMigration::migrate04_05(Database * db)
             Inifile ini;
             ini.load(gameIniLoc);
             string title = ini.values["title"];
-            cout << title << endl;
+            PLOG_DEBUG << title ;
 
             Metadata * md = new Metadata();
             md->lookupByTitle(title);
             {
                 if(md->valid)
                 {
-                    cout << to_string(md->year) << endl;
+                    PLOG_DEBUG << to_string(md->year) ;
                     db->updateYear(atoi(id.c_str()),md->year);
                     ini.values["year"]=to_string(md->year);
                     ini.save(gameIniLoc);

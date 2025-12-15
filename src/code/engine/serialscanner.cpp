@@ -9,6 +9,7 @@
 #include "../util.h"
 #include <fstream>
 #include <iostream>
+#include "../log.h"
 #include "../DirEntry.h"
 
 using namespace std;
@@ -50,7 +51,7 @@ string SerialScanner::fixSerial(string serial) {
 //*******************************
 string SerialScanner::scanSerial(ImageType imageType, string path, string firstBinPath) {
     string serial = scanSerialInternal(imageType, path, firstBinPath);
-    std::cout << serial << endl;
+    PLOG_DEBUG << serial;
     if (serial.empty()) {
         serial = workarounds(imageType, path, firstBinPath);
     }
@@ -61,7 +62,7 @@ string SerialScanner::scanSerial(ImageType imageType, string path, string firstB
 // SerialScanner::scanSerialInternal
 //*******************************
 string SerialScanner::scanSerialInternal(ImageType imageType, string path, string firstBinPath) {
-    std::cout << imageType << "   " << path << "   " << firstBinPath << endl;
+    PLOG_DEBUG << imageType << "   " << path << "   " << firstBinPath;
     if (imageType == IMAGE_PBP) {
         string destinationDir = path;
         string pbpFileName = DirEntry::findFirstFile(EXT_PBP, destinationDir);
@@ -136,13 +137,13 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
             string serialFound = "";
             if (!dir.rootDir.empty()) {
                 for (const string &entry : dir.rootDir) {
-                    //   cout << entry << endl;
+                    //   PLOG_DEBUG << entry ;
                     string potentialSerial = fixSerial(entry);
                     for (const string &prefix : prefixes) {
                         int pos = potentialSerial.find(prefix.c_str(), 0);
                         if (pos == 0) {
                             serialFound = potentialSerial;
-                            cout << "Serial number: " << serialFound << endl;
+                            PLOG_DEBUG << "Serial number: " << serialFound;
                             return serialFound;
                         }
                     }
@@ -152,7 +153,7 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
                     int pos = volume.find(prefix.c_str(), 0);
                     if (pos == 0) {
                         serialFound = volume;
-                        cout << "Serial number: " << serialFound << endl;
+                        PLOG_DEBUG << "Serial number: " << serialFound;
                         return serialFound;
                     }
                 }

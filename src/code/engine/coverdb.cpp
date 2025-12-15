@@ -5,6 +5,7 @@
 #include "coverdb.h"
 #include "../util.h"
 #include <iostream>
+#include "../log.h"
 #include "../DirEntry.h"
 #include "../environment.h"
 
@@ -25,10 +26,10 @@ Coverdb::Coverdb() {
             covers[i] = new Database();
             bool success = covers[i]->connect(filename);
             if (!success) {
-                cout << "failed to open database " << filename << endl;
+                PLOG_ERROR << "failed to open database " << filename;
             }
         } else {
-            cout << "database file " << filename << " not found" << endl;
+            PLOG_DEBUG << "database file " << filename << " not found";
         }
     }
 }

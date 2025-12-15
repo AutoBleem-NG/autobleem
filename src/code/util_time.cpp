@@ -9,7 +9,7 @@ using namespace std;
 //*******************************
 time_t UtilTime::getCurrentTime() {
     time_t t = time(nullptr);
-    // cout << "Current Time = " << t << ", " << timeToDisplayTimeString(t) << endl;
+    // PLOG_DEBUG << "Current Time = " << t << ", " << timeToDisplayTimeString(t) ;
 
     return t;
 }

@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <iostream>
+#include "../log.h"
 
 using namespace std;
 
@@ -40,5 +41,5 @@ void GuiScrollWin::appendLine(const std::string str) {
     } else
         lines.emplace_back(str); // add a line at the end of the existing lines
     if (alsoWriteToCout)
-        cout << str << endl;
+        PLOG_DEBUG << str;
 }

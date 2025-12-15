@@ -3,6 +3,7 @@
 //
 
 #include "gui_gameEditorMenu_RA.h"
+#include "../../log.h"
 #include "../gui.h"
 #include "../gui_keyboard.h"
 #include "../gui_selectmemcard.h"
@@ -80,7 +81,7 @@ SDL_Shared<SDL_Texture> GuiEditor_RA::GetBoxArtTexture() {
         coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
     } else {
         // use default
-        cout << "boxart image NOT found for " << imagePath << endl;
+        PLOG_DEBUG << "boxart image NOT found for " << imagePath;
         coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/ra-cover.png").c_str());
     }
 

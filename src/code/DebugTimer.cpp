@@ -2,6 +2,7 @@
 #include <SDL2/SDL_timer.h>
 #include <stdio.h>
 #include <iostream>
+#include "log.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ using namespace std;
 //
 DebugTimer::DebugTimer(const string &_description) : description(_description) {
     ticks_start = SDL_GetTicks();
-    cout << description << ": start timer" << endl;
+    PLOG_DEBUG << description << ": start timer";
 }
 
 //*******************************
@@ -23,6 +24,6 @@ DebugTimer::DebugTimer(const string &_description) : description(_description) {
 DebugTimer::~DebugTimer() {
     ticks_end = SDL_GetTicks();
     float time = float(ticks_end - ticks_start) / 1000.0;
-    cout << description << ": " << time << " seconds" << endl;
+    PLOG_DEBUG << description << ": " << time << " seconds";
 };
 #endif

@@ -10,6 +10,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include "../log.h"
 #include "../gui/gui.h"
 #include "../lang.h"
 #include "../engine/scanner.h"
@@ -33,7 +34,7 @@ void GuiAppStart::init() {
         std::ifstream t(game->readme_path);
         t.seekg(0, std::ios::end);
         size_t size = t.tellg();
-        cout << "Readme file size:" << size << endl;
+        PLOG_DEBUG << "Readme file size:" << size;
         buffer = "";
         t.seekg(0);
         std::string temp;

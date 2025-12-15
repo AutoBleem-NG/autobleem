@@ -6,6 +6,7 @@
 #include "fstream"
 #include <cstdio>
 #include <iostream>
+#include "../log.h"
 #include <sstream>
 #include <algorithm>
 #include "../util.h"
@@ -44,13 +45,13 @@ RAIntegrator::~RAIntegrator() = default;
 bool RAIntegrator::isValidPlaylist(string path) {
     // check file extension
     if (ReturnLowerCase(DirEntry::getFileExtension(path)) != "lpl") {
-        cout << "Extension is not .lpl" << endl;
+        PLOG_DEBUG << "Extension is not .lpl";
         return false;
     }
     // check if not empty
     std::ifstream in(path, std::ifstream::ate | std::ifstream::binary);
     if (in.tellg() <= 0) {
-        cout << "Playlist looks like empty file" << endl;
+        PLOG_DEBUG << "Playlist looks like empty file";
         return false;
     }
 
@@ -74,14 +75,14 @@ std::tuple<bool, int> RAIntegrator::playlistNameToIndex(const string &name) {
 // RAIntegrator::readGamesFromPlaylistFile()
 //********************
 PsGames RAIntegrator::readGamesFromPlaylistFile(const std::string &path) {
-    cout << "Parsing Playlist: " << path << endl;
+    PLOG_DEBUG << "Parsing Playlist: " << path;
     PsGames psGames;
     if (isJSONPlaylist(path)) {
         psGames = parseJSON(path);
     } else {
         psGames = parse6line(path);
     }
-    cout << "Games found: " << psGames.size() << endl;
+    PLOG_DEBUG << "Games found: " << psGames.size();
     return psGames;
 }
 
@@ -213,11 +214,11 @@ void RAIntegrator::readGamesFromAllPlaylistsIntoRAPlaylistInfos() {
     }
 
     string path = Env::getPathToRetroarchPlaylistsDir();
-    cout << "Checking playlists path" << path << endl;
+    PLOG_DEBUG << "Checking playlists path" << path;
 
     if (DirEntry::exists(path)) {
         vector<DirEntry> entries = DirEntry::diru_FilesOnly(path);
-        cout << "Total Playlists:" << entries.size() << endl;
+        PLOG_DEBUG << "Total Playlists:" << entries.size();
         vector<string> playlistNames;
         for (const DirEntry &entry : entries) {
             if (DirEntry::getFileNameWithoutExtension(entry.name) == "AutoBleem")
@@ -231,7 +232,7 @@ void RAIntegrator::readGamesFromAllPlaylistsIntoRAPlaylistInfos() {
         sort(begin(playlistNames), end(playlistNames));
 
         for (auto &playlistName : playlistNames) {
-            cout << "Playlist: " << playlistName << endl;
+            PLOG_DEBUG << "Playlist: " << playlistName;
             string path = Env::getPathToRetroarchPlaylistsDir() + sep + playlistName;
             if (isValidPlaylist(path)) {
                 PsGames games = readGamesFromPlaylistFile(path);
@@ -239,9 +240,9 @@ void RAIntegrator::readGamesFromAllPlaylistsIntoRAPlaylistInfos() {
                 if (games.size() > 0)
                     playlistInfos.emplace_back(nameOnly, path, games);
                 else
-                    cout << "Playlist has no games: " << playlistName << endl;
+                    PLOG_DEBUG << "Playlist has no games: " << playlistName;
             } else
-                cout << "Invalid Playlist: " << playlistName << endl;
+                PLOG_DEBUG << "Invalid Playlist: " << playlistName;
         }
         reloadFavorites(); // since it isn't already in the list, reloadFavorites() will add favorites at the end
         reloadHistory();   // since it isn't already in the list, reloadHistory() will add history at the end
@@ -388,7 +389,7 @@ PsGames RAIntegrator::parseJSON(string path) {
         if (isGameValid(game)) {
             psGames.emplace_back(game);
         } else {
-            cout << "Game invalid: title = '" << game->title << "'" << endl;
+            PLOG_DEBUG << "Game invalid: title = '" << game->title << "'";
         }
     }
     in.close();
@@ -494,18 +495,18 @@ bool RAIntegrator::autoDetectCorePath(PsGamePtr game, string &core_name, string 
 // RAIntegrator::initCoreInfo
 //********************
 void RAIntegrator::initCoreInfo() {
-    cout << "Building core list" << endl;
+    PLOG_DEBUG << "Building core list";
     if (!DirEntry::exists(Env::getPathToRetroarchDir())) {
-        cout << "Retroarch Not Found" << endl;
+        PLOG_DEBUG << "Retroarch Not Found";
         return;
     }
     cores.clear();
     databases.clear();
     defaultCores.clear();
     string infoFolder = Env::getPathToRetroarchDir() + sep + "info/";
-    cout << "Scanning: " << infoFolder << endl;
+    PLOG_DEBUG << "Scanning: " << infoFolder;
     vector<DirEntry> entries = DirEntry::diru_FilesOnly(infoFolder);
-    cout << "Found files:" << entries.size() << endl;
+    PLOG_DEBUG << "Found files:" << entries.size();
     for (const DirEntry &entry : entries) {
         if (DirEntry::getFileExtension(entry.name) == "info") {
             string fullPath = infoFolder + sep + entry.name;
@@ -539,7 +540,7 @@ void RAIntegrator::initCoreInfo() {
             continue;
         }
 
-        cout << "Mapping DB: " << dbname << "  Core: " << pos->second->name << endl;
+        PLOG_DEBUG << "Mapping DB: " << dbname << "  Core: " << pos->second->name;
     }
 
     overrideCores.clear();
@@ -548,14 +549,14 @@ void RAIntegrator::initCoreInfo() {
     while (getline(in, line)) {
         string db_name = line.substr(0, line.find("="));
         string value = line.substr(line.find("=") + 1);
-        cout << "Custom Core Override: " << db_name << "    core: " << value << endl;
+        PLOG_DEBUG << "Custom Core Override: " << db_name << "    core: " << value;
 
         for (CoreInfoPtr ciPtr : cores) {
             if (ciPtr->name.find(value) != string::npos) {
                 lcase(db_name);
                 trim(db_name);
                 overrideCores.insert(std::pair<string, CoreInfoPtr>(db_name, ciPtr));
-                cout << "Found: " << db_name << "    core: " << ciPtr->name << " " << ciPtr->core_path << endl;
+                PLOG_DEBUG << "Found: " << db_name << "    core: " << ciPtr->name << " " << ciPtr->core_path;
             }
         }
     }
@@ -600,12 +601,12 @@ CoreInfoPtr RAIntegrator::parseCoreInfo(string file, string entry) {
     ifstream in(file);
     string line;
 
-    cout << "Parsing " << endl;
+    PLOG_DEBUG << "Parsing ";
     CoreInfoPtr coreInfoPtr{new CoreInfo};
     coreInfoPtr->core_path =
         Env::getPathToRetroarchDir() + sep + "cores/" + DirEntry::getFileNameWithoutExtension(entry) + ".so";
     coreInfoPtr->extensions.clear();
-    cout << "CorePath: " << coreInfoPtr->core_path << endl;
+    PLOG_DEBUG << "CorePath: " << coreInfoPtr->core_path;
     while (getline(in, line)) {
         string lcaseline = line;
         lcase(lcaseline);
@@ -615,7 +616,7 @@ CoreInfoPtr RAIntegrator::parseCoreInfo(string file, string entry) {
             value.erase(remove(value.begin(), value.end(), '\"'), value.end());
             trim(value);
             coreInfoPtr->name = value;
-            cout << "CoreName: " << coreInfoPtr->name << endl;
+            PLOG_DEBUG << "CoreName: " << coreInfoPtr->name;
         }
         if (lcaseline.rfind("supported_extensions", 0) == 0) {
             string value = line.substr(lcaseline.find("=") + 1);

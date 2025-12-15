@@ -15,6 +15,7 @@
 #include "gui_padTest.h"
 #include <unistd.h>
 #include <iostream>
+#include "../log.h"
 #include <iomanip>
 #include <json.h>
 #include "../nlohmann/fifo_map.h"
@@ -102,7 +103,7 @@ string GuiBase::getCurrentThemeSoundPath() {
     if (!DirEntry::exists(path)) {
         path = Env::getSonyPath() + sep + "sounds";
     }
-    cout << path << endl;
+    PLOG_DEBUG << path;
     return path;
 #else
     string path = "/media/themes/" + cfg.inifile.values["theme"] + "/sounds";
@@ -252,7 +253,7 @@ void Gui::loadAssets(bool reloadMusic) {
     string defaultPath = Env::getPathToThemesDir() + sep + "default" + sep;
     themePath = getCurrentThemePath() + sep;
 
-    cout << "Loading UI theme:" << themePath << endl;
+    PLOG_DEBUG << "Loading UI theme:" << themePath;
     if (!DirEntry::exists(themePath + "theme.ini")) {
         themePath = defaultPath;
         cfg.inifile.values["theme"] = "default";
@@ -723,7 +724,7 @@ void Gui::exportDBToRetroarch() {
 
     j["items"] = items;
 
-    cout << j.dump() << endl;
+    PLOG_DEBUG << j.dump();
     std::ofstream o(Env::getPathToRetroarchDir() + sep + "playlists/" + RA_PLAYLIST);
     o << std::setw(2) << j << std::endl;
     o.flush();
@@ -805,7 +806,7 @@ int Gui::getCheckIconWidth() {
     if (it != buttonTextureMap.end()) {
         SDL_QueryTexture(it->second, nullptr, nullptr, &checkIconWidth, &checkIconHeight);
     } else {
-        cout << "missing check icon" << endl;
+        PLOG_DEBUG << "missing check icon";
         assert(false);
     }
 
@@ -886,7 +887,7 @@ void Gui::AllTextOrEmojiTokenInfo::getTokenInfo(FC_Font_Shared _font, const stri
                 // add the token info
                 tokenInfos.emplace_back(tokenInfo);
             } else {
-                cout << "emoji not found for " << tokenString << endl;
+                PLOG_DEBUG << "emoji not found for " << tokenString;
             }
         } else {
             tokenInfo.rect = gui->FC_getFontTextRect(font, tokenString);

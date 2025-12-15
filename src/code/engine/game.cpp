@@ -11,6 +11,7 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include "../log.h"
 #include "../engine/scanner.h"
 #include "../environment.h"
 #include "../lang.h"
@@ -94,7 +95,7 @@ bool USBGame::verify(std::vector<std::string> *failureReasons) {
             result = false;
         }
         if (!discs[i].cueFound) {
-            cout << i << discs[i].diskName << discs[i].cueFound << endl;
+            PLOG_DEBUG << i << discs[i].diskName << discs[i].cueFound;
             if (failureReasons)
                 failureReasons->emplace_back(_("Cue file not found"));
             result = false;
@@ -138,7 +139,7 @@ bool USBGame::verify(std::vector<std::string> *failureReasons) {
     }
 
     if (!result) {
-        cerr << "Game: " << title << " Validation Failed" << endl;
+        PLOG_WARNING << "Game: " << title << " validation failed";
     }
 
     return result;
@@ -148,43 +149,43 @@ bool USBGame::verify(std::vector<std::string> *failureReasons) {
 // USBGame::print
 //*******************************
 bool USBGame::print() {
-    cout << "-------------------" << endl;
-    cout << "Printing game data:" << endl;
-    cout << "-----------------" << endl;
-    cout << "AUTOMATION: " << automationUsed << endl;
-    cout << "Game folder id: " << folder_id << endl;
-    cout << "Game: " << title << endl;
-    cout << "Players: " << players << endl;
-    cout << "Publisher: " << publisher << endl;
-    cout << "Year: " << year << endl;
-    cout << "Serial: " << serial << endl;
-    cout << "Region: " << region << endl;
-    cout << "GameData found: " << gameDataFound << endl;
-    cout << "Game.ini found: " << gameIniFound << endl;
-    cout << "Game.ini valid: " << gameIniValid << endl;
-    cout << "PNG found:" << coverImageFound << endl;
-    cout << "LIC found:" << licFound << endl;
-    cout << "pcsx.cfg found: " << pcsxCfgFound << endl;
-    cout << "TotalDiscs: " << discs.size() << endl;
-    cout << "Favorite: " << favorite << endl;
-    cout << "Play Using RA: " << play_using_ra << endl;
-    cout << "Last Played: " << last_played << endl;
-    cout << "Last Played: " << UtilTime::timeToDisplayTimeString(last_played) << endl;
+    PLOG_DEBUG << "-------------------";
+    PLOG_DEBUG << "Printing game data:";
+    PLOG_DEBUG << "-----------------";
+    PLOG_DEBUG << "AUTOMATION: " << automationUsed;
+    PLOG_DEBUG << "Game folder id: " << folder_id;
+    PLOG_DEBUG << "Game: " << title;
+    PLOG_DEBUG << "Players: " << players;
+    PLOG_DEBUG << "Publisher: " << publisher;
+    PLOG_DEBUG << "Year: " << year;
+    PLOG_DEBUG << "Serial: " << serial;
+    PLOG_DEBUG << "Region: " << region;
+    PLOG_DEBUG << "GameData found: " << gameDataFound;
+    PLOG_DEBUG << "Game.ini found: " << gameIniFound;
+    PLOG_DEBUG << "Game.ini valid: " << gameIniValid;
+    PLOG_DEBUG << "PNG found:" << coverImageFound;
+    PLOG_DEBUG << "LIC found:" << licFound;
+    PLOG_DEBUG << "pcsx.cfg found: " << pcsxCfgFound;
+    PLOG_DEBUG << "TotalDiscs: " << discs.size();
+    PLOG_DEBUG << "Favorite: " << favorite;
+    PLOG_DEBUG << "Play Using RA: " << play_using_ra;
+    PLOG_DEBUG << "Last Played: " << last_played;
+    PLOG_DEBUG << "Last Played: " << UtilTime::timeToDisplayTimeString(last_played);
 
     for (int i = 0; i < discs.size(); i++) {
-        cout << "  Disc:" << i + 1 << "  " << discs[i].diskName << endl;
-        cout << "  CUE found: " << discs[i].cueFound << endl;
-        cout << "  BIN correct: " << discs[i].binVerified << endl;
+        PLOG_DEBUG << "  Disc:" << i + 1 << "  " << discs[i].diskName;
+        PLOG_DEBUG << "  CUE found: " << discs[i].cueFound;
+        PLOG_DEBUG << "  BIN correct: " << discs[i].binVerified;
     }
 
     vector<string> failureReasons;
     bool result = verify(&failureReasons);
     if (result) {
-        cout << "-------Game Verify OK-------" << endl;
+        PLOG_DEBUG << "-------Game Verify OK-------";
     } else {
-        cout << "------Game Verify FAIL------" << endl;
+        PLOG_DEBUG << "------Game Verify FAIL------";
         for (const auto &reason : failureReasons)
-            cout << "Reason: " << reason << endl;
+            PLOG_DEBUG << "Reason: " << reason;
     }
 
     return result;
@@ -215,7 +216,7 @@ void USBGame::recoverMissingFiles() {
             }
         } else {
             automationUsed = true;
-            cout << "Switching automation in PBP" << endl;
+            PLOG_DEBUG << "Switching automation in PBP";
         }
     } else if (this->imageType == IMAGE_CHD) {
         // disc link
@@ -243,13 +244,13 @@ void USBGame::recoverMissingFiles() {
                 imageType = IMAGE_CHD;
         } else {
             automationUsed = true;
-            cout << "Switching automation in CHD" << endl;
+            PLOG_DEBUG << "Switching automation in CHD";
         }
     }
     if (DirEntry::imageTypeUsesACueFile(this->imageType)) {
         if (discs.size() == 0) {
             automationUsed = true;
-            cout << "Switching automation no discs" << endl;
+            PLOG_DEBUG << "Switching automation no discs";
             // find cue files
             string destination = fullPath;
             for (const DirEntry &entry : DirEntry::diru(destination)) {
@@ -269,29 +270,29 @@ void USBGame::recoverMissingFiles() {
     if (discs.size() > 0) {
         if (!licFound) {
             automationUsed = true;
-            cout << "Switching automation no lic" << endl;
+            PLOG_DEBUG << "Switching automation no lic";
             string source = workingPath + sep + "default.lic";
             string destination = fullPath + sep + discs[0].diskName + ".lic";
-            cerr << "SRC:" << source << " DST:" << destination << endl;
+            PLOG_DEBUG << "Copy: " << source << " -> " << destination;
             DirEntry::copy(source, destination);
             licFound = true;
         }
         if (!coverImageFound) {
             automationUsed = true;
-            cout << "Switching automation no image" << endl;
+            PLOG_DEBUG << "Switching automation no image";
             string source = workingPath + sep + "default.png";
             string destination = fullPath + sep + discs[0].diskName + ".png";
-            cerr << "SRC:" << source << " DST:" << destination << endl;
+            PLOG_DEBUG << "Copy: " << source << " -> " << destination;
             DirEntry::copy(source, destination);
             // maybe we can do better ?
-            cout << "getting serial from Image File" << endl;
+            PLOG_DEBUG << "getting serial from Image File";
 
             string serial = SerialScanner::scanSerial(imageType, fullPath, firstBinPath);
             if (serial != "") {
 
                 if (md.lookupBySerial(serial)) {
                     metadataLoaded = true;
-                    cout << "Updating cover in recoverMissingFiles()" << destination << endl;
+                    PLOG_DEBUG << "Updating cover in recoverMissingFiles()" << destination;
                     ofstream pngFile;
                     pngFile.open(destination, std::ios::out | std::ios::binary);
                     pngFile.write(md.bytes, md.dataSize);
@@ -308,10 +309,10 @@ void USBGame::recoverMissingFiles() {
 
     if (!pcsxCfgFound) {
         automationUsed = true;
-        cout << "Switching automation no pcsx" << endl;
+        PLOG_DEBUG << "Switching automation no pcsx";
         string source = workingPath + sep + PCSX_CFG;
         string destination = fullPath + sep + PCSX_CFG;
-        cerr << "SRC:" << source << " DST:" << destination << endl;
+        PLOG_DEBUG << "Copy: " << source << " -> " << destination;
 
         int region = 0;
         bool japan = false;
@@ -434,7 +435,7 @@ void USBGame::updateObj() {
 // USBGame::saveIni
 //*******************************
 void USBGame::saveIni(string path) {
-    // cout << "Overwritting ini file" << path << endl;
+    // PLOG_DEBUG << "Overwritting ini file" << path ;
     Inifile *ini = new Inifile();
     ini->section = "Game";
     ini->values["title"] = title;

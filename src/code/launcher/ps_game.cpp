@@ -8,6 +8,7 @@
 #include "../gui/gui.h"
 #include <fstream>
 #include <iostream>
+#include "../log.h"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ bool PsGame::isCleanExit() {
         string filenamefile = ssFolder + sep + "filename.txt";
         bool ret = DirEntry::exists(filenamefile);
         if (!ret)
-            cout << "PsGame::isCleanExit() failed '" << filenamefile << "' not found" << endl;
+            PLOG_DEBUG << "PsGame::isCleanExit() failed '" << filenamefile << "' not found";
         return ret;
     } else {
         return true;

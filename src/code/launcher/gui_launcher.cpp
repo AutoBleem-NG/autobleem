@@ -9,6 +9,7 @@
 #include "../gui/gui_confirm.h"
 #include <algorithm>
 #include <iostream>
+#include "../log.h"
 #include "gui_mc_manager.h"
 #include <cassert>
 
@@ -52,7 +53,7 @@ void GuiLauncher::getGames_SET_SUBDIR(PsGames *gamesList, int rowIndex) {
 
 #if 0
     for (auto &gameRowInfo : gameRowInfos)
-            cout << "game row: " << gameRowInfo.subDirRowIndex << ", " << gameRowInfo.rowName << ", " <<
+            PLOG_DEBUG << "game row: " << gameRowInfo.subDirRowIndex << ", " << gameRowInfo.rowName << ", " <<
                  gameRowInfo.indentLevel << ", " << gameRowInfo.numGames << endl;
 #endif
     PsGames completeList;
@@ -62,14 +63,14 @@ void GuiLauncher::getGames_SET_SUBDIR(PsGames *gamesList, int rowIndex) {
     gui->db->getGameIdsInRow(&gameIdsInRow, rowIndex);
 #if 0
     for (auto &id : gameIdsInRow) {
-            cout << "game row: " << selectedRowIndex << ", id: " << id << endl;
+            PLOG_DEBUG << "game row: " << selectedRowIndex << ", id: " << id ;
         }
 #endif
 
     if (rowIndex < gameRowInfos.size()) {
         for (auto &psgame : completeList) {
             if (find(begin(gameIdsInRow), end(gameIdsInRow), psgame->gameId) != end(gameIdsInRow)) {
-                // cout << "game in row: " << psgame->title << endl;
+                // PLOG_DEBUG << "game in row: " << psgame->title ;
                 gamesList->emplace_back(psgame);
             }
         }
@@ -126,7 +127,7 @@ PsGames GuiLauncher::getAllPS1Games(bool includeUSB, bool includeInternal) {
 // GuiLauncher::getGames_SET_RETROARCH
 //*******************************
 void GuiLauncher::getGames_SET_RETROARCH(const std::string &playlistName, PsGames *gamesList) {
-    cout << "Getting RA games for playlist: " << playlistName << endl;
+    PLOG_DEBUG << "Getting RA games for playlist: " << playlistName;
     if (playlistName != "")
         *gamesList = raIntegrator->getGames(playlistName);
 }
@@ -135,7 +136,7 @@ void GuiLauncher::getGames_SET_RETROARCH(const std::string &playlistName, PsGame
 // GuiLauncher::getGames_SET_LIGHTGUN
 //*******************************
 void GuiLauncher::getGames_SET_LIGHTGUN(PsGames *gamesList) {
-    cout << "Getting Lightgun games" << endl;
+    PLOG_DEBUG << "Getting Lightgun games";
     *gamesList = gui->lightgunGames.GetAllLightgunGames();
 }
 
@@ -150,10 +151,10 @@ void GuiLauncher::getGames_SET_APPS(PsGames *gamesList) {
         return;
     }
     DirEntries dirs = DirEntry::diru_DirsOnly(appPath);
-    cout << "Scanning apps in: " << appPath << endl;
+    PLOG_DEBUG << "Scanning apps in: " << appPath;
     for (auto &dir : dirs) {
         std::string appIni = appPath + sep + dir.name + sep + "app.ini";
-        cout << "AppIni: " << appIni << endl;
+        PLOG_DEBUG << "AppIni: " << appIni;
         if (DirEntry::exists(appIni)) {
             Inifile *file = new Inifile();
             file->load(appIni);
@@ -184,7 +185,7 @@ void GuiLauncher::getGames_SET_APPS(PsGames *gamesList) {
 // GuiLauncher::switchSet
 //*******************************
 void GuiLauncher::switchSet(int newSet, bool noForce) { // Warning: newSet is not used.  probably not the intent.
-    cout << "Switching to Set: " << currentSet << endl;
+    PLOG_DEBUG << "Switching to Set: " << currentSet;
     // clear the carousel text
     if (!carouselGames.empty()) {
         for (auto &game : carouselGames) {
@@ -192,7 +193,7 @@ void GuiLauncher::switchSet(int newSet, bool noForce) { // Warning: newSet is no
         }
     }
 
-    cout << "Reloading games list" << endl; // get fresh list of games for this set
+    PLOG_DEBUG << "Reloading games list"; // get fresh list of games for this set
     PsGames gamesList;
 
     if (currentSet == SET_PS1) {
@@ -243,7 +244,7 @@ void GuiLauncher::switchSet(int newSet, bool noForce) { // Warning: newSet is no
             sort(gamesList.begin(), gamesList.end(), sortByTitle);
         }
     }
-    cout << "Games Sorted" << endl;
+    PLOG_DEBUG << "Games Sorted";
     // copy the gamesList into the carousel
     carouselGames.clear();
     for_each(begin(gamesList), end(gamesList), [&](PsGamePtr &game) { carouselGames.emplace_back(game); });
@@ -262,7 +263,7 @@ void GuiLauncher::switchSet(int newSet, bool noForce) { // Warning: newSet is no
         }
     }
 
-    cout << "Setting initial positions" << endl;
+    PLOG_DEBUG << "Setting initial positions";
     if (carouselGames.empty()) {
         selGameIndex = -1;
     } else {
@@ -329,7 +330,7 @@ void GuiLauncher::showSetName() {
 //*******************************
 // load all assets needed by the screengame i
 void GuiLauncher::loadAssets() {
-    cout << "Loading playlists" << endl;
+    PLOG_DEBUG << "Loading playlists";
     raPlaylists.clear();
     if (DirEntry::exists(Env::getPathToRetroarchDir())) {
         raPlaylists = raIntegrator->getPlaylists();
@@ -389,7 +390,7 @@ void GuiLauncher::loadAssets() {
     publisher = "";
     year = "";
     players = "";
-    cout << "Last Index" << gui->lastSelIndex << endl;
+    PLOG_DEBUG << "Last Index" << gui->lastSelIndex;
     if (gui->lastSelIndex != 0) {
         selGameIndex = gui->lastSelIndex;
         setInitialPositions(selGameIndex);
@@ -397,7 +398,7 @@ void GuiLauncher::loadAssets() {
 
     long time = SDL_GetTicks();
 
-    cout << "Loading theme and creating objects" << endl;
+    PLOG_DEBUG << "Loading theme and creating objects";
     if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png")) {
         staticMeta = true;
         background = new PsObj("background", gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png");
@@ -518,7 +519,7 @@ void GuiLauncher::loadAssets() {
     sselector->visible = false;
 
     if (gui->resumingGui) {
-        cout << "Restoring GUI state" << endl;
+        PLOG_DEBUG << "Restoring GUI state";
         PsGamePtr &game = carouselGames[selGameIndex];
 
         if (gui->emuMode == EMU_PCSX) {

@@ -7,6 +7,7 @@
 #include <fstream>
 #include "../DirEntry.h"
 #include <iostream>
+#include "../log.h"
 #include "../environment.h"
 
 using namespace std;
@@ -15,9 +16,9 @@ using namespace std;
 // CfgProcessor::replaceProperty
 //*******************************
 void CfgProcessor::replaceProperty(string fullCfgFilePath, string property, string newline) {
-    //   cout << "cfg replace, '" << fullCfgFilePath << "', '" << property << "' with: '" << newline << "'" << endl;
+    //   PLOG_DEBUG << "cfg replace, '" << fullCfgFilePath << "', '" << property << "' with: '" << newline << "'" ;
     if (!DirEntry::exists(fullCfgFilePath)) {
-        cout << "  cfg file doesn't exist" << endl;
+        PLOG_DEBUG << "  cfg file doesn't exist";
         return;
     }
     // do not store if file not updated (one less iocall on filesystem)
@@ -42,7 +43,7 @@ void CfgProcessor::replaceProperty(string fullCfgFilePath, string property, stri
 
             if (lcaseline.rfind(lcasepattern, 0) == 0) {
                 fileUpdated = true;
-                cout << "  new line: '" << newline << "'" << endl;
+                PLOG_DEBUG << "  new line: '" << newline << "'";
                 lines.push_back(newline);
             } else {
                 lines.push_back(line);
@@ -65,7 +66,7 @@ void CfgProcessor::replaceProperty(string fullCfgFilePath, string property, stri
 // CfgProcessor::getValueFromCfgFile
 //*******************************
 string CfgProcessor::getValueFromCfgFile(string fullCfgFilePath, string property) {
-    // cout << "cfg getValue, '" << fullCfgFilePath << "', '" << property << "'" << endl;
+    // PLOG_DEBUG << "cfg getValue, '" << fullCfgFilePath << "', '" << property << "'" ;
     fstream file(fullCfgFilePath, ios::in);
     vector<string> lines;
     lines.clear();
@@ -84,13 +85,13 @@ string CfgProcessor::getValueFromCfgFile(string fullCfgFilePath, string property
                     value.pop_back(); // remove the trailing /r
                 }
                 trim(value); // remove leading and trailing spaces
-                // cout << "  return: '" << value << "'" << endl;
+                // PLOG_DEBUG << "  return: '" << value << "'" ;
                 return value;
             }
         }
         file.close();
     }
-    // cout << "  return: ''" << endl;
+    // PLOG_DEBUG << "  return: ''" ;
     return "";
 }
 
@@ -103,8 +104,8 @@ string CfgProcessor::getValueFromCfgFile(string fullCfgFilePath, string property
 string CfgProcessor::getValue(string gamePath, string property) {
     string fullCfgFilePath = gamePath + sep + PCSX_CFG;
     if (!DirEntry::exists(fullCfgFilePath)) {
-        cout << "  cfg file doesn't exist" << endl;
-        cout << "  return: ''" << endl;
+        PLOG_DEBUG << "  cfg file doesn't exist";
+        PLOG_DEBUG << "  return: ''";
         return "";
     }
 
@@ -117,7 +118,7 @@ string CfgProcessor::getValue(string gamePath, string property) {
 // example pathToCfgDir = "/media/Games/!SaveStates/Driver 2/cfg"
 //*******************************
 void CfgProcessor::replacePropertyInAllCfgsInDir(string pathToCfgDir, string property, string newline) {
-    cout << "cfg replaceInAllCfg, '" << pathToCfgDir << "', '" << property << "'" << endl;
+    PLOG_DEBUG << "cfg replaceInAllCfg, '" << pathToCfgDir << "', '" << property << "'";
     for (const DirEntry &cfgEntry : DirEntry::diru_FilesOnly(pathToCfgDir)) {
         if (DirEntry::matchExtension(cfgEntry.name, ".cfg")) {
             string fullCfgFilePath = pathToCfgDir + sep + cfgEntry.name;
@@ -170,6 +171,6 @@ void CfgProcessor::replace(string entry, string gamePath, string property, strin
 // CfgProcessor::replaceRaConf
 //*******************************
 void CfgProcessor::replaceRaConf(std::string fullCfgFilePath, std::string property, std::string newline) {
-    cout << "cfg replaceRaConf, '" << fullCfgFilePath << "', '" << property << "'" << endl;
+    PLOG_DEBUG << "cfg replaceRaConf, '" << fullCfgFilePath << "', '" << property << "'";
     replaceProperty(fullCfgFilePath, property, newline);
 }

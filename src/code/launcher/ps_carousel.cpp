@@ -9,6 +9,7 @@
 #include <SDL2/SDL_image.h>
 #include <unistd.h>
 #include <iostream>
+#include "../log.h"
 #include "../environment.h"
 
 using namespace std;
@@ -132,7 +133,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                     coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
                 } else {
                     // use default
-                    cout << "boxart image NOT found for " << imagePath << endl;
+                    PLOG_DEBUG << "boxart image NOT found for " << imagePath;
                     coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/ra-cover.png").c_str());
                 }
             } else // App
@@ -143,7 +144,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                     coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
                 } else {
                     // use default
-                    cout << "boxart image NOT found for " << imagePath << endl;
+                    PLOG_DEBUG << "boxart image NOT found for " << imagePath;
                     coverPng =
                         IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/app-cover.png").c_str());
                 }

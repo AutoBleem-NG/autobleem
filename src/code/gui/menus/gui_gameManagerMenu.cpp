@@ -3,6 +3,7 @@
 //
 
 #include "gui_gameManagerMenu.h"
+#include "../../log.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include <string>
@@ -109,7 +110,7 @@ void GuiManager::doSquare_Pressed() {
     delete confirm;
 
     if (delGame) {
-        cout << "Trying to delete " << gameName << endl;
+        PLOG_INFO << "Trying to delete " << gameName;
         gui->renderStatus(_("Please wait ... deleting") + " " + gameName);
         bool success = gui->db->deleteGameIdFromAllTables(gameId);
         if (success) {
@@ -131,11 +132,11 @@ void GuiManager::doSquare_Pressed() {
                 }
             }
         } else {
-            cout << "Failed to delete directory " << game->folder << endl;
+            PLOG_ERROR << "Failed to delete directory " << game->folder;
             gui->renderStatus(_("Failed to delete") + " " + gameName);
         }
     } else {
-        cout << "Failed to delete " << gameName << endl;
+        PLOG_ERROR << "Failed to delete " << gameName;
         gui->renderStatus(_("Failed to delete") + " " + gameName);
     }
     gui->forceScan = true; // in order for the sub dir hierarchy to be fixed we have to do a rescan
@@ -156,12 +157,11 @@ void GuiManager::doTriangle_Pressed() {
     delete confirm;
 
     if (delCovers) {
-        cout << "Trying to delete covers" << endl;
+        PLOG_INFO << "Trying to delete covers";
         gui->renderStatus(_("Please wait ... deleting covers..."));
 
         int errors = 0;
         int flags = FTW_DEPTH | FTW_PHYS | FTW_CHDIR;
-        // cout << gui->pathToGamesDir << endl;
         if (nftw(DirEntry::fixPath(gui->pathToGamesDir).c_str(), flushCovers, 1, flags) != 0) {
             errors++;
         }

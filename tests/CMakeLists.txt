@@ -19,6 +19,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/sqlite
     ${CMAKE_SOURCE_DIR}/libs/nlohmann
     ${CMAKE_SOURCE_DIR}/libs/libchdr/include
+    ${CMAKE_SOURCE_DIR}/libs
 )
 
 # CHDReader tests
@@ -65,3 +66,20 @@ target_link_libraries(
 )
 
 gtest_discover_tests(database_test)
+
+# Log tests
+add_executable(
+    log_test
+    log_test.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/DirEntry.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/util.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/environment.cpp
+)
+
+target_link_libraries(
+    log_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(log_test)

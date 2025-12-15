@@ -12,6 +12,7 @@
 #include "../engine/cfgprocessor.h"
 #include <fstream>
 #include <iostream>
+#include "../log.h"
 #include <unistd.h>
 #include "../environment.h"
 
@@ -39,7 +40,7 @@ void PcsxInterceptor::cleanupConfig(PsGamePtr &game) {
 // PcsxInterceptor::execute
 //*******************************
 bool PcsxInterceptor::execute(PsGamePtr &game, int resumepoint) {
-    cout << "calling PcsxInterceptor::execute()" << endl;
+    PLOG_DEBUG << "calling PcsxInterceptor::execute()";
 
     shared_ptr<Gui> gui(Gui::getInstance());
 
@@ -124,13 +125,13 @@ bool PcsxInterceptor::execute(PsGamePtr &game, int resumepoint) {
 
     argvNew.push_back(nullptr);
 
-    cout << "CMD line to execute: ";
+    PLOG_DEBUG << "CMD line to execute: ";
     for (const char *s : argvNew) {
         if (s != nullptr) {
-            cout << "'" << s << "' ";
+            PLOG_DEBUG << "'" << s << "' ";
         }
     }
-    cout << endl;
+    PLOG_DEBUG << endl;
 
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     Gui::splash("I'm sorry Dave.  I'm afraid I can't do that.");
@@ -160,8 +161,10 @@ void PcsxInterceptor::memcardIn(PsGamePtr &game) {
     }
     if (memcard != "SONY") {
         if (DirEntry::exists(Env::getPathToMemCardsDir() + sep + game->memcard)) {
+            PLOG_DEBUG << "Swapping in memcard: " << game->memcard;
             Memcard *card = new Memcard(Env::getPathToGamesDir() + sep);
             if (!card->swapIn(game->ssFolder, game->memcard)) {
+                PLOG_WARNING << "Failed to swap in memcard, reverting to SONY";
                 game->setMemCard("SONY");
             };
             delete card;
