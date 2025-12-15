@@ -36,6 +36,25 @@ Header-only JSON library for modern C++. Used for parsing and generating JSON co
 - Header-only library, trivial to include
 - Ensures consistent JSON parsing behavior across all build environments
 
+### plog
+**Source:** https://github.com/SergiusTheBest/plog
+**Version:** 1.1.9+ (commit `7881eeacf0f31b7862f90b88e62be7ecf0dd0a45`, 2025-11-12)
+
+Portable, simple and extensible C++ logging library. Header-only with no dependencies.
+
+**Why bundled:**
+- Header-only library, trivial to include
+- Lightweight and suitable for embedded ARM targets
+- Provides log levels, file output, and log rotation
+
+**Usage:**
+```cpp
+#include "log.h"
+Log::init();
+PLOG_INFO << "Message";
+PLOG_ERROR << "Error: " << code;
+```
+
 ### sqlite3
 **Source:** https://sqlite.org/
 **Header (sqlite3ab.h):** Official SQLite 3.26.0 (2018-12-01)
@@ -65,13 +84,16 @@ When updating bundled libraries:
 
 2. **nlohmann/json:** Download the single-header version (`json.hpp`) and rename to `json.h`. Update version in this README.
 
-3. **sqlite3:** Use matching versions from [azadkuh/sqlite-amalgamation](https://github.com/azadkuh/sqlite-amalgamation/tags) to ensure header and implementation match. Download `sqlite3.h` and `sqlite3.c`, rename to `sqlite3ab.h` and `sqlite3ab.c`. Verify SOURCE_ID matches between both files. Update version and SOURCE_ID in this README.
+3. **plog:** Clone the repository and copy `include/plog/` to `libs/plog/`. Copy the LICENSE file. Update version in this README.
+
+4. **sqlite3:** Use matching versions from [azadkuh/sqlite-amalgamation](https://github.com/azadkuh/sqlite-amalgamation/tags) to ensure header and implementation match. Download `sqlite3.h` and `sqlite3.c`, rename to `sqlite3ab.h` and `sqlite3ab.c`. Verify SOURCE_ID matches between both files. Update version and SOURCE_ID in this README.
 
 ## License Information
 
 Each library retains its original license:
 - libchdr: BSD-3-Clause (see `libchdr/LICENSE.txt`)
 - nlohmann/json: MIT License (see header in `nlohmann/json.h`)
+- plog: MIT License (see `plog/LICENSE`)
 - sqlite3: Public Domain
 - LZMA SDK: Public Domain
 - zlib: zlib License (see `libchdr/deps/zlib-*/LICENSE`)

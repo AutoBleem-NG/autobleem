@@ -102,6 +102,7 @@ The following libraries are bundled in `libs/`:
 
 - **libchdr** - CHD (Compressed Hunks of Data) disc image format support
 - **nlohmann/json** - JSON parsing
+- **plog** - Lightweight logging library
 - **sqlite3** - Database engine
 
 ## Toolchain Files

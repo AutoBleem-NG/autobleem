@@ -78,6 +78,9 @@ endif()
 find_package(Threads REQUIRED
              SDL2 REQUIRED)
 
+# Global include directories for bundled libraries
+include_directories(${CMAKE_SOURCE_DIR}/libs)
+
 # Bundled sqlite3 library
 add_library(sqlite3 STATIC libs/sqlite/sqlite3ab.c)
 
@@ -242,6 +245,7 @@ target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/sqlite>
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/nlohmann>
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/libchdr/include>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs>
 		)
 
 add_executable(starter
@@ -254,6 +258,10 @@ add_executable(starter
         src/code/engine/memcard.cpp src/code/engine/memcard.h
 		src/code/environment.h
 		src/code/environment.cpp
+		)
+
+target_include_directories(starter PUBLIC
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs>
 		)
 
 # Link libraries for autobleem-gui
