@@ -11,7 +11,7 @@
 #   make clean        - Remove all build artifacts
 #   make help         - Show this help
 
-.PHONY: all sys arm mac english lint clean help
+.PHONY: all sys arm mac english lint test clean help
 
 # Number of parallel jobs for make
 JOBS := 4
@@ -79,10 +79,26 @@ lint:
 	done
 	@echo "Linting complete! Check output above for warnings."
 
+# Run unit tests
+test:
+	@echo "Running unit tests..."
+	@if [ ! -d "build_sys" ]; then \
+		echo "Build directory not found. Run 'make sys' first."; \
+		exit 1; \
+	fi
+	@if [ ! -f "build_sys/tests/chd_reader_test" ]; then \
+		echo "Tests not built. Building tests..."; \
+		cd build_sys && make chd_reader_test; \
+	fi
+	@echo ""
+	@cd build_sys && ctest --output-on-failure
+	@echo ""
+	@echo "Tests complete!"
+
 # Clean all build artifacts
 clean:
 	@echo "Cleaning build directories..."
-	rm -rf build_arm build_sys build_local
+	rm -rf build_arm build_sys
 
 # Show help
 help:
@@ -97,5 +113,6 @@ help:
 	@echo "Utility Targets:"
 	@echo "  make english      Generate English.txt from source strings"
 	@echo "  make lint         Run clang-tidy static analysis"
+	@echo "  make test         Run unit tests (requires 'make sys' first)"
 	@echo "  make clean        Remove all build artifacts"
 	@echo "  make help         Show this help"
