@@ -32,24 +32,24 @@ StarFx::StarFx()
 
 void StarFx::render()
 {
-    for (int i=0;i<7;i++) {
-        for (int star = 0; star < STARS_PER_LAYER; star++) {
-            starLayers[i][star].y+= starLayers[i][star].speed;
-            if (starLayers[i][star].y>SCREEN_HEIGHT) starLayers[i][star].y-=SCREEN_HEIGHT;
+    for (auto& layer : starLayers) {
+        for (auto& star : layer) {
+            star.y += star.speed;
+            if (star.y > SCREEN_HEIGHT) star.y -= SCREEN_HEIGHT;
         }
     }
-    for (int i=0;i<7;i++) {
-        for (int star = 0; star < STARS_PER_LAYER; star++) {
+    for (auto& layer : starLayers) {
+        for (auto& star : layer) {
             SDL_Rect rect;
-            rect.x=starLayers[i][star].x;
-            rect.y=starLayers[i][star].y;
-            rect.w=starLayers[i][star].size;
-            rect.h=starLayers[i][star].size;
+            rect.x = star.x;
+            rect.y = star.y;
+            rect.w = star.size;
+            rect.h = star.size;
             RGB lastColor;
-            SDL_GetRenderDrawColor(renderer, &lastColor.r,&lastColor.g,&lastColor.b,&lastColor.a);
-            SDL_SetRenderDrawColor(renderer, starLayers[i][star].color.r,starLayers[i][star].color.g,starLayers[i][star].color.b,255);
-            SDL_RenderFillRect(renderer,&rect);
-            SDL_GetRenderDrawColor(renderer, &lastColor.r,&lastColor.g,&lastColor.b,&lastColor.a);
+            SDL_GetRenderDrawColor(renderer, &lastColor.r, &lastColor.g, &lastColor.b, &lastColor.a);
+            SDL_SetRenderDrawColor(renderer, star.color.r, star.color.g, star.color.b, 255);
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_GetRenderDrawColor(renderer, &lastColor.r, &lastColor.g, &lastColor.b, &lastColor.a);
         }
     }
 }

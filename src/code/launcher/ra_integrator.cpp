@@ -36,11 +36,7 @@ std::shared_ptr<RAIntegrator> RAIntegrator::getInstance() {
 //********************
 // RAIntegrator::~RAIntegrator()
 //********************
-RAIntegrator::~RAIntegrator() {
-    for (CoreInfoPtr ci: cores) {
-        ci.reset();
-    }
-}
+RAIntegrator::~RAIntegrator() = default;
 
 //********************
 // RAIntegrator::isValidPlaylist

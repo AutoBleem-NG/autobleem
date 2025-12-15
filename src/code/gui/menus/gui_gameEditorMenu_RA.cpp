@@ -152,7 +152,7 @@ void GuiEditor_RA::render() {
     outputRect.x += (226-outputRect.w)/2;
     outputRect.y += (226-outputRect.h)/2;
 
-    SDL_RenderCopy(renderer, cover, NULL, &outputRect);
+    SDL_RenderCopy(renderer, cover, nullptr, &outputRect);
 
     SDL_RenderPresent(renderer);
 }

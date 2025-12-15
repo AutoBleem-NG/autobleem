@@ -63,11 +63,11 @@ public:
 
     void updateTexts(PsGamePtr & game, SDL_Color _textColor);
 
-    void destroy();
+    void destroy() override;
 
-    void render();
+    void render() override;
 
-    void update(long time);
+    void update(long time) override;
 
     using PsObj::PsObj;
 };

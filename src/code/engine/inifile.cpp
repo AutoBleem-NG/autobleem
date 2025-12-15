@@ -72,10 +72,10 @@ void Inifile::save(const string & _path) {
     ofstream os;
     os.open(_path);
     os << "[" << section <<"]" << endl;
-    for (map<string,string>::iterator iter = values.begin(); iter != values.end(); ++iter)
+    for (auto & value : values)
     {
-        string k =  iter->first;
-        string v = iter->second;
+        string k =  value.first;
+        string v = value.second;
         k=lcase(k);
         if (k == "publisher")
             Util::cleanPublisherString(v);

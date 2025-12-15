@@ -14,10 +14,12 @@
 struct TTF_Font_Shared {
     std::shared_ptr<TTF_Font> font_shared_ptr;
 
-    TTF_Font_Shared(TTF_Font* font = nullptr) : font_shared_ptr(font, [](TTF_Font *font)
-        { TTF_CloseFont(font); } ) {};    // automatically destroy/free when the last shared_ptr goes away
+    // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
+    TTF_Font_Shared(TTF_Font* font = nullptr) : font_shared_ptr(font, [](TTF_Font *font)  // NOLINT(google-explicit-constructor)
+        { TTF_CloseFont(font); } ) {};
 
-    operator TTF_Font* () { return font_shared_ptr.get(); };
+    // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
+    operator TTF_Font* () { return font_shared_ptr.get(); };  // NOLINT(google-explicit-constructor)
     TTF_Font & operator * () { return *font_shared_ptr.get(); };
     TTF_Font * operator -> () { return font_shared_ptr.get(); };
 };
@@ -28,10 +30,12 @@ struct TTF_Font_Shared {
 struct FC_Font_Shared {
     std::shared_ptr<FC_Font> font_shared_ptr;
 
-    FC_Font_Shared(FC_Font* font = nullptr) : font_shared_ptr(font, [](FC_Font *font)
-    { FC_FreeFont(font); } ) {};    // automatically destroy/free when the last shared_ptr goes away
+    // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
+    FC_Font_Shared(FC_Font* font = nullptr) : font_shared_ptr(font, [](FC_Font *font)  // NOLINT(google-explicit-constructor)
+    { FC_FreeFont(font); } ) {};
 
-    operator FC_Font* () { return font_shared_ptr.get(); };
+    // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
+    operator FC_Font* () { return font_shared_ptr.get(); };  // NOLINT(google-explicit-constructor)
     FC_Font & operator * () { return *font_shared_ptr.get(); };
     FC_Font * operator -> () { return font_shared_ptr.get(); };
 };

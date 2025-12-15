@@ -9,7 +9,7 @@
 //*******************************
 class GuiPlaylists : public GuiStringMenu {
 public:
-    GuiPlaylists(SDL_Shared<SDL_Renderer> _renderer) : GuiStringMenu(_renderer) {}
+    explicit GuiPlaylists(SDL_Shared<SDL_Renderer> _renderer) : GuiStringMenu(_renderer) {}
 
     void init() override {
         for (const string& playlist : playlists) {
@@ -18,8 +18,8 @@ public:
         GuiStringMenu::init();
     }
 
-    virtual std::string getTitle() override { return "-=" + _("Select RetroBoot Platform") + "=-"; }
-    virtual std::string getStatusLine() override { return GuiStringMenu::getStatusLine(); }
+    std::string getTitle() override { return "-=" + _("Select RetroBoot Platform") + "=-"; }
+    std::string getStatusLine() override { return GuiStringMenu::getStatusLine(); }
 
     void doEnter() { doCross_Pressed(); }
     void doEscape() { doCircle_Pressed(); }

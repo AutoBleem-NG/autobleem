@@ -373,7 +373,7 @@ void USBGame::updateObj() {
 
     if (Util::isInteger(tmp.c_str())) year = atoi(tmp.c_str()); else year = 2018;
     tmp = valueOrDefault("highres","0");
-    if (Util::isInteger(tmp.c_str())) highRes = atoi(tmp.c_str()); else highRes = 0;
+    if (Util::isInteger(tmp.c_str())) highRes = atoi(tmp.c_str()); else highRes = false;
     favorite = valueOrDefault("favorite", "0", false);  // favorite is a new field that didn't exist before so
     play_using_ra = valueOrDefault("play_using_ra", "false", false);  // favorite is a new field that didn't exist before so
     // don't set automationUsed if it doesn't exist

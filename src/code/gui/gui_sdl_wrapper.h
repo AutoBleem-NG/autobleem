@@ -15,10 +15,12 @@ template <typename T>
 struct SDL_Shared {
     std::shared_ptr<T> sdl_shared_ptr;
 
-    SDL_Shared(T* t = nullptr) : sdl_shared_ptr(t, [](T *t)
-        { SDL_DelRes(t); } ) {};    // automatically destroy/free when the last shared_ptr goes away
+    // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
+    SDL_Shared(T* t = nullptr) : sdl_shared_ptr(t, [](T *t)  // NOLINT(google-explicit-constructor)
+        { SDL_DelRes(t); } ) {};
 
-    operator T* () { return sdl_shared_ptr.get(); };
+    // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
+    operator T* () { return sdl_shared_ptr.get(); };  // NOLINT(google-explicit-constructor)
     T & operator * () { return *sdl_shared_ptr.get(); };
     T * operator -> () { return sdl_shared_ptr.get(); };
 };

@@ -38,7 +38,7 @@ void execute(int argc, char** argv)
     if (!pid) {
         execvp(PCSX, argv);
     }
-    waitpid(pid, NULL, 0);
+    waitpid(pid, nullptr, 0);
 }
 
 //*******************************
@@ -116,7 +116,7 @@ int main (int argc, char *argv[])
 
     vector<char*> argvNew;
     for (const auto& arg : arguments)
-        argvNew.push_back((char*)arg.data());
+        argvNew.push_back(const_cast<char*>(arg.data()));
 
     argvNew.push_back(nullptr);
     execute(argvNew.size() - 1, argvNew.data());

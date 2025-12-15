@@ -12,9 +12,9 @@
 //********************
 class GuiEditor : public GuiScreen{
 public:
-    void init();
-    void render();
-    void loop();
+    void init() override;
+    void render() override;
+    void loop() override;
 
     void refreshData();
     Inifile gameIni;

@@ -7,13 +7,13 @@
 //******************
 class GuiPadTest   : public GuiScrollWin {
 public:
-    void init();
-    void render() { GuiScrollWin::render(); }
-    void loop();
+    void init() override;
+    void render() override { GuiScrollWin::render(); }
+    void loop() override;
 
     SDL_JoystickID joyid = -1;
 
-    GuiPadTest(SDL_Shared<SDL_Renderer> renderer1) : GuiScrollWin(renderer1)
+    explicit GuiPadTest(SDL_Shared<SDL_Renderer> renderer1) : GuiScrollWin(renderer1)
     {
     };
 };

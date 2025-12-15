@@ -18,7 +18,7 @@
 //******************
 class Scanner {
 public:
-    Scanner() {}
+    Scanner() = default;
     USBGames gamesToAddToDB;
     bool forceScan=false;
     bool noGamesFoundDuringScan=false;

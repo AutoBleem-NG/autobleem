@@ -32,9 +32,9 @@ extern const SDL_Color brightWhite;
 //******************
 class GuiLauncher : public GuiScreen {
 public:
-    void init();
-    ~GuiLauncher();
-    void render();
+    void init() override;
+    ~GuiLauncher() override;
+    void render() override;
 
     // these variables are used by the loop routines
     long motionStart = 0;
@@ -51,7 +51,7 @@ public:
     bool R1_isPressedForFastForward = false;
     Uint32 R1_fastForwardTimeStart = 0;
 
-    void loop();
+    void loop() override;
 
     void loop_joyMoveLeft();
     void loop_joyMoveRight();

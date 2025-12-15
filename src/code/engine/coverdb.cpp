@@ -41,12 +41,12 @@ Coverdb::Coverdb()
 //*******************************
 Coverdb::~Coverdb()
 {
-    for (int i=0;i<3;i++)
+    for (auto & cover : covers)
     {
-        if (covers[i]!= nullptr)
+        if (cover!= nullptr)
         {
-            covers[i]->disconnect();
-            delete covers[i];
+            cover->disconnect();
+            delete cover;
         }
     }
 }

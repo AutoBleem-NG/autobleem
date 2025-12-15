@@ -22,7 +22,7 @@ public:
     void rename(std::string oldName, std::string newName);
     void restoreAll(std::string mainDir);
 
-    Memcard(std::string path) {
+    explicit Memcard(std::string path) {
         this->path = path;
     }
 private:

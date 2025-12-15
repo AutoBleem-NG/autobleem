@@ -16,12 +16,12 @@ void GuiSplash::render() {
     std::shared_ptr<Gui> gui(Gui::getInstance());
     int w, h; // texture width & height
     SDL_SetTextureBlendMode(gui->backgroundImg, SDL_BLENDMODE_BLEND);
-    SDL_QueryTexture(gui->backgroundImg, NULL, NULL, &w, &h);
+    SDL_QueryTexture(gui->backgroundImg, nullptr, nullptr, &w, &h);
     gui->backgroundRect.x = 0;
     gui->backgroundRect.y = 0;
     gui->backgroundRect.w = w;
     gui->backgroundRect.h = h;
-    SDL_QueryTexture(gui->logo, NULL, NULL, &w, &h);
+    SDL_QueryTexture(gui->logo, nullptr, nullptr, &w, &h);
 
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(renderer);
@@ -29,8 +29,8 @@ void GuiSplash::render() {
     SDL_SetTextureAlphaMod(gui->logo, alpha);
     Mix_VolumeMusic(alpha / 3);
 
-    SDL_RenderCopy(renderer, gui->backgroundImg, NULL, &gui->backgroundRect);
-    SDL_RenderCopy(renderer, gui->logo, NULL, &gui->logoRect);
+    SDL_RenderCopy(renderer, gui->backgroundImg, nullptr, &gui->backgroundRect);
+    SDL_RenderCopy(renderer, gui->logo, nullptr, &gui->logoRect);
 
     string bg = gui->themeData.values["text_bg"];
 
@@ -57,7 +57,7 @@ void GuiSplash::loop() {
     Mix_VolumeMusic(0);
     alpha = 0;
     start = SDL_GetTicks();
-    while (1) {
+    while (true) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             gui->mapper.handleHotPlug(&e);

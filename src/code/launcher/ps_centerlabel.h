@@ -18,10 +18,10 @@ public:
     SDL_Color textColor;
     FC_Size textSize;
 
-    void render();
+    void render() override;
 
     void setText(const std::string & _text, SDL_Color _textColor);
 
-    PsCenterLabel(const std::string & name1, const std::string & texPath = "");
-    ~PsCenterLabel();
+    explicit PsCenterLabel(const std::string & name1, const std::string & texPath = "");
+    ~PsCenterLabel() override;
 };

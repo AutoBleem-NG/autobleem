@@ -15,12 +15,12 @@ extern int sdl_filter_analog_on ;
 
 
 void PadMapper::init() {
-    SDL_SetEventFilter(&playstation_event_filter, NULL);
+    SDL_SetEventFilter(&playstation_event_filter, nullptr);
 }
 
 void PadMapper::registerPad(int joy_idx) {
     SDL_Joystick *js = SDL_JoystickOpen(joy_idx);
-    if (js == NULL) return;
+    if (js == nullptr) return;
     SDL_JoystickGUID guid = SDL_JoystickGetGUID(js);
     char guid_str[1024];
     SDL_JoystickGetGUIDString(guid, guid_str, sizeof(guid_str));
@@ -28,9 +28,9 @@ void PadMapper::registerPad(int joy_idx) {
         SDL_JoystickClose(js);
         return;
     }
-    SDL_GameController *controller = NULL;
+    SDL_GameController *controller = nullptr;
     controller = SDL_GameControllerOpen(joy_idx);
-    if (controller == NULL)
+    if (controller == nullptr)
         return;
     string name = SDL_GameControllerName(controller);
     cout << "New GameController name: " << name << endl;
@@ -66,8 +66,7 @@ void PadMapper::handleHotPlug(SDL_Event *event) {
 }
 
 void PadMapper::flushPads() {
-    for (int i = 0; i < connectedPads.size(); i++) {
-        ControllerInfo *ci = connectedPads[i];
+    for (auto ci : connectedPads) {
         SDL_GameControllerClose(ci->pad);
         delete ci;
     }

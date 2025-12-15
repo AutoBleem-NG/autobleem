@@ -56,7 +56,7 @@ class SizesOfBoldThemeFont {
     std::map<int, FC_Font_Shared> boldFonts;
 
 public:
-    SizesOfBoldThemeFont() {};
+    SizesOfBoldThemeFont() = default;
     void Init() { boldFonts.clear(); }
     FC_Font_Shared AddFont(int size, FC_Font_Shared boldFont);
     FC_Font_Shared GetFont(int size, const Fonts& fonts);

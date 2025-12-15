@@ -146,7 +146,7 @@ void PsMeta::render() {
         // if the game name goes off the end of the screen use a smaller font
         int textWidth = FC_GetWidth(nameFont, gameName.c_str());
         if (x + textWidth > SCREEN_WIDTH) {
-            int miniMe = 28.0 * ((float)(SCREEN_WIDTH - x) / (float)(textWidth)) + 0.5;
+            int miniMe = 28.0 * (static_cast<float>(SCREEN_WIDTH - x) / static_cast<float>(textWidth)) + 0.5;
             nameFont = gui->sizesOfBoldThemeFont.GetFont(miniMe, gui->themeFonts);
 
             // if it's still a bit over the right edge go down one more font size

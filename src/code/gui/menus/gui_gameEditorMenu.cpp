@@ -324,13 +324,13 @@ void GuiEditor::refreshData() {
     }
     highres       = atoi  (processor->getValue(path, "gpu_neon.enhancement_enable").c_str());
     speedhack     = atoi  (processor->getValue(path, "gpu_neon.enhancement_no_main").c_str());
-    clock         = strtol(processor->getValue(path, "psx_clock").c_str(), NULL, 16);
+    clock         = strtol(processor->getValue(path, "psx_clock").c_str(), nullptr, 16);
     gpu           =        processor->getValue(path, "gpu3");
     frameskip     = atoi  (processor->getValue(path, "frameskip3").c_str());
     dither        = atoi  (processor->getValue(path, "gpu_peops.iUseDither").c_str());
     scanlines     = atoi  (processor->getValue(path, "scanlines").c_str());
-    scanlineLevel = strtol(processor->getValue(path, "scanline_level").c_str(), NULL, 16);
-    interpolation = strtol(processor->getValue(path, "spu_config.iUseInterpolation").c_str(), NULL, 16);
+    scanlineLevel = strtol(processor->getValue(path, "scanline_level").c_str(), nullptr, 16);
+    interpolation = strtol(processor->getValue(path, "spu_config.iUseInterpolation").c_str(), nullptr, 16);
 
     delete processor;
 }
@@ -498,7 +498,7 @@ void GuiEditor::render() {
     rect.w = 226;
     rect.h = 226;
 
-    SDL_RenderCopy(renderer, cover, NULL, &rect);
+    SDL_RenderCopy(renderer, cover, nullptr, &rect);
 
     SDL_RenderPresent(renderer);
 }

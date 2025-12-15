@@ -12,8 +12,8 @@ struct DebugTimer {
     std::string description;
     uint32_t ticks_start = 0;
     uint32_t ticks_end = 0;
-	
-    DebugTimer(const std::string & _description);
+
+    explicit DebugTimer(const std::string & _description);
     ~DebugTimer();
 };
 #else // release build

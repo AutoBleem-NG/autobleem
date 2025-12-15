@@ -20,7 +20,7 @@ Fonts::FontInfo Fonts::allFontInfos[] = {
 //********************
 // Fonts::Fonts
 //********************
-Fonts::Fonts() { }
+Fonts::Fonts() = default;
 
 //********************
 // Fonts::openNewSharedCachedFont

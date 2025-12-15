@@ -13,9 +13,9 @@
 //********************
 class GuiScrollWin : public GuiScreen{
 public:
-    void init();    // call this from your init()
-    void render();  // call this from your render()
-    //void loop();  // not used in this class.  base GuiScreen::show() will call virtual loop() in your class.
+    void init() override;    // call this from your init()
+    void render() override;  // call this from your render()
+    //void loop() override;  // not used in this class.  base GuiScreen::show() will call virtual loop() in your class.
 
     shared_ptr<Gui> gui;
 

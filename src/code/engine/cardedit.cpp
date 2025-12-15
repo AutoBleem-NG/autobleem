@@ -34,7 +34,7 @@ CardEdit::CardEdit(SDL_Shared<SDL_Renderer> renderer1) {
         void *pixels;
         for (int icon=0;icon<3;icon++) {
             slot_icons[i][icon] = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 16, 16);
-            SDL_LockTexture(slot_icons[i][icon], NULL, &pixels, &pitch);
+            SDL_LockTexture(slot_icons[i][icon], nullptr, &pixels, &pitch);
             //Copy loaded/formatted surface pixels
             std::memset(pixels, 0, 16 * 16 * 4);
             SDL_UnlockTexture(slot_icons[i][icon]);
@@ -195,8 +195,8 @@ int CardEdit::undelete_slot(int slot) {
 }
 
 int CardEdit::clearData() {
-    for (int i = 0; i < 131072; i++) {
-        memoryCard[i] = 0;
+    for (char & i : memoryCard) {
+        i = 0;
     }
     load_file(Env::getWorkingPath() + sep + "memcard" + sep + "card1.mcd");
     update();
@@ -339,7 +339,7 @@ void CardEdit::update_slot_titles() {
                 slot_titles[i] = "";
 
                 //  04h-43h  Title in Shift-JIS format (64 bytes = max 32 characters)
-                jis_title = (char *) &memoryCard[current_pos + 4];
+                jis_title = &memoryCard[current_pos + 4];
                 tlen = strnlen(jis_title, 64);
 
 
@@ -368,7 +368,7 @@ std::string CardEdit::sj2utf8(const std::string &input)
 
     while(indexInput < input.length())
     {
-        char arraySection = ((uint8_t)input[indexInput]) >> 4;
+        char arraySection = (static_cast<uint8_t>(input[indexInput])) >> 4;
 
         size_t arrayOffset;
         if(arraySection == 0x8) arrayOffset = 0x100; //these are two-byte shiftjis
@@ -379,11 +379,11 @@ std::string CardEdit::sj2utf8(const std::string &input)
         //determining real array offset
         if(arrayOffset)
         {
-            arrayOffset += (((uint8_t)input[indexInput]) & 0xf) << 8;
+            arrayOffset += ((static_cast<uint8_t>(input[indexInput])) & 0xf) << 8;
             indexInput++;
             if(indexInput >= input.length()) break;
         }
-        arrayOffset += (uint8_t)input[indexInput++];
+        arrayOffset += static_cast<uint8_t>(input[indexInput++]);
         arrayOffset <<= 1;
 
         //unicode number is...
@@ -433,9 +433,9 @@ void CardEdit::importGame(unsigned char* buffer, int length)
         memoryCard[dir_position+i] = buffer[i];
 
     // update size in header
-    memoryCard[dir_position+4] = (unsigned char)(numberOfBytes & 0xFF);
-    memoryCard[dir_position+5] = (unsigned char)((numberOfBytes & 0xFF00) >> 8);
-    memoryCard[dir_position+6] = (unsigned char)((numberOfBytes & 0xFF0000) >> 16);
+    memoryCard[dir_position+4] = static_cast<unsigned char>(numberOfBytes & 0xFF);
+    memoryCard[dir_position+5] = static_cast<unsigned char>((numberOfBytes & 0xFF00) >> 8);
+    memoryCard[dir_position+6] = static_cast<unsigned char>((numberOfBytes & 0xFF0000) >> 16);
 
     // store all slots
 
@@ -457,7 +457,7 @@ void CardEdit::importGame(unsigned char* buffer, int length)
         int slot = destSlots[i];
         dir_position = 0x80 + (slot * 0x80);
         memoryCard[dir_position+0] = 0x52;
-        memoryCard[dir_position+8] = (unsigned char) destSlots[i + 1];
+        memoryCard[dir_position+8] = static_cast<unsigned char>(destSlots[i + 1]);
         memoryCard[dir_position+9] = 0x00;
     }
 
@@ -550,8 +550,8 @@ void CardEdit::update_slot_iconImages() {
                 icn_pos = 0;
                 void *pixels;
                 int pitch;
-                SDL_LockTexture(slot_icons[i][icon], NULL, &pixels, &pitch);
-                Uint32 *pixelData = (Uint32 *) pixels;
+                SDL_LockTexture(slot_icons[i][icon], nullptr, &pixels, &pitch);
+                Uint32 *pixelData = static_cast<Uint32 *>(pixels);
                 SDL_PixelFormat *fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
                 for (int y = 0; y < 16; y++) {
                     for (int x = 0; x < 16; x += 2) {
@@ -576,8 +576,8 @@ void CardEdit::update_slot_iconImages() {
             } else {
                 void *pixels;
                 int pitch;
-                SDL_LockTexture(slot_icons[i][icon], NULL, &pixels, &pitch);
-                Uint32 *pixelData = (Uint32 *) pixels;
+                SDL_LockTexture(slot_icons[i][icon], nullptr, &pixels, &pitch);
+                Uint32 *pixelData = static_cast<Uint32 *>(pixels);
                 SDL_PixelFormat *fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
                 Uint32 transparent = SDL_MapRGBA(fmt, 0, 0, 0, 127);
                 for (int y = 0; y < 16; y++) {
@@ -612,10 +612,10 @@ void CardEdit::update_slot_iconImages() {
                         int pitch;
                         void *destpixels;
                         int destpitch;
-                        SDL_LockTexture(slot_icons[slot][icon], NULL, &destpixels, &destpitch);
-                        SDL_LockTexture(currentTex, NULL, &pixels, &pitch);
-                        Uint32 *pixelData = (Uint32 *) pixels;
-                        Uint32 *pixelDataDest = (Uint32 *) destpixels;
+                        SDL_LockTexture(slot_icons[slot][icon], nullptr, &destpixels, &destpitch);
+                        SDL_LockTexture(currentTex, nullptr, &pixels, &pitch);
+                        Uint32 *pixelData = static_cast<Uint32 *>(pixels);
+                        Uint32 *pixelDataDest = static_cast<Uint32 *>(destpixels);
 
                         Uint8 r,g,b,a;
                         Uint32 transparent = SDL_MapRGBA(fmt, 0, 0, 0, 127);

@@ -10,12 +10,12 @@
 //********************
 class GuiMemcards : public GuiStringMenu {
 public:
-    GuiMemcards(SDL_Shared<SDL_Renderer> _renderer) : GuiStringMenu(_renderer) {}
+    explicit GuiMemcards(SDL_Shared<SDL_Renderer> _renderer) : GuiStringMenu(_renderer) {}
 
     void init() override;
 
-    virtual std::string getTitle() override { return "-=" + _("-=" + _("Custom Memory Cards") + "=-") + "=-"; }
-    virtual std::string getStatusLine() override;   // returns the status line at the bottom
+    std::string getTitle() override { return "-=" + _("-=" + _("Custom Memory Cards") + "=-") + "=-"; }
+    std::string getStatusLine() override;   // returns the status line at the bottom
 
     void doCircle_Pressed() override;
     void doSquare_Pressed() override;

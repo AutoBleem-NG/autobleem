@@ -54,9 +54,9 @@ void Lang::load(string languageName) {
         // if this is the first line of the file and the beginning of the string contains the UTF-8 header
         // strip the UTF-8 header off
         if (lineNum == 0 && line.size() >= 3) {
-            unsigned char* p = (unsigned char*) line.c_str();
+            const unsigned char* p = reinterpret_cast<const unsigned char*>(line.c_str());
             if ((p[0] == 0xEF) && (p[1] == 0xBB) && (p[2] == 0xBF)) {
-                string skipUTF8Header =  (char*) p + 3;
+                string skipUTF8Header = reinterpret_cast<const char*>(p + 3);
                 line = skipUTF8Header;
             }
         }

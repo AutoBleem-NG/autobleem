@@ -217,7 +217,7 @@ public:
         SDL_Color textColor;
         bool drawBackgroundRect = false;
 
-        AllTextOrEmojiTokenInfo() { }
+        AllTextOrEmojiTokenInfo() = default;
         AllTextOrEmojiTokenInfo(FC_Font_Shared _font, const std::string & _text) { getTokenInfo(_font, _text); }
         void getTokenInfo(FC_Font_Shared _font, const std::string & _text);
 

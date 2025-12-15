@@ -36,7 +36,7 @@ public:
 class CardEdit
 {
 public:
-    CardEdit(SDL_Shared<SDL_Renderer> renderer1);
+    explicit CardEdit(SDL_Shared<SDL_Renderer> renderer1);
 	~CardEdit();
 
 	// action commands

@@ -26,12 +26,12 @@ void GuiManager::init() {
     psGames.clear();
     gui->db->getGames(&psGames);    // Create list of games
     sort(psGames.begin(), psGames.end(), sortByTitle);  // sort by title
-    for (int i = 0; i < psGames.size(); ++i) {
+    for (auto & psGame : psGames) {
         // left column              right column
         // "title"                  "path"
-        string path = DirEntry::removeSeparatorFromEndOfPath(psGames[i]->folder);
+        string path = DirEntry::removeSeparatorFromEndOfPath(psGame->folder);
         path = DirEntry::removeGamesPathFromFrontOfPath(path);
-        lines.emplace_back(TwoColumnsOfText(psGames[i]->title, path));
+        lines.emplace_back(TwoColumnsOfText(psGame->title, path));
     }
 }
 

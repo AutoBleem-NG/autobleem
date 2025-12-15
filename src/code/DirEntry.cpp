@@ -192,9 +192,9 @@ DirEntries DirEntry::dir(string path) {
     path = fixPath(removeSeparatorFromEndOfPath(path));
     DirEntries result;
     DIR *dir = opendir(path.c_str());
-    if (dir != NULL) {
+    if (dir != nullptr) {
         struct dirent *entry = readdir(dir);
-        while (entry != NULL) {
+        while (entry != nullptr) {
             DirEntry obj(entry->d_name, entry->d_type);
             result.push_back(obj);
             entry = readdir(dir);
@@ -213,9 +213,9 @@ DirEntries DirEntry::diru(string path) {
     path = fixPath(removeSeparatorFromEndOfPath(path));
     DirEntries result;
     DIR *dir = opendir(path.c_str());
-    if (dir != NULL) {
+    if (dir != nullptr) {
         struct dirent *entry = readdir(dir);
-        while (entry != NULL) {
+        while (entry != nullptr) {
             DirEntry obj(entry->d_name, isDirectory(path + sep + entry->d_name));
             if (entry->d_name[0] != '.') {
                 result.push_back(obj);
@@ -480,14 +480,14 @@ string DirEntry::getFileNameWithoutExtension(const string &filename) {
 vector<string> DirEntry::cueToBinList(string cueFile) {
     vector<string> binList;
     FILE *fp;
-    char *cline = NULL;
+    char *cline = nullptr;
     string line;
     size_t length = 0;
     ssize_t read;
 
     //Opening file
     fp = fopen(cueFile.c_str(), "r");
-    if (fp == NULL) {
+    if (fp == nullptr) {
         printf("Error opening cue file");
         return binList;
     }

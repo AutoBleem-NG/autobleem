@@ -45,12 +45,12 @@ public:
 
     void loadAssets();
     void freeAssets();
-    void update(long time);
-    void render();
+    void update(long time) override;
+    void render() override;
 
     void setResumePic(std::string picturePath);
 
     int transition =0;
 
-    PsMenu(std::string name1, std::string texPath = "");
+    explicit PsMenu(std::string name1, std::string texPath = "");
 };

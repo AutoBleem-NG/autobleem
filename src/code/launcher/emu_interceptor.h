@@ -8,7 +8,7 @@
 
 class EmuInterceptor {
 public:
-    virtual ~EmuInterceptor() {}
+    virtual ~EmuInterceptor() = default;
 
     virtual bool execute(PsGamePtr & game, int resumepoint){return false;};
     virtual void memcardIn(PsGamePtr & game){};

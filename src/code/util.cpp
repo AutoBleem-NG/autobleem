@@ -84,7 +84,7 @@ bool Util::compareCaseInsensitive(string first, string second) {
 //*******************************
 unsigned char Util::readChar(ifstream *stream) {
     unsigned char c;
-    stream->read((char *) &c, 1);
+    stream->read(reinterpret_cast<char*>(&c), 1);
     return c;
 }
 
@@ -219,7 +219,7 @@ string Util::execUnixCommand(const char* cmd){
         result += buffer.data();
     }
     if (!result.empty()) {
-        result.erase(remove(result.begin(), result.end(), '\n'));
+        result.erase(remove(result.begin(), result.end(), '\n'), result.end());
     }
     return result;
 }
@@ -243,10 +243,10 @@ void Util::execFork(const char *cmd,  vector<const char *> argvNew)
 
     int pid = fork();
     if (!pid) {
-        execvp(link.c_str(), (char **) argvNew.data());
+        execvp(link.c_str(), const_cast<char**>(argvNew.data()));
     }
 
-    waitpid(pid, NULL, 0);
+    waitpid(pid, nullptr, 0);
 }
 
 //*******************************
@@ -336,7 +336,7 @@ void Util::cleanPublisherString(std::string & pub)
 //*******************************
 void Util::dumpMemory(const  char *p, int count) {
     for (int i=0; i < count; ++i) {
-        printf("%x, ", (unsigned int) *p++);
+        printf("%x, ", static_cast<unsigned int>(*p++));
         if (i %16 == 15 || i == count-1)
             cout << endl;
     }

@@ -21,9 +21,9 @@ public:
 
     string rightCardName_ori;
     string cardPath_ori;
-    void render();
-    void loop();
-    void init();
+    void render() override;
+    void loop() override;
+    void init() override;
 
     void loadAssets();
     using GuiScreen::GuiScreen;

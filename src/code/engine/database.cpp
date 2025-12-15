@@ -652,7 +652,7 @@ bool Database::getGameRowInfos(GameRowInfos *gameRowInfos) {
             SubDirRowInfo subDirRowInfo;
             subDirRowInfo.subDirRowIndex = sqlite3_column_int(res, 0);
             const unsigned char *name = sqlite3_column_text(res, 1);
-            subDirRowInfo.rowName = (const char*) name;
+            subDirRowInfo.rowName = reinterpret_cast<const char*>(name);
             subDirRowInfo.indentLevel = sqlite3_column_int(res, 2);
             subDirRowInfo.numGames = sqlite3_column_int(res, 3);
 
@@ -879,7 +879,7 @@ bool Database::insertSubDirGames(int rowIndex, int gameId) {
 //*******************************
 // Database::executeCreateStatement
 //*******************************
-bool Database::executeCreateStatement(char *sql, string name) {
+bool Database::executeCreateStatement(const char *sql, string name) {
     char *errorReport = nullptr;
     cout << "Creating " << name << " (if not exists)" << endl;
     int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errorReport);
@@ -895,7 +895,7 @@ bool Database::executeCreateStatement(char *sql, string name) {
 //*******************************
 // Database::executeStatement
 //*******************************
-bool Database::executeStatement(char *sql, string outMsg, string errorMsg) {
+bool Database::executeStatement(const char *sql, string outMsg, string errorMsg) {
     char *errorReport = nullptr;
     cout << outMsg << endl;
     int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errorReport);
@@ -940,7 +940,7 @@ void Database::disconnect() {
 // Database::beginTransaction
 //*******************************
 bool Database::beginTransaction() {
-    executeStatement((char *) BEGIN_TRANSACTION, "Begin Transaction", "Error beginning  transaction");
+    executeStatement(BEGIN_TRANSACTION, "Begin Transaction", "Error beginning  transaction");
     return true;
 }
 
@@ -948,7 +948,7 @@ bool Database::beginTransaction() {
 // Database::commit
 //*******************************
 bool Database::commit() {
-    executeStatement((char *) COMMIT, "Commit", "Error on commit");
+    executeStatement(COMMIT, "Commit", "Error on commit");
     return true;
 }
 
@@ -957,11 +957,11 @@ bool Database::commit() {
 // delete all data in all tables
 //*******************************
 bool Database::truncate() {
-    executeStatement((char *) DELETE_GAME_DATA, "Truncating all data", "Error truncating data");
-    executeStatement((char *) DELETE_DISC_DATA, "Truncating all data", "Error truncating data");
-    executeStatement((char *) DELETE_LANGUAGE_DATA, "Truncating all data", "Error truncating data");
-    executeStatement((char *) DELETE_SUBDIR_ROW_DATA, "Truncating all data", "Error truncating data");
-    executeStatement((char *) DELETE_SUBDIR_GAME_DATA, "Truncating all data", "Error truncating data");
+    executeStatement(DELETE_GAME_DATA, "Truncating all data", "Error truncating data");
+    executeStatement(DELETE_DISC_DATA, "Truncating all data", "Error truncating data");
+    executeStatement(DELETE_LANGUAGE_DATA, "Truncating all data", "Error truncating data");
+    executeStatement(DELETE_SUBDIR_ROW_DATA, "Truncating all data", "Error truncating data");
+    executeStatement(DELETE_SUBDIR_GAME_DATA, "Truncating all data", "Error truncating data");
     return true;
 }
 
@@ -969,13 +969,13 @@ bool Database::truncate() {
 // Database::createInitialDatabase
 //*******************************
 bool Database::createInitialDatabase() {
-    if (!executeCreateStatement((char *) CREATE_GAME_SQL, "GAME")) return false;
-    executeCreateStatement((char*) ADD_HISTORY_COLUMN, "History column" ); // add column to existing table
-    executeCreateStatement((char*) ADD_LAST_PLAYED_COLUMN, "Last_Played column" ); // add column to existing table
-    if (!executeCreateStatement((char *) CREATE_DISC_SQL, "DISC")) return false;
-    if (!executeCreateStatement((char *) CREATE_LANGUAGE_SPECIFIC_SQL, "LANGUAGE_SPECIFIC")) return false;
-    if (!executeCreateStatement((char *) CREATE_SUBDIR_ROW_SQL, "SUBDIR_ROWS")) return false;
-    if (!executeCreateStatement((char *) CREATE_SUBDIR_GAMES_TO_DISPLAY_ON_ROW_SQL, "SUBDIR_GAMES_TO_DISPLAY_ON_ROW")) return false;
+    if (!executeCreateStatement(CREATE_GAME_SQL, "GAME")) return false;
+    executeCreateStatement(ADD_HISTORY_COLUMN, "History column" ); // add column to existing table
+    executeCreateStatement(ADD_LAST_PLAYED_COLUMN, "Last_Played column" ); // add column to existing table
+    if (!executeCreateStatement(CREATE_DISC_SQL, "DISC")) return false;
+    if (!executeCreateStatement(CREATE_LANGUAGE_SPECIFIC_SQL, "LANGUAGE_SPECIFIC")) return false;
+    if (!executeCreateStatement(CREATE_SUBDIR_ROW_SQL, "SUBDIR_ROWS")) return false;
+    if (!executeCreateStatement(CREATE_SUBDIR_GAMES_TO_DISPLAY_ON_ROW_SQL, "SUBDIR_GAMES_TO_DISPLAY_ON_ROW")) return false;
 
     return true;
 }
@@ -984,28 +984,28 @@ bool Database::createInitialDatabase() {
 // Database::addFavoriteColumn
 //*******************************
 void Database::addFavoriteColumn() {
-    executeCreateStatement((char*) ADD_FAVORITE_COLUMN, "Favorite column" );
+    executeCreateStatement(ADD_FAVORITE_COLUMN, "Favorite column" );
 }
 
 //*******************************
 // Database::addPlayUsingRAColumn
 //*******************************
 void Database::addPlayUsingRAColumn() {
-    executeCreateStatement((char*) ADD_PLAY_USING_RA_COLUMN, "Play Using RA column" );
+    executeCreateStatement(ADD_PLAY_USING_RA_COLUMN, "Play Using RA column" );
 }
 
 //*******************************
 // Database::addHistoryColumn
 //*******************************
 void Database::addHistoryColumn() {
-    executeCreateStatement((char*) ADD_HISTORY_COLUMN, "History column" );
+    executeCreateStatement(ADD_HISTORY_COLUMN, "History column" );
 }
 
 //*******************************
 // Database::addLastPlayedColumn
 //*******************************
 void Database::addLastPlayedColumn() {
-    executeCreateStatement((char*) ADD_LAST_PLAYED_COLUMN, "Last_Played column" );
+    executeCreateStatement(ADD_LAST_PLAYED_COLUMN, "Last_Played column" );
 }
 
 //*******************************
