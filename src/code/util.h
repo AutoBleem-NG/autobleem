@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   util.h
  * Author: screemer
  *
@@ -21,7 +21,7 @@
 // Util
 //******************
 class Util {
-public:
+  public:
     static std::string escape(std::string input);
     static std::string decode(std::string input);
     static void replaceAll(std::string &str, const std::string &from, const std::string &to);
@@ -29,35 +29,36 @@ public:
     static bool isInteger(const char *input);
     static bool compareCaseInsensitive(std::string first, std::string second);
 
-    static unsigned char readChar(std::ifstream * stream);
-    static unsigned long readDword(std::ifstream * stream);
-    static std::string readString(int size, std::ifstream * stream);
-    static std::string readString(std::ifstream * stream);
-    static void skipZeros(std::ifstream * stream);
-    static std::string commaSep(const std::string& input, int pos);
-    static std::string ltrim(const std::string& s);
-    static std::string rtrim(const std::string& s);
-    static std::string trim(const std::string& s);
+    static unsigned char readChar(std::ifstream *stream);
+    static unsigned long readDword(std::ifstream *stream);
+    static std::string readString(int size, std::ifstream *stream);
+    static std::string readString(std::ifstream *stream);
+    static void skipZeros(std::ifstream *stream);
+    static std::string commaSep(const std::string &input, int pos);
+    static std::string ltrim(const std::string &s);
+    static std::string rtrim(const std::string &s);
+    static std::string trim(const std::string &s);
     static std::string getStringWithinChar(std::string s, char del);
-    static void removeCharsFromString(std::string& str, std::string charsToRemove);
-    static void removeCRLFFromString(std::string& str) { removeCharsFromString(str, "\r\n"); }
-    static std::istream& getlineRemoveCR(std::istream& is, std::string& str);
-    static void removeComment(std::string& str);    // remove "#" to end of line
+    static void removeCharsFromString(std::string &str, std::string charsToRemove);
+    static void removeCRLFFromString(std::string &str) { removeCharsFromString(str, "\r\n"); }
+    static std::istream &getlineRemoveCR(std::istream &is, std::string &str);
+    static void removeComment(std::string &str); // remove "#" to end of line
 
     static std::string getAvailableSpace();
     static std::string floatToString(float f, int n);
-    static std::string execUnixCommand(const char* cmd);
-    static void execFork(const char* cmd,  std::vector<const char *> argvNew);
+    static std::string execUnixCommand(const char *cmd);
+    static void execFork(const char *cmd, std::vector<const char *> argvNew);
 
     static void powerOff();
 
-    static void cleanPublisherString(std::string & pub);  // remove any trailing "." or spaces
+    static void cleanPublisherString(std::string &pub); // remove any trailing "." or spaces
     static void dumpMemory(const char *p, int count);
-    static std::vector<std::string> getTokens(const std::string& str, char delim);
+    static std::vector<std::string> getTokens(const std::string &str, char delim);
 
     static unsigned int getRandomNumber();
     static unsigned int getRandomIndex(unsigned int size);
 
-    static std::vector<std::string> ReadTextFileAsAStringArray(const std::string& filePath, bool removeCRLF);
-    static bool WriteStringsToTextFile(const std::vector<std::string>& strings, const std::string& filePath, bool appendLineEnding);
+    static std::vector<std::string> ReadTextFileAsAStringArray(const std::string &filePath, bool removeCRLF);
+    static bool WriteStringsToTextFile(const std::vector<std::string> &strings, const std::string &filePath,
+                                       bool appendLineEnding);
 };

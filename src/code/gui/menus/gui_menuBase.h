@@ -10,76 +10,74 @@
 //*******************************
 // GuiMenuBase template class
 //*******************************
-template<typename LineDataType>
-class GuiMenuBase : public GuiScreen {
-public:
+template <typename LineDataType> class GuiMenuBase : public GuiScreen {
+  public:
     explicit GuiMenuBase(SDL_Shared<SDL_Renderer> _renderer) : GuiScreen(_renderer) {}
 
     void init() override;
     void render() override;
 
     virtual std::string getTitle();
-    virtual std::string getStatusLine();   // returns the status line at the bottom.  cross, circle, etc icons.
+    virtual std::string getStatusLine(); // returns the status line at the bottom.  cross, circle, etc icons.
 
     bool firstRender = true;
-    virtual void renderLineIndexOnRow(int /*index*/, int /*row*/) {}  // you must inherit from GuiMenuBase and provide this
+    virtual void renderLineIndexOnRow(int /*index*/, int /*row*/) {
+    } // you must inherit from GuiMenuBase and provide this
     void renderLines();
     void renderSelectionBox();
 
     // controller dpad/joystick pressed
-    void doJoyDown() override;                           // move down one line, may fast forwward
-    void doJoyUp() override;                             // move up one line, may fast forwward
+    void doJoyDown() override; // move down one line, may fast forwward
+    void doJoyUp() override;   // move up one line, may fast forwward
 
     // controller button pressed
-    void doCircle_Pressed() override;                    // default = leave menu.  cancel = true.
-    void doCross_Pressed() override;                     // default = leave menu.  cancel = false.
+    void doCircle_Pressed() override; // default = leave menu.  cancel = true.
+    void doCross_Pressed() override;  // default = leave menu.  cancel = false.
 
     // horizontal lists of choices like the options menu will probably override these virtuals
-    void doL1_Pressed() override { doPageUp(); }         // default = page up
-    void doR1_Pressed() override { doPageDown(); }       // default = page down
-    void doL2_Pressed() override { doHome(); }           // default = home
-    void doR2_Pressed() override { doEnd(); }            // default = end
+    void doL1_Pressed() override { doPageUp(); }   // default = page up
+    void doR1_Pressed() override { doPageDown(); } // default = page down
+    void doL2_Pressed() override { doHome(); }     // default = home
+    void doR2_Pressed() override { doEnd(); }      // default = end
 
     // keyboard
-    void doKeyDown() override;                           // move down one line
-    void doKeyUp() override;                             // move up one line
-    void doEnter() override { doCross_Pressed(); }       // default = doCross
-    void doEscape() override { doCircle_Pressed(); }     // default = doCircle
+    void doKeyDown() override;                       // move down one line
+    void doKeyUp() override;                         // move up one line
+    void doEnter() override { doCross_Pressed(); }   // default = doCross
+    void doEscape() override { doCircle_Pressed(); } // default = doCircle
     void doPageDown() override;
     void doPageUp() override;
     void doHome() override;
     void doEnd() override;
 
     FC_Font_Shared font;
-    bool useSmallerFont = false;    // useful for 2 column menu with long strings
+    bool useSmallerFont = false; // useful for 2 column menu with long strings
 
     // plain menu
     std::vector<LineDataType> lines; // these are the menu lines
     virtual int getVerticalSize() { return lines.size(); }
 
-    int selected = 0;               // the current selected index
-    int maxVisible = 8;             // the number of lines that can fit on the display (theme dependent)
-    int firstVisibleIndex = 0;      // current visible range on page
-    int lastVisibleIndex = 7;       // current visible range on page
-    int firstRow = 2;               // row 0 is the title.  this is the first row of the menu item lines
-    int yoffset = 0;                 // y offset for the line (y=fontHeight*line + yoffset).  set by renderLogo()
+    int selected = 0;          // the current selected index
+    int maxVisible = 8;        // the number of lines that can fit on the display (theme dependent)
+    int firstVisibleIndex = 0; // current visible range on page
+    int lastVisibleIndex = 7;  // current visible range on page
+    int firstRow = 2;          // row 0 is the title.  this is the first row of the menu item lines
+    int yoffset = 0;           // y offset for the line (y=fontHeight*line + yoffset).  set by renderLogo()
 
     // this is useful in menus that have blank lines like gui_networkMenu.cpp
     virtual bool skipSelectingThisLineWhenMovingByOne(int index) { return false; }
 
-    void adjustPageBy(int moveBy);  // move the page up or down by an amount
-    void computePagePosition();     // complete recompute of positions based on the selected value
+    void adjustPageBy(int moveBy); // move the page up or down by an amount
+    void computePagePosition();    // complete recompute of positions based on the selected value
 
-    bool changes=false;
+    bool changes = false;
     bool cancelled = false;
 };
 
 //*******************************
 // void GuiMenuBase<LineDataType>::init()
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::init()
-{
+template <typename LineDataType> void GuiMenuBase<LineDataType>::init() {
     font = gui->themeFont;
 
     maxVisible = atoi(gui->themeData.values["lines"].c_str());
@@ -87,11 +85,11 @@ void GuiMenuBase<LineDataType>::init()
     if (useSmallerFont) {
         // sometimes the left column will overwrite into the right column.
         // and the second column sometimes go off the right side.
-        font = gui->themeFonts[FONT_15_BOLD];   // use a smaller font
+        font = gui->themeFonts[FONT_15_BOLD]; // use a smaller font
         // compute the larger number of rows we can now display
         string themeFontSizeString = gui->themeData.values["fsize"];
         int themeFontSize = atoi(themeFontSizeString.c_str());
-        maxVisible = ( static_cast<float>(themeFontSize) / static_cast<float>(15) ) * static_cast<float>(maxVisible);
+        maxVisible = (static_cast<float>(themeFontSize) / static_cast<float>(15)) * static_cast<float>(maxVisible);
         lastVisibleIndex = firstVisibleIndex + maxVisible - 1;
     }
 }
@@ -100,8 +98,7 @@ void GuiMenuBase<LineDataType>::init()
 // GuiMenuBase<T>::adjustPageBy
 //*******************************
 // move the page up or down by an amount
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::adjustPageBy(int moveBy) {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::adjustPageBy(int moveBy) {
     selected += moveBy;
     firstVisibleIndex += moveBy;
     lastVisibleIndex += moveBy;
@@ -111,8 +108,7 @@ void GuiMenuBase<LineDataType>::adjustPageBy(int moveBy) {
 // GuiMenuBase<LineDataType>::computePagePosition
 //*******************************
 // complete recompute of positions based on the selected value
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::computePagePosition() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::computePagePosition() {
     if (getVerticalSize() == 0) {
         selected = 0;
         firstVisibleIndex = 0;
@@ -138,15 +134,14 @@ void GuiMenuBase<LineDataType>::computePagePosition() {
 //*******************************
 // GuiMenuBase<LineDataType>::renderLines
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::renderLines() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::renderLines() {
     if (selected >= 0 && getVerticalSize() > 0) {
         int row = firstRow;
         for (int i = firstVisibleIndex; i <= lastVisibleIndex; i++) {
             if (i < 0 || i >= getVerticalSize()) {
                 break;
             }
-            renderLineIndexOnRow(i, row);  // call virtual that knows how to display the data
+            renderLineIndexOnRow(i, row); // call virtual that knows how to display the data
             row++;
         }
     }
@@ -155,8 +150,7 @@ void GuiMenuBase<LineDataType>::renderLines() {
 //*******************************
 // GuiMenuBase<LineDataType>::renderSelectionBox
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::renderSelectionBox() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::renderSelectionBox() {
     if (!getVerticalSize() == 0) {
         gui->renderSelectionBox(selected - firstVisibleIndex + firstRow, yoffset, 0, font);
     }
@@ -165,9 +159,7 @@ void GuiMenuBase<LineDataType>::renderSelectionBox() {
 //*******************************
 // GuiMenuBase<LineDataType>::render
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::render()
-{
+template <typename LineDataType> void GuiMenuBase<LineDataType>::render() {
     SDL_RenderClear(renderer);
     gui->renderBackground();
     gui->renderTextBar();
@@ -188,8 +180,7 @@ void GuiMenuBase<LineDataType>::render()
 //*******************************
 // GuiMenuBase<LineDataType>::getTitle
 //*******************************
-template<typename LineDataType>
-std::string GuiMenuBase<LineDataType>::getTitle() {
+template <typename LineDataType> std::string GuiMenuBase<LineDataType>::getTitle() {
     return "****** MISSING TITLE ******";
 }
 
@@ -197,19 +188,15 @@ std::string GuiMenuBase<LineDataType>::getTitle() {
 // GuiMenuBase<LineDataType>::getStatusLine
 //*******************************
 // the default status line for menus.  override if needed.
-template<typename LineDataType>
-std::string GuiMenuBase<LineDataType>::getStatusLine() {
-    return _("Entry")+" " + to_string(selected + 1) + "/" + to_string(getVerticalSize()) +
-           "    |@L1|/|@R1| " + _("Page") +
-           "   |@X| " + _("Select") +
-           "   |@O| " + _("Close") + " |";
+template <typename LineDataType> std::string GuiMenuBase<LineDataType>::getStatusLine() {
+    return _("Entry") + " " + to_string(selected + 1) + "/" + to_string(getVerticalSize()) + "    |@L1|/|@R1| " +
+           _("Page") + "   |@X| " + _("Select") + "   |@O| " + _("Close") + " |";
 }
 
 //*******************************
 // GuiMenuBase<LineDataType>::doKeyDown
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doKeyDown() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doKeyDown() {
     Mix_PlayChannel(-1, gui->cursor, 0);
     if (getVerticalSize() > 1) {
         if (selected >= getVerticalSize() - 1) {
@@ -219,7 +206,7 @@ void GuiMenuBase<LineDataType>::doKeyDown() {
             adjustPageBy(1);
         } else {
             ++selected;
-            while (skipSelectingThisLineWhenMovingByOne(selected) &&  selected < getVerticalSize() - 1)
+            while (skipSelectingThisLineWhenMovingByOne(selected) && selected < getVerticalSize() - 1)
                 ++selected;
         }
     }
@@ -228,8 +215,7 @@ void GuiMenuBase<LineDataType>::doKeyDown() {
 //*******************************
 // GuiMenuBase<LineDataType>::doKeyUp
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doKeyUp() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doKeyUp() {
     Mix_PlayChannel(-1, gui->cursor, 0);
     if (getVerticalSize() > 1) {
         if (selected <= 0) {
@@ -239,7 +225,7 @@ void GuiMenuBase<LineDataType>::doKeyUp() {
             adjustPageBy(-1);
         } else {
             --selected;
-            while (skipSelectingThisLineWhenMovingByOne(selected) &&  selected > 1)
+            while (skipSelectingThisLineWhenMovingByOne(selected) && selected > 1)
                 --selected;
         }
     }
@@ -248,8 +234,7 @@ void GuiMenuBase<LineDataType>::doKeyUp() {
 //*******************************
 // GuiMenuBase<LineDataType>::doJoyDown
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doJoyDown() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doJoyDown() {
     do {
         doKeyDown();
         render();
@@ -259,8 +244,7 @@ void GuiMenuBase<LineDataType>::doJoyDown() {
 //*******************************
 // GuiMenuBase<LineDataType>::doJoyUp
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doJoyUp() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doJoyUp() {
     do {
         doKeyUp();
         render();
@@ -270,8 +254,7 @@ void GuiMenuBase<LineDataType>::doJoyUp() {
 //*******************************
 // GuiMenuBase<LineDataType>::doPageDown
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doPageDown() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doPageDown() {
     Mix_PlayChannel(-1, gui->home_up, 0);
     if (getVerticalSize() > 1) {
         if (lastVisibleIndex + maxVisible >= getVerticalSize()) {
@@ -286,8 +269,7 @@ void GuiMenuBase<LineDataType>::doPageDown() {
 //*******************************
 // GuiMenuBase<LineDataType>::doPageUp
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doPageUp() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doPageUp() {
     Mix_PlayChannel(-1, gui->home_down, 0);
     if (getVerticalSize() > 1) {
         if (firstVisibleIndex - maxVisible < 0) {
@@ -302,8 +284,7 @@ void GuiMenuBase<LineDataType>::doPageUp() {
 //*******************************
 // GuiMenuBase<LineDataType>::doHome
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doHome() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doHome() {
     Mix_PlayChannel(-1, gui->home_down, 0);
     if (getVerticalSize() > 1) {
         selected = 0;
@@ -314,8 +295,7 @@ void GuiMenuBase<LineDataType>::doHome() {
 //*******************************
 // GuiMenuBase<LineDataType>::doEnd
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doEnd() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doEnd() {
     Mix_PlayChannel(-1, gui->home_down, 0);
     if (getVerticalSize() > 1) {
         selected = getVerticalSize() - 1;
@@ -326,8 +306,7 @@ void GuiMenuBase<LineDataType>::doEnd() {
 //*******************************
 // GuiMenuBase::doCircle_Pressed
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doCircle_Pressed() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doCircle_Pressed() {
     Mix_PlayChannel(-1, gui->cancel, 0);
     cancelled = true;
     menuVisible = false;
@@ -336,12 +315,10 @@ void GuiMenuBase<LineDataType>::doCircle_Pressed() {
 //*******************************
 // GuiMenuBase<LineDataType>::doCross_Pressed
 //*******************************
-template<typename LineDataType>
-void GuiMenuBase<LineDataType>::doCross_Pressed() {
+template <typename LineDataType> void GuiMenuBase<LineDataType>::doCross_Pressed() {
     Mix_PlayChannel(-1, gui->cursor, 0);
     cancelled = false;
-    if (!lines.empty())
-    {
+    if (!lines.empty()) {
         menuVisible = false;
     }
 }

@@ -10,6 +10,5 @@
 // PsStatic
 //******************
 class PsStatic : public PsObj {
-public:
-
+  public:
 };

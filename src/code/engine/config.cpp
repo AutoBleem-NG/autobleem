@@ -11,9 +11,8 @@
 //*******************************
 // Config::Config()
 //*******************************
-Config::Config()
-{
-    std::string path=Env::getWorkingPath() + sep + "config.ini";
+Config::Config() {
+    std::string path = Env::getWorkingPath() + sep + "config.ini";
     inifile.load(path);
 
     // these are no longer used
@@ -26,40 +25,34 @@ Config::Config()
     inifile.values.erase("ui");
     save();
 
-    bool aDefaultWasSet {false};
-    if (inifile.values["language"]=="")
-    {
-        inifile.values["language"]="English";
+    bool aDefaultWasSet{false};
+    if (inifile.values["language"] == "") {
+        inifile.values["language"] = "English";
         aDefaultWasSet = true;
     }
-    if (inifile.values["aspect"]=="")
-    {
-        inifile.values["aspect"]="false";
+    if (inifile.values["aspect"] == "") {
+        inifile.values["aspect"] = "false";
         aDefaultWasSet = true;
     }
-    if (inifile.values["jewel"]=="")
-    {
-        inifile.values["jewel"]="default";
+    if (inifile.values["jewel"] == "") {
+        inifile.values["jewel"] = "default";
         aDefaultWasSet = true;
     }
-    if (inifile.values["music"]=="")
-    {
-        inifile.values["music"]="--";
+    if (inifile.values["music"] == "") {
+        inifile.values["music"] = "--";
         aDefaultWasSet = true;
     }
-    if (inifile.values["showingtimeout"]=="")
-    {
-        inifile.values["showingtimeout"]=DefaultShowingTimeoutText;
+    if (inifile.values["showingtimeout"] == "") {
+        inifile.values["showingtimeout"] = DefaultShowingTimeoutText;
         aDefaultWasSet = true;
     }
 
-    if (inifile.values["raconfig"]=="")
-    {
-        inifile.values["raconfig"]="true";
+    if (inifile.values["raconfig"] == "") {
+        inifile.values["raconfig"] = "true";
         aDefaultWasSet = true;
     }
 
-    inifile.values["pcsx"]="bleemsync";
+    inifile.values["pcsx"] = "bleemsync";
 
     if (aDefaultWasSet)
         save();
@@ -68,9 +61,8 @@ Config::Config()
 //*******************************
 // Config::save
 //*******************************
-void Config::save()
-{
-    inifile.values["pcsx"]="bleemsync";
-    std::string path=Env::getWorkingPath() + sep + "config.ini";
+void Config::save() {
+    inifile.values["pcsx"] = "bleemsync";
+    std::string path = Env::getWorkingPath() + sep + "config.ini";
     inifile.save(path);
 }

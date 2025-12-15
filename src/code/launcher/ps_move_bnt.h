@@ -10,7 +10,7 @@
 // PsMoveBtn
 //******************
 class PsMoveBtn : public PsObj {
-public:
+  public:
     float moveStep = 4;
     int maxMove = 15;
     int originaly = 0;

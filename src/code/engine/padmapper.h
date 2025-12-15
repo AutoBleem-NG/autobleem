@@ -9,23 +9,21 @@
 #include "../environment.h"
 #include "inifile.h"
 
-
 using namespace std;
 
-#define DUP         0
-#define DDOWN       1
-#define DLEFT       2
-#define DRIGHT      3
+#define DUP 0
+#define DDOWN 1
+#define DLEFT 2
+#define DRIGHT 3
 
-
-#define DIR_UP    1
-#define DIR_DOWN  2
-#define DIR_LEFT  3
+#define DIR_UP 1
+#define DIR_DOWN 2
+#define DIR_LEFT 3
 #define DIR_RIGHT 4
-#define DIR_NONE  5
+#define DIR_NONE 5
 
 class ControllerInfo {
-public:
+  public:
     SDL_GameController *pad;
     SDL_Joystick *joy;
     string name;
@@ -39,14 +37,13 @@ using namespace std;
 // PadMapper
 //******************
 class PadMapper {
-private:
+  private:
     string currentControllerdb = "";
     vector<string> gamedbpaths;
     vector<ControllerInfo *> connectedPads;
     bool status[4];
-public:
 
-
+  public:
     // loads all mapping files
     PadMapper() {
         status[0] = false;

@@ -21,12 +21,12 @@ using namespace std;
 //*******************************
 void GuiManager::init() {
     useSmallerFont = true;
-    GuiMenuBase::init();    // call the base class init()
+    GuiMenuBase::init(); // call the base class init()
 
     psGames.clear();
-    gui->db->getGames(&psGames);    // Create list of games
-    sort(psGames.begin(), psGames.end(), sortByTitle);  // sort by title
-    for (auto & psGame : psGames) {
+    gui->db->getGames(&psGames);                       // Create list of games
+    sort(psGames.begin(), psGames.end(), sortByTitle); // sort by title
+    for (auto &psGame : psGames) {
         // left column              right column
         // "title"                  "path"
         string path = DirEntry::removeSeparatorFromEndOfPath(psGame->folder);
@@ -38,14 +38,13 @@ void GuiManager::init() {
 //*******************************
 // GuiManager::render
 //*******************************
-void GuiManager::render()
-{
+void GuiManager::render() {
     SDL_RenderClear(renderer);
     gui->renderBackground();
     gui->renderTextBar();
     yoffset = gui->renderLogo(true);
 
-    gui->renderFreeSpace();     // this is why this menu's render is special instead of using the base class
+    gui->renderFreeSpace(); // this is why this menu's render is special instead of using the base class
 
     gui->renderTextLine(getTitle(), 0, yoffset, XALIGN_CENTER);
 
@@ -59,31 +58,24 @@ void GuiManager::render()
 //*******************************
 // GuiManager::getTitle
 //*******************************
-std::string GuiManager::getTitle() {
-    return "-=" + _("Game manager - Select game") + "=-";
-}
+std::string GuiManager::getTitle() { return "-=" + _("Game manager - Select game") + "=-"; }
 
 //*******************************
 // GuiManager::getStatusLine
 //*******************************
 string GuiManager::getStatusLine() {
-    return _("Game") + " " + to_string(selected + 1) + "/" + to_string(psGames.size()) +
-           "    |@L1|/|@R1| " + _("Page") +
-           "   |@X| " + _("Select") +
-           "  |@S| " + _("Delete Game") +
-           "  |@T| " + _("Flush covers") +
+    return _("Game") + " " + to_string(selected + 1) + "/" + to_string(psGames.size()) + "    |@L1|/|@R1| " +
+           _("Page") + "   |@X| " + _("Select") + "  |@S| " + _("Delete Game") + "  |@T| " + _("Flush covers") +
            " |@O| " + _("Close") + " |";
 }
 
 //*******************************
 // GuiManager::flushCovers
 //*******************************
-int GuiManager::flushCovers(const char *file, const struct stat* /*sb*/, int /*flag*/, struct FTW* /*s*/)
-{
+int GuiManager::flushCovers(const char *file, const struct stat * /*sb*/, int /*flag*/, struct FTW * /*s*/) {
     int retval = 0;
 
-    if (DirEntry::getFileExtension(file)=="png")
-    {
+    if (DirEntry::getFileExtension(file) == "png") {
         remove(file);
     }
 
@@ -95,9 +87,8 @@ int GuiManager::flushCovers(const char *file, const struct stat* /*sb*/, int /*f
 //*******************************
 void GuiManager::doCircle_Pressed() {
     Mix_PlayChannel(-1, gui->cancel, 0);
-    if (changes)
-    {
-        gui->forceScan=true;
+    if (changes) {
+        gui->forceScan = true;
     }
     menuVisible = false;
 }
@@ -126,10 +117,9 @@ void GuiManager::doSquare_Pressed() {
             if (success) {
                 PsGames currentGames;
                 gui->db->getGames(&currentGames);
-                int numberOfGamesRemainingWithSameSaveState = count_if(begin(currentGames), end(currentGames),
-                                                                       [&](const PsGamePtr &g) {
-                                                                           return g->ssFolder == gameSaveStateFolder;
-                                                                       });
+                int numberOfGamesRemainingWithSameSaveState =
+                    count_if(begin(currentGames), end(currentGames),
+                             [&](const PsGamePtr &g) { return g->ssFolder == gameSaveStateFolder; });
                 if (numberOfGamesRemainingWithSameSaveState == 0) {
                     GuiConfirm *confirm = new GuiConfirm(renderer);
                     confirm->label = _("Delete !SaveState folder for game") + " " + gameName + "?";
@@ -148,8 +138,8 @@ void GuiManager::doSquare_Pressed() {
         cout << "Failed to delete " << gameName << endl;
         gui->renderStatus(_("Failed to delete") + " " + gameName);
     }
-    gui->forceScan = true;  // in order for the sub dir hierarchy to be fixed we have to do a rescan
-    //menuVisible = false;
+    gui->forceScan = true; // in order for the sub dir hierarchy to be fixed we have to do a rescan
+    // menuVisible = false;
     init(); // refresh games list and menu item count
     render();
 }
@@ -159,20 +149,19 @@ void GuiManager::doSquare_Pressed() {
 //*******************************
 void GuiManager::doTriangle_Pressed() {
     Mix_PlayChannel(-1, gui->cursor, 0);
-    GuiConfirm * confirm = new GuiConfirm(renderer);
+    GuiConfirm *confirm = new GuiConfirm(renderer);
     confirm->label = _("Are you sure you want to flush all covers?");
     confirm->show();
     bool delCovers = confirm->result;
     delete confirm;
 
-    if (delCovers)
-    {
+    if (delCovers) {
         cout << "Trying to delete covers" << endl;
         gui->renderStatus(_("Please wait ... deleting covers..."));
 
         int errors = 0;
         int flags = FTW_DEPTH | FTW_PHYS | FTW_CHDIR;
-        //cout << gui->pathToGamesDir << endl;
+        // cout << gui->pathToGamesDir << endl;
         if (nftw(DirEntry::fixPath(gui->pathToGamesDir).c_str(), flushCovers, 1, flags) != 0) {
             errors++;
         }
@@ -189,8 +178,7 @@ void GuiManager::doTriangle_Pressed() {
 //*******************************
 void GuiManager::doCross_Pressed() {
     Mix_PlayChannel(-1, gui->cursor, 0);
-    if (!psGames.empty())
-    {
+    if (!psGames.empty()) {
         string selectedGameFolder = psGames[selected]->folder;
         GuiEditor *editor = new GuiEditor(renderer);
         editor->gameData = psGames[selected];
@@ -200,8 +188,7 @@ void GuiManager::doCross_Pressed() {
         // change "/media/Games/Racing/Driver 2" to "Driver 2"
         editor->gameIni.entry = DirEntry::getFileNameFromPath(folderNoLast);
         editor->show();
-        if (editor->changes)
-        {
+        if (editor->changes) {
             changes = true;
         }
         selected = 0;
@@ -210,10 +197,8 @@ void GuiManager::doCross_Pressed() {
 
         init();
         int pos = 0;
-        for (const auto & psGame : psGames)
-        {
-            if (psGame->folder == selectedGameFolder)
-            {
+        for (const auto &psGame : psGames) {
+            if (psGame->folder == selectedGameFolder) {
                 selected = pos;
                 firstVisibleIndex = pos;
                 lastVisibleIndex = firstVisibleIndex + maxVisible - 1;

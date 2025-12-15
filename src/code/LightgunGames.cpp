@@ -25,7 +25,9 @@ LightgunGames::LightgunGames() {
     lightgunGamePaths = Util::ReadTextFileAsAStringArray(filename, true);
 
     // there shouldn't be any blank lines unless someone hand edited it.  but just to be sure.
-    lightgunGamePaths.erase(remove_if(begin(lightgunGamePaths), end(lightgunGamePaths), [] (const string& str) { return str == ""; }), end(lightgunGamePaths));
+    lightgunGamePaths.erase(
+        remove_if(begin(lightgunGamePaths), end(lightgunGamePaths), [](const string &str) { return str == ""; }),
+        end(lightgunGamePaths));
 }
 
 //********************
@@ -36,27 +38,22 @@ string LightgunGames::PathForLightgunFile(PsGamePtr game) {
         return "";
 
     if (game->foreign)
-        return game->image_path;   // Retroarch roms game
+        return game->image_path; // Retroarch roms game
     else
-        return game->folder;       // /Games PS1 game
-   
+        return game->folder; // /Games PS1 game
 }
 
 //********************
 // UpdateFile
 //********************
-void LightgunGames::UpdateFile() {
-    Util::WriteStringsToTextFile(lightgunGamePaths, filename, true);
-}
+void LightgunGames::UpdateFile() { Util::WriteStringsToTextFile(lightgunGamePaths, filename, true); }
 
 //********************
 // IsGameALightgunGame
 //********************
-bool LightgunGames::IsGameALightgunGame(PsGamePtr game) {
-    return IsGameALightgunGame(PathForLightgunFile(game));
-}
+bool LightgunGames::IsGameALightgunGame(PsGamePtr game) { return IsGameALightgunGame(PathForLightgunFile(game)); }
 
-bool LightgunGames::IsGameALightgunGame(const std::string& gamepath) {
+bool LightgunGames::IsGameALightgunGame(const std::string &gamepath) {
     if (gamepath == "")
         return false;
 
@@ -72,7 +69,7 @@ void LightgunGames::AddGame(PsGamePtr game) {
         AddGame(PathForLightgunFile(game));
 }
 
-void LightgunGames::AddGame(const std::string& gamepath) {
+void LightgunGames::AddGame(const std::string &gamepath) {
     if (gamepath == "")
         return;
 
@@ -90,7 +87,7 @@ void LightgunGames::RemoveGame(PsGamePtr game) {
         RemoveGame(PathForLightgunFile(game));
 }
 
-void LightgunGames::RemoveGame(const std::string& gamepath) {
+void LightgunGames::RemoveGame(const std::string &gamepath) {
     if (gamepath == "")
         return;
 
@@ -103,7 +100,7 @@ void LightgunGames::RemoveGame(const std::string& gamepath) {
 //********************
 void LightgunGames::PurgeGamesNotFound() {
     lightgunGamePaths.erase(remove_if(begin(lightgunGamePaths), end(lightgunGamePaths),
-                                      [] (const string& gamepath) { return !DirEntry::exists(gamepath); }),
+                                      [](const string &gamepath) { return !DirEntry::exists(gamepath); }),
                             end(lightgunGamePaths));
     UpdateFile();
 }
@@ -119,15 +116,17 @@ PsGames LightgunGames::GetAllLightgunGames() {
     // add PS1 lightgun games
     PsGames psgames;
     Gui::getInstance()->db->getGames(&psgames);
-    copy_if(begin(psgames), end(psgames), back_inserter(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
+    copy_if(begin(psgames), end(psgames), back_inserter(lightgunGames),
+            [&](PsGamePtr game) { return IsGameALightgunGame(game); });
 
     // add RA lightgun games
     shared_ptr<RAIntegrator> integrator = RAIntegrator::getInstance();
     PsGames raGames = integrator->getAllRAGames();
-    copy_if(begin(raGames), end(raGames), back_inserter(lightgunGames), [&] (PsGamePtr game) { return IsGameALightgunGame(game); });
+    copy_if(begin(raGames), end(raGames), back_inserter(lightgunGames),
+            [&](PsGamePtr game) { return IsGameALightgunGame(game); });
 
-    sort(begin(lightgunGames), end(lightgunGames), [] (PsGamePtr game1, PsGamePtr game2) { return game1->title < game2->title; });
+    sort(begin(lightgunGames), end(lightgunGames),
+         [](PsGamePtr game1, PsGamePtr game2) { return game1->title < game2->title; });
 
     return lightgunGames;
 }
-

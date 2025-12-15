@@ -9,13 +9,11 @@
 // Coverdb
 //******************
 class Coverdb {
-public:
+  public:
     Database *covers[3];
     std::string regionStr[3];
 
     bool isValid();
     Coverdb();
     ~Coverdb();
-
 };
-

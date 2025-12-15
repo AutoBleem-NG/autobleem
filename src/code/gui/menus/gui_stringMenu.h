@@ -8,7 +8,7 @@
 // class GuiStringMenu
 //*******************************
 class GuiStringMenu : public GuiMenuBase<std::string> {
-public:
+  public:
     explicit GuiStringMenu(SDL_Shared<SDL_Renderer> _renderer) : GuiMenuBase(_renderer) {}
 
     std::string getTitle() override { return GuiMenuBase::getTitle(); }

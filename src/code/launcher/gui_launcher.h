@@ -20,10 +20,10 @@
 #include "ra_integrator.h"
 #include "../gui/gui.h"
 
-#define STATE_GAMES    0
-#define STATE_SET      1
-#define STATE_RESUME   2
-#define STATE_INFO     3
+#define STATE_GAMES 0
+#define STATE_SET 1
+#define STATE_RESUME 2
+#define STATE_INFO 3
 
 extern const SDL_Color brightWhite;
 
@@ -31,7 +31,7 @@ extern const SDL_Color brightWhite;
 // GuiLauncher
 //******************
 class GuiLauncher : public GuiScreen {
-public:
+  public:
     void init() override;
     ~GuiLauncher() override;
     void render() override;
@@ -79,7 +79,7 @@ public:
 
     // a button is released
     void loop_joyButtonReleased();
-    void loop_prevNextGameFirstLetter(bool next);   // false is prev, true is next
+    void loop_prevNextGameFirstLetter(bool next); // false is prev, true is next
     void loop_prevGameFirstLetter();
     void loop_nextGameFirstLetter();
 
@@ -93,25 +93,26 @@ public:
     shared_ptr<Gui> gui;
 
     int currentSet = SET_PS1;
-    int currentPS1_SelectState = SET_PS1_All_Games;    // SET_PS1_All_Games, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_Games_Subdir
+    int currentPS1_SelectState =
+        SET_PS1_All_Games; // SET_PS1_All_Games, SET_PS1_Internal_Only, SET_PS1_Favorites, SET_PS1_Games_Subdir
     void switchSet(int newSet, bool noForce);
     void showSetName();
 
-    void getGames_SET_SUBDIR(PsGames* gamesList, int rowIndex);
-    void appendGames_SET_INTERNAL(PsGames* gamesList);
-    void getGames_SET_FAVORITE(PsGames* gamesList);
-    void getGames_SET_HISTORY(PsGames* gamesList);
+    void getGames_SET_SUBDIR(PsGames *gamesList, int rowIndex);
+    void appendGames_SET_INTERNAL(PsGames *gamesList);
+    void getGames_SET_FAVORITE(PsGames *gamesList);
+    void getGames_SET_HISTORY(PsGames *gamesList);
 
     PsGames getAllPS1Games(bool includeUSB, bool includeInternal);
 
-    void getGames_SET_RETROARCH(const std::string& playlistName, PsGames* gamesList);
-    void getGames_SET_LIGHTGUN(PsGames* gamesList);
-    void getGames_SET_APPS(PsGames* gamesList);
+    void getGames_SET_RETROARCH(const std::string &playlistName, PsGames *gamesList);
+    void getGames_SET_LIGHTGUN(PsGames *gamesList);
+    void getGames_SET_APPS(PsGames *gamesList);
 
     // current USB Game Dir
     int currentUSBGameDirIndex = 0;
     std::string currentUSBGameDirName = "";
-    
+
     // current RetroArch Playlist
     int currentRAPlaylistIndex = 0;
     std::string currentRAPlaylistName = "";
@@ -119,7 +120,7 @@ public:
     NotificationLines notificationLines; // top two lines of the screen
     int numberOfNonDuplicatedGamesInCarousel = 0;
 
-    bool powerOffShift=false;
+    bool powerOffShift = false;
 
     PsCarousel carouselPositions;
 
@@ -136,18 +137,18 @@ public:
     PsObj *oButton;
     PsObj *tButton;
     PsMenu *psOptionsMenu;
-    PsStateSelector * sselector= nullptr;
+    PsStateSelector *sselector = nullptr;
 
-    SDL_Color fgColor { 255, 255, 255, SDL_ALPHA_OPAQUE };
-    SDL_Color secColor { 100, 100, 100, SDL_ALPHA_OPAQUE };
+    SDL_Color fgColor{255, 255, 255, SDL_ALPHA_OPAQUE};
+    SDL_Color secColor{100, 100, 100, SDL_ALPHA_OPAQUE};
 
     std::vector<PsObj *> staticElements;
     std::vector<PsObj *> frontElemets;
     std::vector<PsObj *> menuElements;
     std::vector<PsObj *> carousel;
 
-    PsCenterLabel * menuHead;
-    PsCenterLabel * menuText;
+    PsCenterLabel *menuHead;
+    PsCenterLabel *menuText;
 
     std::string gameName;
     std::string publisher;
@@ -156,7 +157,7 @@ public:
     std::string region;
     std::string players;
 
-    bool staticMeta=false;
+    bool staticMeta = false;
     bool gameInfoVisible = true;
     bool scrolling = false;
     using GuiScreen::GuiScreen;
@@ -167,7 +168,12 @@ public:
     std::vector<PsCarouselGame> carouselGames;
     int selGameIndex = 0;
     bool selGameIndexInCarouselGamesIsValid() { return ((selGameIndex >= 0) && (selGameIndex < carouselGames.size())); }
-    PsGamePtr GetSelectedCarouselGame() { if (selGameIndexInCarouselGamesIsValid()) return carouselGames[selGameIndex]; else return nullptr; }
+    PsGamePtr GetSelectedCarouselGame() {
+        if (selGameIndexInCarouselGamesIsValid())
+            return carouselGames[selGameIndex];
+        else
+            return nullptr;
+    }
 
     std::shared_ptr<RAIntegrator> raIntegrator;
     std::vector<std::string> raPlaylists;
@@ -183,5 +189,7 @@ public:
     void switchState(int state, int time);
     void showOptions();
 
-    static bool sortByTitle(const PsGamePtr &i, const PsGamePtr &j) { return SortByCaseInsensitive(i->title, j->title); }
+    static bool sortByTitle(const PsGamePtr &i, const PsGamePtr &j) {
+        return SortByCaseInsensitive(i->title, j->title);
+    }
 };

@@ -39,7 +39,6 @@ void GuiMcManager::loadAssets() {
     pencilColumn = 0;
     pencilRow = 0;
     pencilMemcard = 1;
-
 }
 
 void GuiMcManager::pencilDown() {
@@ -59,7 +58,10 @@ void GuiMcManager::pencilLeft() {
         pencilColumn--;
     } else {
         pencilColumn = 2;
-        if (pencilMemcard == 1) pencilMemcard = 2; else pencilMemcard = 1;
+        if (pencilMemcard == 1)
+            pencilMemcard = 2;
+        else
+            pencilMemcard = 1;
     }
 }
 
@@ -68,10 +70,11 @@ void GuiMcManager::pencilRight() {
         pencilColumn++;
     } else {
         pencilColumn = 0;
-        if (pencilMemcard == 1) pencilMemcard = 2; else pencilMemcard = 1;
+        if (pencilMemcard == 1)
+            pencilMemcard = 2;
+        else
+            pencilMemcard = 1;
     }
-
-
 }
 
 void GuiMcManager::renderPencil(int memcard, int col, int row) {
@@ -87,10 +90,8 @@ void GuiMcManager::renderPencil(int memcard, int col, int row) {
     SDL_RenderCopy(renderer, mcPencil, nullptr, &pencilPos);
 }
 
-void GuiMcManager::trySave()
-{
-    if (changes)
-    {
+void GuiMcManager::trySave() {
+    if (changes) {
         auto confirm = new GuiConfirm(renderer);
         confirm->label = _("Do you want to save memcards data ?");
         confirm->show();
@@ -109,16 +110,11 @@ void GuiMcManager::renderStatic() {
     gui->renderBackground();
     gui->renderTextBar();
     gui->renderTextLine("-=" + _("Memory Card Manager") + "=-", 1, 1, XALIGN_CENTER);
-    gui->renderStatus(
-            "|@Start| " + _("Select Right Card") +
-            " | |@Select| " + _("Defragment Card") +
-            "   | " + "|@X| " + _("Reload Cards") +
-            "   | " + "|@T| " + _("Delete") +
-            " | " + "|@S| " + _("Copy") +
-            " | " + "|@O| " + _("Go back") +
-            "|");
+    gui->renderStatus("|@Start| " + _("Select Right Card") + " | |@Select| " + _("Defragment Card") + "   | " +
+                      "|@X| " + _("Reload Cards") + "   | " + "|@T| " + _("Delete") + " | " + "|@S| " + _("Copy") +
+                      " | " + "|@O| " + _("Go back") + "|");
 
-    //Draw dot matrix image
+    // Draw dot matrix image
     SDL_Rect input, output;
     SDL_QueryTexture(mcGrid, NULL, NULL, &input.w, &input.h);
     SDL_QueryTexture(mcGrid, NULL, NULL, &output.w, &output.h);
@@ -129,7 +125,6 @@ void GuiMcManager::renderStatic() {
     output.x = 940;
     output.y = 80;
     SDL_RenderCopy(renderer, mcGrid, &input, &output);
-
 }
 
 void GuiMcManager::renderMemCardIcons(int memcard) {
@@ -149,7 +144,6 @@ void GuiMcManager::renderMemCardIcons(int memcard) {
         start = xStartMC2;
         currentCard = memcard2;
     }
-
 
     for (int i = 0; i < 15; i++) {
         int col = i % 3;
@@ -187,8 +181,6 @@ void GuiMcManager::renderMetaInfo() {
     gui->renderTextLine(gameID, 3, 1, XALIGN_CENTER, true);
     gui->renderTextLine(pCode, 4, 1, XALIGN_CENTER, true);
 
-
-
     gui->renderTextLine(leftCardName, -500, 1, XALIGN_LEFT, true);
     gui->renderTextLine(rightCardName, -500, 1, XALIGN_RIGHT, true);
 }
@@ -197,15 +189,14 @@ void GuiMcManager::render() {
     shared_ptr<Gui> gui(Gui::getInstance());
     // render static elements
     renderStatic();
-    //Draw Memcard images and meta info
+    // Draw Memcard images and meta info
     renderMemCardIcons(1);
     renderMemCardIcons(2);
     renderMetaInfo();
 
-    //Draw the pencil
+    // Draw the pencil
     renderPencil(pencilMemcard, pencilColumn, pencilRow);
     SDL_RenderPresent(renderer);
-
 }
 
 void GuiMcManager::loop() {
@@ -221,7 +212,6 @@ void GuiMcManager::loop() {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
-
                 }
             }
             // this is for pc Only
@@ -229,183 +219,172 @@ void GuiMcManager::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_CONTROLLERBUTTONDOWN:
-                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
-                        Mix_PlayChannel(-1, gui->cancel, 0);
-                        trySave();
-                        menuVisible = false;
-                    };
-                    if (e.cbutton.button == SDL_BTN_CROSS) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        trySave();
-                        memcard1->load_file(card1path);
-                        memcard2->load_file(card2path);
-                        changes = false;
-                    };
-                    if (e.cbutton.button == SDL_BTN_SELECT) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        CardEdit *newCard = new CardEdit(renderer);
-                        CardEdit *src;
-                        if (pencilMemcard == 1) {
-                            src = memcard1;
+            case SDL_CONTROLLERBUTTONDOWN:
+                if (e.cbutton.button == SDL_BTN_CIRCLE) {
+                    Mix_PlayChannel(-1, gui->cancel, 0);
+                    trySave();
+                    menuVisible = false;
+                };
+                if (e.cbutton.button == SDL_BTN_CROSS) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    trySave();
+                    memcard1->load_file(card1path);
+                    memcard2->load_file(card2path);
+                    changes = false;
+                };
+                if (e.cbutton.button == SDL_BTN_SELECT) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    CardEdit *newCard = new CardEdit(renderer);
+                    CardEdit *src;
+                    if (pencilMemcard == 1) {
+                        src = memcard1;
 
-                        } else {
-                            src = memcard2;
-
-                        }
-                        int last = 0;
-                        for (int slot = 0; slot < 15; slot++) {
-                            if (!src->is_slot_top(slot))
-                            {
-                                continue;
-                            }
-                            int gameSize = src->getGameSlots(slot).size();
-                            vector<int> destSlots = newCard->findEmptySlot(gameSize);
-
-                            if (destSlots.size() > 0)
-                            {
-                                Mix_PlayChannel(-1, gui->cursor, 0);
-                                unsigned char * buffer;
-                                int exportSize = src->getExportSize(slot);
-                                buffer = new unsigned char[exportSize];
-                                src->exportGame(slot,buffer);
-                                newCard->importGame(buffer,exportSize);
-                                delete buffer;
-                                changes = true;
-
-                            }
-                        }
-                        if (pencilMemcard == 1) {
-                            memcard1 = newCard;
-                            delete(src);
-                        } else
-                        {
-                            memcard2 = newCard;
-                            delete(src);
-                        };
+                    } else {
+                        src = memcard2;
                     }
-
-                    if (e.cbutton.button == SDL_BTN_START) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        trySave();
-                        auto select = new GuiSelectMemcard(renderer);
-                        select->listType=MC_MANAGER;
-                        select->show();
-                        if (select->selected!=-1)
-                        {
-                            if (select->selected==0) {
-                                rightCardName = rightCardName_ori;
-                                card2path = cardPath_ori;
-                                memcard2->load_file(card2path);
-                            } else
-                            {
-                                // this is custom
-                                int cardNumCustom=atoi(select->cardSelected.substr(1,1).c_str());
-                                string memcard = select->cardSelected.substr(4);
-                                string cardPath =  Env::getPathToMemCardsDir() + sep + memcard  + "/card" + to_string(cardNumCustom) + ".mcd";
-
-                                rightCardName = select->cardSelected;
-                                card2path = cardPath;
-                                cout << "Card:" << cardPath << endl;
-                                memcard2->load_file(card2path);
-                            }
-                            changes = false;
-                        }
-                        delete select;
-                    }
-                    if (e.cbutton.button == SDL_BTN_TRIANGLE) {
-                        CardEdit *card;
-                        if (pencilMemcard == 1) {
-                            card = memcard1;
-                        } else {
-                            card = memcard2;
-                        }
-                        int slot = pencilColumn + pencilRow * 3;
-                        if (!card->is_slot_top(slot)) {
-                            Mix_PlayChannel(-1, gui->cancel, 0);
-                            continue;
-                        }
-                        if (card->get_slot_is_free(slot)) {
-                            Mix_PlayChannel(-1, gui->cursor, 0);
-                            continue;
-                        }
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        card->delete_game(slot);
-                        changes=true;
-
-
-                    };
-                    if (e.cbutton.button == SDL_BTN_SQUARE) {
-                        CardEdit *src, *dest;
-                        if (pencilMemcard == 1) {
-                            src = memcard1;
-                            dest = memcard2;
-                        } else {
-                            src = memcard2;
-                            dest= memcard1;
-                        }
-                        int slot = pencilColumn + pencilRow * 3;
+                    int last = 0;
+                    for (int slot = 0; slot < 15; slot++) {
                         if (!src->is_slot_top(slot)) {
-                            Mix_PlayChannel(-1, gui->cancel, 0);
                             continue;
                         }
-                        if (src->get_slot_is_free(slot)) {
-                            Mix_PlayChannel(-1, gui->cursor, 0);
-                            continue;
-                        }
-
                         int gameSize = src->getGameSlots(slot).size();
-                        vector<int> destSlots = dest->findEmptySlot(gameSize);
+                        vector<int> destSlots = newCard->findEmptySlot(gameSize);
 
-                        if (destSlots.size() > 0)
-                        {
+                        if (destSlots.size() > 0) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
-                            unsigned char * buffer;
+                            unsigned char *buffer;
                             int exportSize = src->getExportSize(slot);
                             buffer = new unsigned char[exportSize];
-
-                            src->exportGame(slot,buffer);
-                            dest->importGame(buffer,exportSize);
+                            src->exportGame(slot, buffer);
+                            newCard->importGame(buffer, exportSize);
                             delete buffer;
                             changes = true;
-                        } else
-                        {
-                            Mix_PlayChannel(-1, gui->cancel, 0);
                         }
+                    }
+                    if (pencilMemcard == 1) {
+                        memcard1 = newCard;
+                        delete (src);
+                    } else {
+                        memcard2 = newCard;
+                        delete (src);
                     };
-                    break;
+                }
 
-                case SDL_CONTROLLERHATMOTIONDOWN:  /* Handle Joystick Motion */
-                case SDL_CONTROLLERHATMOTIONUP:
-                    if (gui->mapper.isCenter(&e)) {
+                if (e.cbutton.button == SDL_BTN_START) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    trySave();
+                    auto select = new GuiSelectMemcard(renderer);
+                    select->listType = MC_MANAGER;
+                    select->show();
+                    if (select->selected != -1) {
+                        if (select->selected == 0) {
+                            rightCardName = rightCardName_ori;
+                            card2path = cardPath_ori;
+                            memcard2->load_file(card2path);
+                        } else {
+                            // this is custom
+                            int cardNumCustom = atoi(select->cardSelected.substr(1, 1).c_str());
+                            string memcard = select->cardSelected.substr(4);
+                            string cardPath = Env::getPathToMemCardsDir() + sep + memcard + "/card" +
+                                              to_string(cardNumCustom) + ".mcd";
 
+                            rightCardName = select->cardSelected;
+                            card2path = cardPath;
+                            cout << "Card:" << cardPath << endl;
+                            memcard2->load_file(card2path);
+                        }
+                        changes = false;
                     }
-                    if (gui->mapper.isLeft(&e)) {
+                    delete select;
+                }
+                if (e.cbutton.button == SDL_BTN_TRIANGLE) {
+                    CardEdit *card;
+                    if (pencilMemcard == 1) {
+                        card = memcard1;
+                    } else {
+                        card = memcard2;
+                    }
+                    int slot = pencilColumn + pencilRow * 3;
+                    if (!card->is_slot_top(slot)) {
+                        Mix_PlayChannel(-1, gui->cancel, 0);
+                        continue;
+                    }
+                    if (card->get_slot_is_free(slot)) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
-                        pencilLeft();
+                        continue;
                     }
-                    if (gui->mapper.isRight(&e)) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    card->delete_game(slot);
+                    changes = true;
+                };
+                if (e.cbutton.button == SDL_BTN_SQUARE) {
+                    CardEdit *src, *dest;
+                    if (pencilMemcard == 1) {
+                        src = memcard1;
+                        dest = memcard2;
+                    } else {
+                        src = memcard2;
+                        dest = memcard1;
+                    }
+                    int slot = pencilColumn + pencilRow * 3;
+                    if (!src->is_slot_top(slot)) {
+                        Mix_PlayChannel(-1, gui->cancel, 0);
+                        continue;
+                    }
+                    if (src->get_slot_is_free(slot)) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
-                        pencilRight();
+                        continue;
                     }
-                    if (gui->mapper.isUp(&e)) {
+
+                    int gameSize = src->getGameSlots(slot).size();
+                    vector<int> destSlots = dest->findEmptySlot(gameSize);
+
+                    if (destSlots.size() > 0) {
                         Mix_PlayChannel(-1, gui->cursor, 0);
-                        pencilUp();
+                        unsigned char *buffer;
+                        int exportSize = src->getExportSize(slot);
+                        buffer = new unsigned char[exportSize];
+
+                        src->exportGame(slot, buffer);
+                        dest->importGame(buffer, exportSize);
+                        delete buffer;
+                        changes = true;
+                    } else {
+                        Mix_PlayChannel(-1, gui->cancel, 0);
                     }
-                    if (gui->mapper.isDown(&e)) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        pencilDown();
-                    }
-                    break;
+                };
+                break;
+
+            case SDL_CONTROLLERHATMOTIONDOWN: /* Handle Joystick Motion */
+            case SDL_CONTROLLERHATMOTIONUP:
+                if (gui->mapper.isCenter(&e)) {
+                }
+                if (gui->mapper.isLeft(&e)) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    pencilLeft();
+                }
+                if (gui->mapper.isRight(&e)) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    pencilRight();
+                }
+                if (gui->mapper.isUp(&e)) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    pencilUp();
+                }
+                if (gui->mapper.isDown(&e)) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    pencilDown();
+                }
+                break;
             }
         }
         counter++;
         if (counter > 5) {
             animFrame++;
-            if (animFrame > 2) animFrame = 0;
+            if (animFrame > 2)
+                animFrame = 0;
             counter = 0;
         }
         render();
     }
 }
-

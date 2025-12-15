@@ -2,7 +2,7 @@
 
 #include <string>
 
-#ifndef NDEBUG  // if debug build
+#ifndef NDEBUG // if debug build
 //******************
 // DebugTimer
 //******************
@@ -13,11 +13,11 @@ struct DebugTimer {
     uint32_t ticks_start = 0;
     uint32_t ticks_end = 0;
 
-    explicit DebugTimer(const std::string & _description);
+    explicit DebugTimer(const std::string &_description);
     ~DebugTimer();
 };
 #else // release build
 struct DebugTimer {
-    DebugTimer(const std::string & _description = "") {};
+    DebugTimer(const std::string &_description = "") {};
 };
 #endif

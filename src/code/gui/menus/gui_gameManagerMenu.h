@@ -11,7 +11,7 @@
 // GuiManager
 //********************
 class GuiManager : public GuiTwoColumnStringMenu {
-public:
+  public:
     explicit GuiManager(SDL_Shared<SDL_Renderer> _renderer) : GuiTwoColumnStringMenu(_renderer) {}
 
     void init() override;

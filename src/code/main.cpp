@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   main.cpp
  * Author: screemer
  *
@@ -29,7 +29,7 @@
 
 using namespace std;
 
-Database * db;
+Database *db;
 
 // these are defined in environment.h and are meant to not be modified once they are initialized here.
 extern bool private_singleArgPassed;
@@ -43,7 +43,7 @@ extern string private_pathToInternalDBFile;
 //*******************************
 // Search for games with supported extension and move to sub-dir
 // returns true is any files moved into sub-dirs
-bool copyGameFilesInGamesDirToSubDirs(const string & path){
+bool copyGameFilesInGamesDirToSubDirs(const string &path) {
     bool ret = false;
     string fileExt;
     string filenameWE;
@@ -54,32 +54,32 @@ bool copyGameFilesInGamesDirToSubDirs(const string & path){
     extensions.push_back("cue");
     extensions.push_back("chd");
 
-    //Getting all files in USBGames Dir
+    // Getting all files in USBGames Dir
     DirEntries globalFileList = DirEntry::diru(path);
     DirEntries fileList = DirEntry::getFilesWithExtension(path, globalFileList, extensions);
 
-    //On first run, we won't process bin/img files, as cue file may handle a part of them
-    for (const auto &entry : fileList){
+    // On first run, we won't process bin/img files, as cue file may handle a part of them
+    for (const auto &entry : fileList) {
         Gui::splash(_("Moving :") + " " + entry.name);
         fileExt = DirEntry::getFileExtension(entry.name);
         filenameWE = DirEntry::getFileNameWithoutExtension(entry.name);
-        //Checking if file exists
-        if(access((path + sep + entry.name).c_str(),F_OK) != -1){
-            if(fileExt == "cue"){
+        // Checking if file exists
+        if (access((path + sep + entry.name).c_str(), F_OK) != -1) {
+            if (fileExt == "cue") {
                 binList = DirEntry::cueToBinList(path + sep + entry.name);
-                if(!binList.empty()){
-                    //Create directory for game
+                if (!binList.empty()) {
+                    // Create directory for game
                     DirEntry::createDir(path + sep + filenameWE);
-                    //Move cue file
+                    // Move cue file
                     DirEntry::renameFile(path + "/" + entry.name, path + sep + filenameWE + "/" + entry.name);
-                    //Move bin files
-                    for (const auto &bin : binList){
+                    // Move bin files
+                    for (const auto &bin : binList) {
                         Gui::splash(_("Moving :") + " " + bin);
                         DirEntry::renameFile(path + sep + bin, path + sep + filenameWE + sep + bin);
                     }
                     ret = true;
                 }
-            }else{
+            } else {
                 DirEntry::createDir(path + sep + filenameWE);
 
                 DirEntry::renameFile(path + sep + entry.name, path + sep + filenameWE + sep + entry.name);
@@ -88,17 +88,17 @@ bool copyGameFilesInGamesDirToSubDirs(const string & path){
         }
     }
 
-    //Next we will read only bin and img files
+    // Next we will read only bin and img files
     extensions.clear();
     extensions.push_back("img");
     extensions.push_back("bin");
     fileList = DirEntry::getFilesWithExtension(path, globalFileList, extensions);
-    for (const auto &entry : fileList){
+    for (const auto &entry : fileList) {
         Gui::splash(_("Moving :") + " " + entry.name);
         fileExt = DirEntry::getFileExtension(entry.name);
         filenameWE = DirEntry::getFileNameWithoutExtension(entry.name);
-        //Checking if file exists
-        if(access((path + sep + entry.name).c_str(),F_OK) != -1){
+        // Checking if file exists
+        if (access((path + sep + entry.name).c_str(), F_OK) != -1) {
             DirEntry::createDir(path + sep + filenameWE);
             DirEntry::renameFile(path + sep + entry.name, path + sep + filenameWE + sep + entry.name);
             ret = true;
@@ -130,8 +130,7 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
     }
 
     // delete all data in all tables
-    if (!db->truncate())
-    {
+    if (!db->truncate()) {
         gui->drawText("ERROR IN DB");
         sleep(1);
         return EXIT_FAILURE;
@@ -144,7 +143,8 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
     PsGames psGames;
     db->getGames(&psGames);
     for (PsGamePtr savedGame : gamesWithHistoryOrLastPlayed) {
-        auto it = find_if(begin(psGames), end(psGames), [&](PsGamePtr psGame) { return psGame->folder == savedGame->folder; });
+        auto it = find_if(begin(psGames), end(psGames),
+                          [&](PsGamePtr psGame) { return psGame->folder == savedGame->folder; });
         if (it != end(psGames)) {
             db->updateHistory((*it)->gameId, savedGame->history);
             db->updateDatePlayed((*it)->gameId, savedGame->last_played);
@@ -180,17 +180,17 @@ void rewriteGamelistXml() {
     xml << "<?xml version=\"1.0\"?>" << endl;
     xml << "<gameList>" << endl;
 
-    auto makeGamesPathRelative = [] (const string& oldPath) -> string {
-        string newPath=oldPath;
+    auto makeGamesPathRelative = [](const string &oldPath) -> string {
+        string newPath = oldPath;
         size_t pos = newPath.find("/Games");
         if (pos != string::npos) {
-            newPath.erase(0, pos-1 + sizeof("/Games"));
+            newPath.erase(0, pos - 1 + sizeof("/Games"));
             newPath = "." + newPath;
         }
         return newPath;
     };
 
-    for (const auto& game : currentGames) {
+    for (const auto &game : currentGames) {
         xml << "\t<game>" << endl;
 
         xml << "\t\t<path>" << makeGamesPathRelative(game->folder) << "</path>" << endl;
@@ -216,7 +216,6 @@ int main(int argc, char *argv[]) {
     Env::autobleemKernel = DirEntry::exists("/autobleem");
     shared_ptr<Lang> lang(Lang::getInstance());
 
-
     if (argc == 1 + 1) {
         // the single arg is the path to the usb drive
         private_singleArgPassed = true;
@@ -228,15 +227,14 @@ int main(int argc, char *argv[]) {
         // the two args are the path to the regional.db file and the path to the /Games dir on the usb drive
         private_singleArgPassed = false;
         private_pathToRegionalDBFile = argv[1];
-#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
-        private_pathToInternalDBFile = "internal.db";   // it's in the same dir as the autobleem-gui app you are debugging
+#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
+        private_pathToInternalDBFile = "internal.db"; // it's in the same dir as the autobleem-gui app you are debugging
 #else
         private_pathToInternalDBFile = "/media/System/Databases/internal.db";
 #endif
         private_pathToGamesDir = argv[2];
         private_pathToUSBDrive = DirEntry::getDirNameFromPath(private_pathToGamesDir);
-    }
-    else {
+    } else {
         cout << "USAGE: autobleem-gui /path/dbfilename.db /path/to/games" << endl;
         return EXIT_FAILURE;
     }
@@ -269,8 +267,8 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     gui->internalDB = internalDB;
-    gui->internalDB->addFavoriteColumn(); // add the favorites column if it doesn't exist
-    gui->internalDB->addHistoryColumn();  // add the history column if it doesn't exist
+    gui->internalDB->addFavoriteColumn();    // add the favorites column if it doesn't exist
+    gui->internalDB->addHistoryColumn();     // add the history column if it doesn't exist
     gui->internalDB->addLastPlayedColumn();  // add the last played column if it doesn't exist
     gui->internalDB->addPlayUsingRAColumn(); // add the favorites column if it doesn't exist
 
@@ -283,7 +281,8 @@ int main(int argc, char *argv[]) {
 
     string prevPath = Env::getWorkingPath() + sep + "autobleem.prev";
     bool prevFileExists = DirEntry::exists(prevPath);
-    bool gamelistXmlExists = DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx/gamelist.xml");
+    bool gamelistXmlExists = DirEntry::exists(
+        Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx/gamelist.xml");
 
     GamesHierarchy gamesHierarchy;
     gamesHierarchy.getHierarchy(pathToGamesDir);
@@ -301,7 +300,7 @@ int main(int argc, char *argv[]) {
     gui->display(scanner->forceScan, pathToGamesDir, db, false);
 
     if (thereAreRawGameFilesInGamesDir)
-        copyGameFilesInGamesDirToSubDirs(pathToGamesDir);   // the gui->display needs to be up first
+        copyGameFilesInGamesDirToSubDirs(pathToGamesDir); // the gui->display needs to be up first
 
     while (gui->menuOption == MENU_OPTION_SCAN || gui->menuOption == MENU_OPTION_START) {
 
@@ -318,7 +317,7 @@ int main(int argc, char *argv[]) {
             if (gui->forceScan) {
                 gui->forceScan = false;
             } else {
-                //break;
+                // break;
             }
         }
 
@@ -328,28 +327,23 @@ int main(int argc, char *argv[]) {
 
             int numtimesopened, frequency, channels;
             Uint16 format;
-            numtimesopened=Mix_QuerySpec(&frequency, &format, &channels);
-            for (int i=0;i<numtimesopened;i++)
-            {
+            numtimesopened = Mix_QuerySpec(&frequency, &format, &channels);
+            for (int i = 0; i < numtimesopened; i++) {
                 Mix_CloseAudio();
             }
-            while(Mix_QuerySpec(&frequency, &format, &channels))
-            {
+            while (Mix_QuerySpec(&frequency, &format, &channels)) {
                 Mix_CloseAudio();
             }
-
 
             gui->mapper.flushPads();
 
             gui->saveSelection();
             EmuInterceptor *interceptor;
-            if (gui->runningGame->foreign)
-            {
-                if (!gui->runningGame->app)
-                {
+            if (gui->runningGame->foreign) {
+                if (!gui->runningGame->app) {
                     interceptor = new RetroArchInterceptor();
                 } else {
-                     interceptor =  new LaunchInterceptor();
+                    interceptor = new LaunchInterceptor();
                 }
             } else {
                 if (gui->emuMode == EMU_PCSX) {
@@ -361,11 +355,11 @@ int main(int argc, char *argv[]) {
 
             interceptor->memcardIn(gui->runningGame);
             interceptor->prepareResumePoint(gui->runningGame, gui->resumepoint);
-            interceptor->execute(gui->runningGame, gui->resumepoint );
+            interceptor->execute(gui->runningGame, gui->resumepoint);
             interceptor->memcardOut(gui->runningGame);
             delete (interceptor);
 
-            bool reloadFavHist {false};
+            bool reloadFavHist{false};
             if (gui->runningGame->foreign)
                 reloadFavHist = true;
             else if (gui->emuMode != EMU_PCSX)
@@ -373,30 +367,29 @@ int main(int argc, char *argv[]) {
 
             if (reloadFavHist) {
                 auto ra = RAIntegrator::getInstance();
-                ra->reloadFavorites();  // they could have changed
-                ra->reloadHistory();  // they could have changed
+                ra->reloadFavorites(); // they could have changed
+                ra->reloadHistory();   // they could have changed
             }
 
-            usleep(300*1000);
-
+            usleep(300 * 1000);
 
             gui->mapper.probePads();
-            gui->runningGame.reset();    // replace with shared_ptr pointing to nullptr
+            gui->runningGame.reset(); // replace with shared_ptr pointing to nullptr
             gui->startingGame = false;
             // remove all events if something left
             SDL_PumpEvents();
-            SDL_FlushEvents(SDL_FIRSTEVENT,SDL_LASTEVENT);
+            SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT);
 
             gui->display(false, pathToGamesDir, db, true);
         }
     }
     db->disconnect();
     delete db;
-	db = nullptr;
+    db = nullptr;
 
     internalDB->disconnect();
     delete internalDB;
-	internalDB = nullptr;
+    internalDB = nullptr;
 
     Gui::splash(_("Loading ... Please Wait ..."));
     gui->finish();

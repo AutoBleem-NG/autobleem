@@ -10,7 +10,7 @@
 // GuiBtnGuide
 //******************
 class GuiBtnGuide : public GuiScreen {
-public:
+  public:
     void render() override;
 
     void loop() override;

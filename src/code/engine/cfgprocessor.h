@@ -17,7 +17,7 @@ class CfgProcessor {
     // example pathToCfgDir = "/media/Games/!SaveStates/Driver 2/cfg"
     void replacePropertyInAllCfgsInDir(std::string pathToCfgDir, std::string property, std::string newline);
 
-public:
+  public:
     // example gamePath = "/media/Games/!SaveStates/7"
     // example gamePath = "/media/Games/!SaveStates/Driver 2" or
     // example gamePath = "/media/Games/Racing/Driver 2"

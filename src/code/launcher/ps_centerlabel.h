@@ -12,7 +12,7 @@
 // PsCenterLabel
 //******************
 class PsCenterLabel : public PsObj {
-public:
+  public:
     std::string text;
     FC_Font_Shared font;
     SDL_Color textColor;
@@ -20,8 +20,8 @@ public:
 
     void render() override;
 
-    void setText(const std::string & _text, SDL_Color _textColor);
+    void setText(const std::string &_text, SDL_Color _textColor);
 
-    explicit PsCenterLabel(const std::string & name1, const std::string & texPath = "");
+    explicit PsCenterLabel(const std::string &name1, const std::string &texPath = "");
     ~PsCenterLabel() override;
 };

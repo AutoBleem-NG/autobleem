@@ -6,21 +6,21 @@
 #include <memory>
 #include <SDL2/SDL.h>
 
-extern void SDL_DelRes(SDL_Window   *r);
+extern void SDL_DelRes(SDL_Window *r);
 extern void SDL_DelRes(SDL_Renderer *r);
-extern void SDL_DelRes(SDL_Texture  *r);
-extern void SDL_DelRes(SDL_Surface  *r);
+extern void SDL_DelRes(SDL_Texture *r);
+extern void SDL_DelRes(SDL_Surface *r);
 
-template <typename T>
-struct SDL_Shared {
+template <typename T> struct SDL_Shared {
     std::shared_ptr<T> sdl_shared_ptr;
 
     // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
-    SDL_Shared(T* t = nullptr) : sdl_shared_ptr(t, [](T *t)  // NOLINT(google-explicit-constructor)
-        { SDL_DelRes(t); } ) {};
+    SDL_Shared(T *t = nullptr)
+        : sdl_shared_ptr(t, [](T *t) // NOLINT(google-explicit-constructor)
+                         { SDL_DelRes(t); }) {};
 
     // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
-    operator T* () { return sdl_shared_ptr.get(); };  // NOLINT(google-explicit-constructor)
-    T & operator * () { return *sdl_shared_ptr.get(); };
-    T * operator -> () { return sdl_shared_ptr.get(); };
+    operator T *() { return sdl_shared_ptr.get(); }; // NOLINT(google-explicit-constructor)
+    T &operator*() { return *sdl_shared_ptr.get(); };
+    T *operator->() { return sdl_shared_ptr.get(); };
 };

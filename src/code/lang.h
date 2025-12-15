@@ -9,17 +9,17 @@
 #include <memory>
 #include <vector>
 
-std::string _(const std::string & input);
+std::string _(const std::string &input);
 
 //******************
 // Lang
 //******************
 class Lang {
-public:
+  public:
     std::string currentLang;
     std::string translate(std::string input);
     void dump(std::string fileName);
-    void load(std::string languageName);    // the filename without the .txt
+    void load(std::string languageName); // the filename without the .txt
     std::vector<std::string> getListOfLanguages();
 
     Lang(Lang const &) = delete;
@@ -28,8 +28,9 @@ public:
         static std::shared_ptr<Lang> s{new Lang};
         return s;
     }
-private:
+
+  private:
     Lang() {};
-    std::map<std::string,std::string> langData;
+    std::map<std::string, std::string> langData;
     std::vector<std::string> newData;
 };

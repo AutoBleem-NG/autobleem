@@ -23,9 +23,8 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 
     if (!(*this)->foreign) {
         if (coverPng == nullptr) {
-            SDL_Shared<SDL_Texture> renderSurface = SDL_CreateTexture(renderer,
-                                                                      SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET,
-                                                                      226, 226);
+            SDL_Shared<SDL_Texture> renderSurface =
+                SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET, 226, 226);
             SDL_Rect fullRect;
 
             SDL_SetRenderTarget(renderer, renderSurface);
@@ -42,7 +41,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                 coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
             } else {
                 coverPng = nullptr;
-#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
+#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
                 if ((*this)->internal) {
                     Metadata md;
                     if (md.lookupBySerial((*this)->serial) && md.bytes && md.dataSize) {
@@ -97,11 +96,10 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             SDL_SetRenderTarget(renderer, nullptr);
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
         }
-    } else {    // foreign
+    } else { // foreign
         if (coverPng == nullptr) {
-            SDL_Shared<SDL_Texture> renderSurface = SDL_CreateTexture(renderer,
-                                                                      SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET,
-                                                                      226, 226);
+            SDL_Shared<SDL_Texture> renderSurface =
+                SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET, 226, 226);
             SDL_Rect fullRect;
 
             SDL_SetRenderTarget(renderer, renderSurface);
@@ -114,12 +112,12 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 
             SDL_SetRenderTarget(renderer, nullptr);
             string imagePath;
-            if (!(*this)->app) {    // RA Game
-                auto makeBoxArtPath = [&] (const string& boxartDir) -> string
-                        { return Env::getPathToRetroarchDir() + sep + "thumbnails" + sep +
-                        DirEntry::getFileNameWithoutExtension((*this)->db_name) + sep +
-                        boxartDir + sep + RAIntegrator::escapeName((*this)->title) + ".png";
-                        };
+            if (!(*this)->app) { // RA Game
+                auto makeBoxArtPath = [&](const string &boxartDir) -> string {
+                    return Env::getPathToRetroarchDir() + sep + "thumbnails" + sep +
+                           DirEntry::getFileNameWithoutExtension((*this)->db_name) + sep + boxartDir + sep +
+                           RAIntegrator::escapeName((*this)->title) + ".png";
+                };
 
                 imagePath = makeBoxArtPath("Named_Boxarts");
                 string imagePath2 = makeBoxArtPath("Named_Titles");
@@ -137,7 +135,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                     cout << "boxart image NOT found for " << imagePath << endl;
                     coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/ra-cover.png").c_str());
                 }
-            } else      // App
+            } else // App
             {
                 imagePath = (*this)->image_path;
 
@@ -146,13 +144,13 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                 } else {
                     // use default
                     cout << "boxart image NOT found for " << imagePath << endl;
-                    coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/app-cover.png").c_str());
+                    coverPng =
+                        IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/app-cover.png").c_str());
                 }
             }
 
-
             SDL_Rect imageCoverRect;
-            int w,h;
+            int w, h;
 
             SDL_SetRenderTarget(renderer, renderSurface);
             fullRect.x = 0;
@@ -162,20 +160,18 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             Uint32 format;
             int access;
             SDL_QueryTexture(coverPng, &format, &access, &fullRect.w, &fullRect.h);
-            float aspectRatio = (fullRect.w*1.0f)/(fullRect.h*1.0f);
+            float aspectRatio = (fullRect.w * 1.0f) / (fullRect.h * 1.0f);
             SDL_Rect outputRect;
 
             // calculate output rect with aspect ratio
-            int biggerSize = fullRect.w>fullRect.h ? fullRect.w : fullRect.h;
-
+            int biggerSize = fullRect.w > fullRect.h ? fullRect.w : fullRect.h;
 
             outputRect.x = 0;
             outputRect.y = 0;
-            outputRect.h = (226*fullRect.h)/biggerSize;
-            outputRect.w = (226*fullRect.w)/biggerSize;
-            outputRect.x = (226-outputRect.w)/2;
-            outputRect.y = (226-outputRect.h)/2;
-
+            outputRect.h = (226 * fullRect.h) / biggerSize;
+            outputRect.w = (226 * fullRect.w) / biggerSize;
+            outputRect.x = (226 - outputRect.w) / 2;
+            outputRect.y = (226 - outputRect.h) / 2;
 
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
             SDL_RenderCopy(renderer, coverPng, &fullRect, &outputRect);
@@ -196,9 +192,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 //*******************************
 // PsCarouselGame::freeTex
 //*******************************
-void PsCarouselGame::freeTex() {
-    coverPng = nullptr;
-}
+void PsCarouselGame::freeTex() { coverPng = nullptr; }
 
 //*******************************
 // PsCarousel::createCoverPoint
@@ -226,7 +220,7 @@ PsScreenpoint PsCarousel::createCoverPoint(int x, int shade, int side) {
 // PsCarousel::initCoverPositions
 //*******************************
 void PsCarousel::initCoverPositions() {
-    //405 x 100
+    // 405 x 100
     coverPositions.clear();
 
     coverPositions.push_back(createCoverPoint(5, 40, 0));

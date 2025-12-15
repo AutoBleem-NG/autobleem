@@ -62,14 +62,11 @@ void GuiPadTest::loop() {
                     appendLine("SDL_CONTROLLERHATMOTIONDOWN = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
                 }
 #else
-                appendLine("SDL_CONTROLLERHATMOTIONDOWN = " + to_string(e.jaxis.axis) + ", " + to_string(e.jaxis.value));
+                appendLine("SDL_CONTROLLERHATMOTIONDOWN = " + to_string(e.jaxis.axis) + ", " +
+                           to_string(e.jaxis.value));
 #endif
-            } else if (e.type == SDL_MOUSEMOTION ||
-                       e.type == SDL_MOUSEBUTTONDOWN ||
-                       e.type == SDL_MOUSEBUTTONUP ||
-                       e.type == SDL_MOUSEWHEEL ||
-                       e.type == SDL_WINDOWEVENT
-                      ) {
+            } else if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP ||
+                       e.type == SDL_MOUSEWHEEL || e.type == SDL_WINDOWEVENT) {
                 ; // ignore
             } else {
                 stringstream strhex;
@@ -82,5 +79,5 @@ void GuiPadTest::loop() {
     appendLine("Release all buttons now");
     sleep(3);
     while (SDL_PollEvent(&e))
-        ;   // eat any events in the queue
+        ; // eat any events in the queue
 }

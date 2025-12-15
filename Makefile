@@ -14,7 +14,7 @@
 #   make clean        - Remove all build artifacts
 #   make help         - Show this help
 
-.PHONY: all sys arm mac docker-build docker-extract docker-shell docker-clean english lint test clean clean-build help
+.PHONY: all sys arm mac docker-build docker-extract docker-shell docker-clean english format format-check lint test clean clean-build help
 
 # Docker image name
 DOCKER_IMAGE := autobleem-builder
@@ -121,6 +121,27 @@ english:
 		echo "Skipping on macOS (grep behavior differs)"; \
 	fi
 
+# Format source code with clang-format
+format:
+	@echo "Formatting source code..."
+	@if ! command -v clang-format >/dev/null 2>&1; then \
+		echo "ERROR: clang-format not found!"; \
+		echo "Install with: sudo apt-get install clang-format"; \
+		exit 1; \
+	fi
+	@find src/code -name "*.cpp" -o -name "*.h" | xargs clang-format -i
+	@echo "Formatting complete!"
+
+# Check formatting without modifying files
+format-check:
+	@echo "Checking code formatting..."
+	@if ! command -v clang-format >/dev/null 2>&1; then \
+		echo "ERROR: clang-format not found!"; \
+		exit 1; \
+	fi
+	@find src/code -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror
+	@echo "Formatting check passed!"
+
 # Run clang-tidy static analysis on all source files
 lint:
 	@echo "Running clang-tidy static analysis..."
@@ -183,9 +204,13 @@ help:
 	@echo "  make arm          Build for ARM (requires PSCtoolchainV8)"
 	@echo "  make mac          Build for ARM on macOS (requires MacToolchain)"
 	@echo ""
+	@echo "Code Quality:"
+	@echo "  make format       Format source code with clang-format"
+	@echo "  make format-check Check formatting without modifying files"
+	@echo "  make lint         Run clang-tidy static analysis"
+	@echo ""
 	@echo "Utility Targets:"
 	@echo "  make english      Generate English.txt from source strings"
-	@echo "  make lint         Run clang-tidy static analysis"
 	@echo "  make test         Run unit tests (requires 'make sys' first)"
 	@echo "  make clean        Remove all build artifacts and Docker image"
 	@echo "  make help         Show this help"

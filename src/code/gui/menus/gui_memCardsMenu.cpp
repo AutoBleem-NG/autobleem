@@ -14,7 +14,7 @@ using namespace std;
 // GuiMemcards::init
 //*******************************
 void GuiMemcards::init() {
-    GuiMenuBase::init();    // call the base init
+    GuiMenuBase::init(); // call the base init
 
     Memcard *memcardOps = new Memcard(gui->pathToGamesDir);
     lines = memcardOps->list();
@@ -26,12 +26,9 @@ void GuiMemcards::init() {
 //*******************************
 // returns the status line at the bottom
 string GuiMemcards::getStatusLine() {
-    return _("Card") + " " + to_string(selected + 1) + "/" + to_string(getVerticalSize()) +
-           "   |@L1|/|@R1| " + _("Page") +
-           "   |@X| " + _("Rename") +
-           "  |@S| " + _("New Card") +
-           "   |@T| " + _("Delete") +
-           "  |@O| " + _("Go back") + "|";
+    return _("Card") + " " + to_string(selected + 1) + "/" + to_string(getVerticalSize()) + "   |@L1|/|@R1| " +
+           _("Page") + "   |@X| " + _("Rename") + "  |@S| " + _("New Card") + "   |@T| " + _("Delete") + "  |@O| " +
+           _("Go back") + "|";
 }
 
 //*******************************
@@ -68,7 +65,7 @@ void GuiMemcards::doSquare_Pressed() {
         memcardOps->newCard(result);
         lines = memcardOps->list();
         int i = 0;
-        for (const string & card : lines) {
+        for (const string &card : lines) {
             if (card == result) {
                 selected = i;
                 firstVisibleIndex = i;
@@ -136,7 +133,7 @@ void GuiMemcards::doCross_Pressed() {
         cancelled = true;
     }
 
-    for (const string & card:lines) {
+    for (const string &card : lines) {
         if (card == result) {
             // orevent overwrite other card
             cancelled = true;
@@ -149,7 +146,7 @@ void GuiMemcards::doCross_Pressed() {
         delete memcardOps;
         init();
         int pos = 0;
-        for (const string & card:lines) {
+        for (const string &card : lines) {
             if (card == result) {
                 selected = pos;
                 firstVisibleIndex = pos;

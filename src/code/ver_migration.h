@@ -7,7 +7,7 @@
 #include <string>
 #include "engine/database.h"
 
-#if 0   // no longer used
+#if 0 // no longer used
 //******************
 // VerMigration
 //******************

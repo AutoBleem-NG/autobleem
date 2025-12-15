@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   database.h
  * Author: screemer
  *
@@ -42,8 +42,7 @@ using GameRowGames = std::vector<GameRowGame>;
 // Database
 //******************
 class Database {
-public:
-
+  public:
     bool connect(std::string fileName);
     void disconnect();
     bool createInitialDatabase();
@@ -51,13 +50,13 @@ public:
     void addPlayUsingRAColumn();
     void addHistoryColumn();
     void addLastPlayedColumn();
-    bool truncate();    // delete all data in all tables
+    bool truncate(); // delete all data in all tables
 
     bool beginTransaction();
     bool commit();
 
-    bool insertGame(int id, std::string title, std::string publisher, int players, int year, std::string path, std::string sspath,
-                    std::string memcard);
+    bool insertGame(int id, std::string title, std::string publisher, int players, int year, std::string path,
+                    std::string sspath, std::string memcard);
     bool insertDisc(int id, int discNum, std::string discName);
 
     bool subDirRowsTableIsEmpty();
@@ -79,14 +78,15 @@ public:
     bool updateTitle(int id, std::string title);
     bool updateFavorite(int id, int fav);
     bool updatePlayUsingRA(int id, int play_using_ra);
-    bool updateHistory(int id, int rank);   // 0 = not in history, 1-100 history from latest game played to oldest
-    bool updateDatePlayed(int id, int date_in_seconds);   // seconds since 1970
-    bool refreshGame(PsGamePtr & game);
-    bool refreshGameInternal(PsGamePtr & game);
+    bool updateHistory(int id, int rank); // 0 = not in history, 1-100 history from latest game played to oldest
+    bool updateDatePlayed(int id, int date_in_seconds); // seconds since 1970
+    bool refreshGame(PsGamePtr &game);
+    bool refreshGameInternal(PsGamePtr &game);
 
-    bool deleteGameIdFromOneTable(int id, const std::string& cmd_str);
+    bool deleteGameIdFromOneTable(int id, const std::string &cmd_str);
     bool deleteGameIdFromAllTables(int id);
-private:
+
+  private:
     sqlite3 *db;
     bool executeCreateStatement(const char *sql, std::string name);
     bool executeStatement(const char *sql, std::string outMsg, std::string errorMsg);

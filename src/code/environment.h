@@ -15,18 +15,19 @@ struct Environment {
     static std::string getPathToRetroarchPlaylistsDir();
     static std::string getPathToRetroarchCoreFile();
     static std::string getPathToRomsDir();
-    static std::string getPathToRegionalDBFile();   // includes the "regional.db" filename
-    static std::string getPathToInternalDBFile();   // includes the "internal.db" filename
+    static std::string getPathToRegionalDBFile(); // includes the "regional.db" filename
+    static std::string getPathToInternalDBFile(); // includes the "internal.db" filename
 
     static std::string getWorkingPath();  // 1 arg: "usb:/Autobleem/bin/autobleem", 2 arg: autobleem-gui executable dir
-    static std::string getSonyPath();  // 1 arg: "usb:/Autobleem/bin/autobleem/sony", 2 arg: "" + sep + "sony"
-    static std::string getSonyFontPath();  // 1 arg: "usb:/Autobleem/bin/autobleem/sony", 2 arg: "" + sep + "sony"
-//    static std::string getPathToWorkingPathFile(const std::string &filename);   // return path to file in working path
+    static std::string getSonyPath();     // 1 arg: "usb:/Autobleem/bin/autobleem/sony", 2 arg: "" + sep + "sony"
+    static std::string getSonyFontPath(); // 1 arg: "usb:/Autobleem/bin/autobleem/sony", 2 arg: "" + sep + "sony"
+    //    static std::string getPathToWorkingPathFile(const std::string &filename);   // return path to file in working
+    //    path
 
-    static std::string getPathToThemesDir();        // "usb:/themes" or "./themes"
-    static std::string getPathToCoversDBDir();   // "usb:/Autobleem/bin/db" or "../db"
+    static std::string getPathToThemesDir();   // "usb:/themes" or "./themes"
+    static std::string getPathToCoversDBDir(); // "usb:/Autobleem/bin/db" or "../db"
 
-    static bool autobleemKernel;        // true if the kernel is the AutoBleem Kernel
+    static bool autobleemKernel; // true if the kernel is the AutoBleem Kernel
     static bool hiddenMenuEnabled;
 };
 

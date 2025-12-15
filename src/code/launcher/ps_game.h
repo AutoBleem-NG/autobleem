@@ -12,7 +12,7 @@
 // PsGame
 //******************
 class PsGame {
-public:
+  public:
     int gameId = 0;
     std::string title;
     std::string publisher;
@@ -22,11 +22,12 @@ public:
     int players = 0;
 
     std::string memcard;
-    std::string folder;     // game folder.  internal example: "/gaadata/8/", USB example: "/media/Games/Racing/007 Racing"
-    std::string ssFolder;  // !SaveStates folder.  ex: "/Games/!SaveStates/8", "/Games/!SaveStates/007 Racing"
+    std::string folder; // game folder.  internal example: "/gaadata/8/", USB example: "/media/Games/Racing/007 Racing"
+    std::string ssFolder; // !SaveStates folder.  ex: "/Games/!SaveStates/8", "/Games/!SaveStates/007 Racing"
 
-    std::string base; // file name of the game.  not sure if extension is included.  
-                      // code looks for .pbp extension and replaces it with cue.  but elsewhere .png is appended without removing extension.
+    std::string base; // file name of the game.  not sure if extension is included.
+                      // code looks for .pbp extension and replaces it with cue.  but elsewhere .png is appended without
+                      // removing extension.
 
     bool hd = false;
     bool locked = false;
@@ -35,10 +36,10 @@ public:
     bool favorite = false;
     bool play_using_ra = false;
     int history = 0;    // 0 = not in history list.  1-100 if in the history list
-    time_t last_played;     // in seconds since 1970
+    time_t last_played; // in seconds since 1970
 
-    bool internal = false;  // one of the 20 internal PSC games
-    bool foreign = false; // to state it is not PS1 game (RA or app)
+    bool internal = false; // one of the 20 internal PSC games
+    bool foreign = false;  // to state it is not PS1 game (RA or app)
     bool app = false;
 
     bool isPS1() { return !foreign; }
@@ -56,7 +57,6 @@ public:
 
     std::string db_name;
 
-
     void setMemCard(std::string name);
     std::string findResumePicture();
     bool isResumeSlotActive(int slot);
@@ -69,4 +69,4 @@ public:
 using PsGamePtr = std::shared_ptr<PsGame>;
 using PsGames = std::vector<PsGamePtr>;
 
-void operator += (PsGames &dest, const PsGames &src);
+void operator+=(PsGames &dest, const PsGames &src);

@@ -14,11 +14,9 @@
 #include "../lang.h"
 #include "../engine/scanner.h"
 
-
 using namespace std;
 
-std::string GuiAppStart::getStringLine(const std::string& str, int lineNo)
-{
+std::string GuiAppStart::getStringLine(const std::string &str, int lineNo) {
     std::string line;
     std::istringstream stream(str);
     while (lineNo-- >= 0)
@@ -26,44 +24,40 @@ std::string GuiAppStart::getStringLine(const std::string& str, int lineNo)
     return line;
 }
 
-void GuiAppStart::init()
-{
-    font = Fonts::openNewSharedCachedFont(Environment::getWorkingPath()+ sep + "november.ttf",20, renderer);
+void GuiAppStart::init() {
+    font = Fonts::openNewSharedCachedFont(Environment::getWorkingPath() + sep + "november.ttf", 20, renderer);
     // Try to load app.ini
     appName = game->title;
-
 
     if (DirEntry::exists(game->readme_path)) {
         std::ifstream t(game->readme_path);
         t.seekg(0, std::ios::end);
         size_t size = t.tellg();
         cout << "Readme file size:" << size << endl;
-        buffer="";
+        buffer = "";
         t.seekg(0);
         std::string temp;
-        while(std::getline(t, temp)) {
+        while (std::getline(t, temp)) {
             buffer = buffer + temp + "\n";
         };
 
         int newlines = 0;
-        const char * p = &buffer.c_str()[0];
-        for ( int i = 0; i < size; i++ ) {
-            if ( p[i] == '\n' ) {
+        const char *p = &buffer.c_str()[0];
+        for (int i = 0; i < size; i++) {
+            if (p[i] == '\n') {
                 newlines++;
             }
         }
-        totalLines = newlines+1;
+        totalLines = newlines + 1;
         readmeLoaded = true;
-
-
     }
 }
 
 void GuiAppStart::render() {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->renderBackground();
-// readme:
-    SDL_SetRenderDrawColor(renderer,0, 0, 0, 128);
+    // readme:
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     SDL_Rect rect2;
@@ -78,69 +72,59 @@ void GuiAppStart::render() {
     rect2.x = 1240;
     rect2.y = 40;
     rect2.w = 20;
-    rect2.h = 20*25;
+    rect2.h = 20 * 25;
 
     SDL_RenderFillRect(renderer, &rect2);
 
     // draw scroll position
-    if (maxLines<totalLines) {
+    if (maxLines < totalLines) {
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-        int heightOfBar = 500/(totalLines-maxLines);
+        int heightOfBar = 500 / (totalLines - maxLines);
 
         rect2.x = 1242;
-        rect2.y = 40 + firstLine*heightOfBar;
+        rect2.y = 40 + firstLine * heightOfBar;
         rect2.w = 16;
         rect2.h = heightOfBar;
         SDL_RenderFillRect(renderer, &rect2);
-
     }
     int yoffset = 15;
     gui->renderTextLine(appName, 0, yoffset, XALIGN_LEFT, 10, font);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-    SDL_RenderDrawLine(renderer, rect2.x, 35,rect2.w,35);
+    SDL_RenderDrawLine(renderer, rect2.x, 35, rect2.w, 35);
 
-    if (scrolling>0)
-    {
+    if (scrolling > 0) {
         firstLine++;
     }
-    if (scrolling<0)
-    {
+    if (scrolling < 0) {
         firstLine--;
     }
-    if (firstLine<0)
-    {
-        firstLine=0;
+    if (firstLine < 0) {
+        firstLine = 0;
     }
-    if (maxLines<totalLines) {
+    if (maxLines < totalLines) {
         if (firstLine > totalLines - maxLines) {
             firstLine = totalLines - maxLines;
         }
-    } else
-    {
+    } else {
         if (firstLine > totalLines - maxLines) {
             firstLine = 0;
         }
     }
 
-    int currentLine =2;
-    if (!readmeLoaded)
-    {
+    int currentLine = 2;
+    if (!readmeLoaded) {
         gui->renderTextLine(_("ReadMe file not found"), 2, yoffset, XALIGN_LEFT, 10, font);
-    } else
-    {
-        for (int i=firstLine;i<firstLine+maxLines;i++)
-        {
-            std::string lineInFile = getStringLine(buffer,i);
-            gui->renderTextLine(getStringLine(buffer,i), currentLine, yoffset, XALIGN_LEFT, 10, font);
+    } else {
+        for (int i = firstLine; i < firstLine + maxLines; i++) {
+            std::string lineInFile = getStringLine(buffer, i);
+            gui->renderTextLine(getStringLine(buffer, i), currentLine, yoffset, XALIGN_LEFT, 10, font);
             currentLine++;
         }
     }
 
-
-    gui->renderStatus("|@X| " + _("OK") + "  |@O| " + _("Cancel") +"|");
+    gui->renderStatus("|@X| " + _("OK") + "  |@O| " + _("Cancel") + "|");
     SDL_RenderPresent(renderer);
 }
-
 
 void GuiAppStart::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
@@ -155,38 +139,36 @@ void GuiAppStart::loop() {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
                     Util::powerOff();
-
                 }
             }
 
             switch (e.type) {
-                case SDL_CONTROLLERBUTTONDOWN:
-                    if (e.cbutton.button == SDL_BTN_CROSS) {
-                        result = true;
-                        menuVisible = false;
-                    };
-                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
-                        result = false;
-                        menuVisible = false;
-                    };
-                    break;
+            case SDL_CONTROLLERBUTTONDOWN:
+                if (e.cbutton.button == SDL_BTN_CROSS) {
+                    result = true;
+                    menuVisible = false;
+                };
+                if (e.cbutton.button == SDL_BTN_CIRCLE) {
+                    result = false;
+                    menuVisible = false;
+                };
+                break;
 
-                case SDL_CONTROLLERHATMOTIONDOWN:  /* Handle Joystick Motion */
-                case SDL_CONTROLLERHATMOTIONUP:
-                    if (totalLines!=0) {
-                        if (gui->mapper.isUp(&e)) {
-                            scrolling = -1;
-                        }
-                        if (gui->mapper.isDown(&e)) {
-
-
-                            scrolling = 1;
-                        }
-                        if (gui->mapper.isCenter(&e)) {
-                            scrolling = 0;
-                        }
+            case SDL_CONTROLLERHATMOTIONDOWN: /* Handle Joystick Motion */
+            case SDL_CONTROLLERHATMOTIONUP:
+                if (totalLines != 0) {
+                    if (gui->mapper.isUp(&e)) {
+                        scrolling = -1;
                     }
-                    break;
+                    if (gui->mapper.isDown(&e)) {
+
+                        scrolling = 1;
+                    }
+                    if (gui->mapper.isCenter(&e)) {
+                        scrolling = 0;
+                    }
+                }
+                break;
             }
         }
     }

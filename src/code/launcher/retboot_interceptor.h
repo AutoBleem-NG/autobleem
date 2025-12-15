@@ -12,15 +12,13 @@
 using namespace std;
 
 class RetroArchInterceptor : public EmuInterceptor {
-private:
+  private:
     void backupCoreConfig();
     void restoreCoreConfig();
-    void transferConfig(PsGamePtr & game);
-public:
-    bool execute(PsGamePtr & game, int resumepoint);
-    void memcardIn(PsGamePtr & game);
-    void memcardOut(PsGamePtr & game);
+    void transferConfig(PsGamePtr &game);
+
+  public:
+    bool execute(PsGamePtr &game, int resumepoint);
+    void memcardIn(PsGamePtr &game);
+    void memcardOut(PsGamePtr &game);
 };
-
-
-

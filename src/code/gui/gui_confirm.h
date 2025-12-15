@@ -9,13 +9,13 @@
 //********************
 // GuiConfirm
 //********************
-class GuiConfirm : public GuiScreen{
-public:
+class GuiConfirm : public GuiScreen {
+  public:
     void render() override;
     void loop() override;
 
-    std::string label="";
-    bool result=false;
+    std::string label = "";
+    bool result = false;
 
     using GuiScreen::GuiScreen;
 };

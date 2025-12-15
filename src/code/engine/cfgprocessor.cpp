@@ -15,7 +15,7 @@ using namespace std;
 // CfgProcessor::replaceProperty
 //*******************************
 void CfgProcessor::replaceProperty(string fullCfgFilePath, string property, string newline) {
- //   cout << "cfg replace, '" << fullCfgFilePath << "', '" << property << "' with: '" << newline << "'" << endl;
+    //   cout << "cfg replace, '" << fullCfgFilePath << "', '" << property << "' with: '" << newline << "'" << endl;
     if (!DirEntry::exists(fullCfgFilePath)) {
         cout << "  cfg file doesn't exist" << endl;
         return;
@@ -65,7 +65,7 @@ void CfgProcessor::replaceProperty(string fullCfgFilePath, string property, stri
 // CfgProcessor::getValueFromCfgFile
 //*******************************
 string CfgProcessor::getValueFromCfgFile(string fullCfgFilePath, string property) {
-   // cout << "cfg getValue, '" << fullCfgFilePath << "', '" << property << "'" << endl;
+    // cout << "cfg getValue, '" << fullCfgFilePath << "', '" << property << "'" << endl;
     fstream file(fullCfgFilePath, ios::in);
     vector<string> lines;
     lines.clear();
@@ -81,16 +81,16 @@ string CfgProcessor::getValueFromCfgFile(string fullCfgFilePath, string property
             if (lcaseline.rfind(lcasepattern, 0) == 0) {
                 string value = line.substr(lcaseline.find("=") + 1);
                 if (!value.empty() && value.back() == '\r') {
-                    value.pop_back();   // remove the trailing /r
+                    value.pop_back(); // remove the trailing /r
                 }
-                trim(value);    // remove leading and trailing spaces
-                //cout << "  return: '" << value << "'" << endl;
+                trim(value); // remove leading and trailing spaces
+                // cout << "  return: '" << value << "'" << endl;
                 return value;
             }
         }
         file.close();
     }
-    //cout << "  return: ''" << endl;
+    // cout << "  return: ''" << endl;
     return "";
 }
 
@@ -144,10 +144,10 @@ void CfgProcessor::replaceInternal(string gamePathInSaveStates, string property,
 //*******************************
 void CfgProcessor::replaceUSB(string entry, string gamePath, string property, string newline) {
     string realCfgPath = gamePath + sep + entry + sep + PCSX_CFG;
-    replaceProperty(realCfgPath, property, newline);    // replace in the game dir pcsx.cfg
+    replaceProperty(realCfgPath, property, newline); // replace in the game dir pcsx.cfg
 
     realCfgPath = Env::getPathToSaveStatesDir() + sep + entry + sep + PCSX_CFG;
-    replaceProperty(realCfgPath, property, newline);    // replace in the !SaveStates/game/pcsx.cfg
+    replaceProperty(realCfgPath, property, newline); // replace in the !SaveStates/game/pcsx.cfg
 
     // replace in the !SaveStates/game/cfg/*.cfg
     replacePropertyInAllCfgsInDir(Env::getPathToSaveStatesDir() + sep + entry + sep + "cfg", property, newline);
@@ -166,12 +166,10 @@ void CfgProcessor::replace(string entry, string gamePath, string property, strin
         replaceUSB(entry, DirEntry::getDirNameFromPath(gamePath), property, newline);
 }
 
-
 //*******************************
 // CfgProcessor::replaceRaConf
 //*******************************
-void CfgProcessor::replaceRaConf(std::string fullCfgFilePath, std::string property, std::string newline)
-{
+void CfgProcessor::replaceRaConf(std::string fullCfgFilePath, std::string property, std::string newline) {
     cout << "cfg replaceRaConf, '" << fullCfgFilePath << "', '" << property << "'" << endl;
     replaceProperty(fullCfgFilePath, property, newline);
 }

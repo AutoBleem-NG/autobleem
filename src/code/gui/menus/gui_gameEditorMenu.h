@@ -10,8 +10,8 @@
 //********************
 // GuiEditor
 //********************
-class GuiEditor : public GuiScreen{
-public:
+class GuiEditor : public GuiScreen {
+  public:
     void init() override;
     void render() override;
     void loop() override;
@@ -26,7 +26,7 @@ public:
     int clock = 0;
     int frameskip = 0;
 
-    std::string gpu="";
+    std::string gpu = "";
     int dither = 0;
 
     int scanlines = 0;
@@ -38,7 +38,7 @@ public:
     bool internal = false;
     int selOption = 5;
     std::string lastName;
-    bool changes=false;
+    bool changes = false;
 
     void processOptionChange(bool direction);
 

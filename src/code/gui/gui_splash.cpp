@@ -42,7 +42,7 @@ void GuiSplash::render() {
     SDL_RenderFillRect(renderer, &rect);
 
     int y = atoi(gui->themeData.values["ttop"].c_str());
-    string splashText = _("AutoBleem")+" " + gui->cfg.inifile.values["version"];
+    string splashText = _("AutoBleem") + " " + gui->cfg.inifile.values["version"];
     gui->renderText(gui->themeFont, splashText, 0, y, XALIGN_CENTER);
 
     SDL_RenderPresent(renderer);

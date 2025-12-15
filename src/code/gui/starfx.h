@@ -15,7 +15,7 @@
 using namespace std;
 
 class RGB {
-public:
+  public:
     RGB() : RGB(0, 0, 0, 0) {};
 
     RGB(unsigned char r, unsigned char g, unsigned char b) : RGB(r, g, b, 0xFF) {};
@@ -28,12 +28,10 @@ public:
     }
 
     unsigned char r, g, b, a;
-
-
 };
 
 class Star {
-public:
+  public:
     float x, y;
     RGB color;
     float speed;
@@ -41,13 +39,11 @@ public:
 };
 
 class StarFx {
-public:
+  public:
     StarFx();
     void render();
     SDL_Shared<SDL_Renderer> renderer;
 
-private:
+  private:
     vector<Star> starLayers[7];
 };
-
-

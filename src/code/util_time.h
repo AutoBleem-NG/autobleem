@@ -8,9 +8,8 @@
 // UtilTime
 //******************
 class UtilTime {
-public:
+  public:
     static time_t getCurrentTime();
     static bool usingWiFiUpdatedTime(); // returns true if using AB kernel and it used WiFi to update the current time
-    static std::string timeToDisplayTimeString(time_t t, const std::string& format = "");
+    static std::string timeToDisplayTimeString(time_t t, const std::string &format = "");
 };
-

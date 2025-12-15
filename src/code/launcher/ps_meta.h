@@ -17,7 +17,7 @@ class PsGame;
 // PsMeta
 //******************
 class PsMeta : public PsObj {
-public:
+  public:
     std::string gameName;
     std::string publisher;
     std::string year;
@@ -55,13 +55,13 @@ public:
     bool foreign = false;
     bool app = false;
 
-    void updateTexts(const std::string & gameNameTxt, const std::string & publisherTxt,
-                     const std::string & yearTxt, const std::string & serial, const std::string & region,
-                     const std::string & playersTxt, bool internal, bool hd, bool locked, int discs, bool favorite,
-                     bool play_using_ra, bool foreign, bool app, const std::string& last_played, const std::string& _gamePathForLightgunGamesFile, 
+    void updateTexts(const std::string &gameNameTxt, const std::string &publisherTxt, const std::string &yearTxt,
+                     const std::string &serial, const std::string &region, const std::string &playersTxt, bool internal,
+                     bool hd, bool locked, int discs, bool favorite, bool play_using_ra, bool foreign, bool app,
+                     const std::string &last_played, const std::string &_gamePathForLightgunGamesFile,
                      SDL_Color _textColor);
 
-    void updateTexts(PsGamePtr & game, SDL_Color _textColor);
+    void updateTexts(PsGamePtr &game, SDL_Color _textColor);
 
     void destroy() override;
 

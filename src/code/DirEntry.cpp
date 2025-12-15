@@ -21,7 +21,7 @@ using namespace std;
 // append separator helper function
 //*******************************
 // to use "operator +" below, "path + sep" will append the separator only if it's not already on the end of path
-std::string operator + (const std::string &leftside, Sep) {
+std::string operator+(const std::string &leftside, Sep) {
     string ret = leftside;
     ret += sep;
 
@@ -32,9 +32,8 @@ std::string operator + (const std::string &leftside, Sep) {
 // append separator helper function
 //*******************************
 // to use "operator +" below, "path + sep" will append the separator only if it's not already on the end of path
-void operator += (std::string &leftside, Sep) {
-    if (leftside.size() > 0)
-    {
+void operator+=(std::string &leftside, Sep) {
+    if (leftside.size() > 0) {
         char lastChar = leftside.back();
         if (lastChar != separator)
             leftside += separator; // add slash at end
@@ -45,7 +44,8 @@ void operator += (std::string &leftside, Sep) {
 // DirEntry::isPBPFile
 //*******************************
 bool DirEntry::isPBPFile(std::string path) {
-    if (path.length() < 4) return false;
+    if (path.length() < 4)
+        return false;
     string last_four = path.substr(path.length() - 4);
     lcase(last_four);
     return last_four == ".pbp";
@@ -61,17 +61,16 @@ void DirEntry::generateM3UForDirectory(std::string path, std::string basename) {
     cout << basename << endl;
     vector<string> files;
     DirEntries filesInPath = DirEntry::diru_FilesOnly(path);
-    for (const DirEntry &entry:filesInPath) {
+    for (const DirEntry &entry : filesInPath) {
         string ext = DirEntry::getFileExtension(entry.name);
-        if (Util::compareCaseInsensitive(ext, "pbp")
-            || Util::compareCaseInsensitive(ext, "cue"))
+        if (Util::compareCaseInsensitive(ext, "pbp") || Util::compareCaseInsensitive(ext, "cue"))
             files.push_back(entry.name);
     }
     string m3uName = DirEntry::fixPath(path) + sep + basename + ".m3u";
     if (files.size() > 1) {
         ofstream os(m3uName);
-        for (const string &file:files) {
-            os   << file << endl;
+        for (const string &file : files) {
+            os << file << endl;
         }
         os.close();
     }
@@ -81,8 +80,7 @@ void DirEntry::generateM3UForDirectory(std::string path, std::string basename) {
 // DirEntry::fixPath
 // removes leading and trailing spaces and removes any '/' from the end
 //*******************************
-string DirEntry::fixPath(string path)
-{
+string DirEntry::fixPath(string path) {
     trim(path);
     if (path.size() > 0 && path.back() == separator)
         path.pop_back();
@@ -94,13 +92,12 @@ string DirEntry::fixPath(string path)
 // DirEntry::removeSeparatorFromEndOfPath
 //*******************************
 // return the path without a separator at the end
-string DirEntry::removeSeparatorFromEndOfPath(const string& path)
-{
+string DirEntry::removeSeparatorFromEndOfPath(const string &path) {
     string ret = path;
     if (ret.length() > 0) {
-        char & lastChar = ret.back();
+        char &lastChar = ret.back();
         if (lastChar == separator)
-            ret.pop_back();     // remove slash at end
+            ret.pop_back(); // remove slash at end
     }
 
     return ret;
@@ -109,7 +106,7 @@ string DirEntry::removeSeparatorFromEndOfPath(const string& path)
 //*******************************
 // DirEntry::removeGamesPathFromFrontOfPath
 //*******************************
-string DirEntry::removeGamesPathFromFrontOfPath(const std::string& path) {
+string DirEntry::removeGamesPathFromFrontOfPath(const std::string &path) {
     string gamesDir = Env::getPathToGamesDir() + sep;
     int len = gamesDir.size();
     if (path.compare(0, len, gamesDir) == 0)
@@ -134,14 +131,13 @@ string DirEntry::getFileNameFromPath(const string &path) {
 //*******************************
 // DirEntry::getDirNameFromPath
 //*******************************
-string DirEntry::getDirNameFromPath(const string& path)
-{
+string DirEntry::getDirNameFromPath(const string &path) {
     string result = "";
     char *cstr = new char[path.length() + 1];
     strcpy(cstr, path.c_str());
-    char * base = dirname(cstr);
+    char *base = dirname(cstr);
     result += base;
-    delete [] cstr;
+    delete[] cstr;
     return result;
 }
 
@@ -159,7 +155,7 @@ bool DirEntry::isDirectory(const string &path) {
 // replaces all the chars of a selection of chars with a single replacement char
 // returns a string with those chars replaced
 //*******************************
-string DirEntry::replaceTheseCharsWithThisChar(string str, const string& charsToReplace, char replacementChar) {
+string DirEntry::replaceTheseCharsWithThisChar(string str, const string &charsToReplace, char replacementChar) {
     auto isBadChar = [&](char c) {
         return charsToReplace.find(c) != string::npos; // return if the char is a bad char
     };
@@ -236,7 +232,7 @@ DirEntries DirEntry::diru_DirsOnly(string path) {
     auto temp = diru(path); // get all dirs and files
     DirEntries ret;
     copy_if(begin(temp), end(temp), back_inserter(ret),
-            [](const DirEntry &dir) { return dir.isDir; });    // copy only dirs
+            [](const DirEntry &dir) { return dir.isDir; }); // copy only dirs
 
     return ret; // return only the dirs
 }
@@ -248,7 +244,7 @@ DirEntries DirEntry::diru_FilesOnly(string path) {
     auto temp = diru(path); // get all dirs and files
     DirEntries ret;
     copy_if(begin(temp), end(temp), back_inserter(ret),
-            [](const DirEntry &dir) { return !dir.isDir; });   //copy only files
+            [](const DirEntry &dir) { return !dir.isDir; }); // copy only files
 
     return ret; // return only the files
 }
@@ -326,22 +322,23 @@ int DirEntry::rmDir(string path) {
     }
 
     return r;
-
 }
 
 //*******************************
 // DirEntry::removeDirAndContents
 //*******************************
-bool  DirEntry::removeDirAndContents(const std::string path) {
+bool DirEntry::removeDirAndContents(const std::string path) {
     // remove the files in the dir
     auto files = diru_FilesOnly(path);
-    for (auto & file : files)
-        { removeFile(path + sep + file.name); }
+    for (auto &file : files) {
+        removeFile(path + sep + file.name);
+    }
 
     // recursively remove the subdirs
     auto dirs = diru_DirsOnly(path);
-    for (auto & dir : dirs)
-        { removeDirAndContents(path + sep + dir.name); }
+    for (auto &dir : dirs) {
+        removeDirAndContents(path + sep + dir.name);
+    }
 
     // remove the passed (now empty) dir
     return (rmdir(path.c_str()) == 0);
@@ -350,21 +347,19 @@ bool  DirEntry::removeDirAndContents(const std::string path) {
 //*******************************
 // DirEntry::removeFile
 //*******************************
-bool DirEntry::removeFile(const string& path) {
-    return remove(path.c_str()) == 0;
-}
+bool DirEntry::removeFile(const string &path) { return remove(path.c_str()) == 0; }
 
 //*******************************
 // DirEntry::renameFile
 //*******************************
-bool DirEntry::renameFile(const std::string& pathFrom, const std::string& pathTo) {
+bool DirEntry::renameFile(const std::string &pathFrom, const std::string &pathTo) {
     return rename(pathFrom.c_str(), pathTo.c_str()) == 0;
 }
 
 //*******************************
 // DirEntry::copyFile
 //*******************************
-bool DirEntry::copyFile(const std::string& pathFrom, const std::string& pathTo) {
+bool DirEntry::copyFile(const std::string &pathFrom, const std::string &pathTo) {
     return DirEntry::copy(pathFrom, pathTo) == 0;
 }
 
@@ -381,12 +376,15 @@ bool DirEntry::copy(const string &source, const string &dest) {
     infile.open(source, ios::binary);
     outfile.open(dest, ios::binary);
 
-    if (!infile.good()) return false;
-    if (!outfile.good()) return false;
+    if (!infile.good())
+        return false;
+    if (!outfile.good())
+        return false;
 
     while (true) {
         int read = infile.readsome(buffer, FILE_BUFFER_SIZE);
-        if (read == 0) break;
+        if (read == 0)
+            break;
         outfile.write(buffer, read);
     }
     infile.close();
@@ -403,7 +401,7 @@ bool DirEntry::copy(const string &source, const string &dest) {
 string DirEntry::findFirstFile(string ext, string path) {
     fixPath(path);
     DirEntries entries = diru(path);
-    for (DirEntry entry:entries) {
+    for (DirEntry entry : entries) {
         if (matchExtension(entry.name, ext)) {
             return entry.name;
         }
@@ -449,7 +447,6 @@ bool DirEntry::matchExtension(string path, string ext) {
     } else {
         return false;
     };
-
 }
 
 //*******************************
@@ -485,14 +482,14 @@ vector<string> DirEntry::cueToBinList(string cueFile) {
     size_t length = 0;
     ssize_t read;
 
-    //Opening file
+    // Opening file
     fp = fopen(cueFile.c_str(), "r");
     if (fp == nullptr) {
         printf("Error opening cue file");
         return binList;
     }
 
-    //Reading line by line
+    // Reading line by line
     while ((read = getline(&cline, &length, fp)) != -1) {
         line = cline;
         line = trim(line);
@@ -501,10 +498,10 @@ vector<string> DirEntry::cueToBinList(string cueFile) {
         }
     }
 
-    //Closing file pointer
+    // Closing file pointer
     fclose(fp);
 
-    //Freeing line pointer
+    // Freeing line pointer
     if (cline) {
         free(cline);
     }
@@ -515,12 +512,12 @@ vector<string> DirEntry::cueToBinList(string cueFile) {
 //*******************************
 // DirEntry::getFilesWithExtension
 //*******************************
-DirEntries
-DirEntry::getFilesWithExtension(const string &path, const DirEntries &entries, const vector<string> &extensions) {
+DirEntries DirEntry::getFilesWithExtension(const string &path, const DirEntries &entries,
+                                           const vector<string> &extensions) {
     DirEntries fileList;
     string fileExt;
     for (const auto &entry : entries) {
-        if(isDirectory(path + sep + entry.name))
+        if (isDirectory(path + sep + entry.name))
             continue;
         // make it case insensitive compare (find .bin and .BIN)
         fileExt = ReturnLowerCase(getFileExtension(entry.name));
@@ -534,15 +531,13 @@ DirEntry::getFilesWithExtension(const string &path, const DirEntries &entries, c
 //*******************************
 // DirEntry::print
 //*******************************
-void DirEntry::print() const {
-    cout << (isDir ? "Dir: " : "File: ") << name << std::endl;
-}
+void DirEntry::print() const { cout << (isDir ? "Dir: " : "File: ") << name << std::endl; }
 
 //*******************************
 // DirEntries::print(const DirEntries &entries)
 //*******************************
 static void print(const DirEntries &entries) {
-    for (auto & entry : entries)
+    for (auto &entry : entries)
         entry.print();
 }
 
@@ -592,14 +587,15 @@ bool DirEntry::imageTypeUsesACueFile(ImageType imageType) {
 // DirEntry::thereIsAGameFile
 //*******************************
 bool DirEntry::thereIsAGameFile(const DirEntries &entries) {
-    return any_of(begin(entries), end(entries), [] (const DirEntry &entry) { return !entry.isDir && isAGameFile(entry.name); } );
+    return any_of(begin(entries), end(entries),
+                  [](const DirEntry &entry) { return !entry.isDir && isAGameFile(entry.name); });
 }
 
 //*******************************
 // DirEntry::thereIsASubDir
 //*******************************
 bool DirEntry::thereIsASubDir(const DirEntries &entries) {
-    return any_of(begin(entries), end(entries), [] (const DirEntry &entry) { return entry.isDir; } );
+    return any_of(begin(entries), end(entries), [](const DirEntry &entry) { return entry.isDir; });
 }
 
 //*******************************
@@ -607,7 +603,7 @@ bool DirEntry::thereIsASubDir(const DirEntries &entries) {
 // Note: you must know that the game file exists in the directory before calling this function
 //*******************************
 tuple<ImageType, string> DirEntry::getGameFile(const DirEntries &entries) {
-    auto iter = find_if(begin(entries), end(entries), [] (const DirEntry &entry) { return isAGameFile(entry.name); } );
+    auto iter = find_if(begin(entries), end(entries), [](const DirEntry &entry) { return isAGameFile(entry.name); });
     if (iter != end(entries))
         return make_tuple(getGameFileImageType(iter->name), iter->name);
     else

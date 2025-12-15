@@ -12,7 +12,7 @@
 using namespace std;
 
 class GuiMcManager : public GuiScreen {
-public:
+  public:
     string leftCardName;
     string rightCardName;
     SDL_Shared<SDL_Texture> backgroundImg;
@@ -30,9 +30,10 @@ public:
     void trySave();
 
     bool changes = false;
-private:
+
+  private:
     int counter = 0;
-    int animFrame=0;
+    int animFrame = 0;
     FC_Font_Shared fontJIS;
     void renderStatic();
     void renderPencil(int memcard, int row, int column);
@@ -44,7 +45,7 @@ private:
     void pencilLeft();
     void pencilRight();
 
-    CardEdit * memcard1, *memcard2;
+    CardEdit *memcard1, *memcard2;
     const int mc1XStart = 150;
     const int mc2XStart = 1010;
     const int mcYStart = 150;

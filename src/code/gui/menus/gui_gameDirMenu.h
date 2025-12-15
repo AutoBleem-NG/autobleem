@@ -9,7 +9,7 @@
 // class GuiGameDirMenu
 //*******************************
 class GuiGameDirMenu : public GuiStringMenu {
-public:
+  public:
     explicit GuiGameDirMenu(SDL_Shared<SDL_Renderer> _renderer) : GuiStringMenu(_renderer) {}
 
     std::string getTitle() override { return "-=" + _("Select PS1 Game Category") + "=-"; }

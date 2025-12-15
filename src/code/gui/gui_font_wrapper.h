@@ -15,13 +15,14 @@ struct TTF_Font_Shared {
     std::shared_ptr<TTF_Font> font_shared_ptr;
 
     // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
-    TTF_Font_Shared(TTF_Font* font = nullptr) : font_shared_ptr(font, [](TTF_Font *font)  // NOLINT(google-explicit-constructor)
-        { TTF_CloseFont(font); } ) {};
+    TTF_Font_Shared(TTF_Font *font = nullptr)
+        : font_shared_ptr(font, [](TTF_Font *font) // NOLINT(google-explicit-constructor)
+                          { TTF_CloseFont(font); }) {};
 
     // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
-    operator TTF_Font* () { return font_shared_ptr.get(); };  // NOLINT(google-explicit-constructor)
-    TTF_Font & operator * () { return *font_shared_ptr.get(); };
-    TTF_Font * operator -> () { return font_shared_ptr.get(); };
+    operator TTF_Font *() { return font_shared_ptr.get(); }; // NOLINT(google-explicit-constructor)
+    TTF_Font &operator*() { return *font_shared_ptr.get(); };
+    TTF_Font *operator->() { return font_shared_ptr.get(); };
 };
 
 //********************
@@ -31,11 +32,12 @@ struct FC_Font_Shared {
     std::shared_ptr<FC_Font> font_shared_ptr;
 
     // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
-    FC_Font_Shared(FC_Font* font = nullptr) : font_shared_ptr(font, [](FC_Font *font)  // NOLINT(google-explicit-constructor)
-    { FC_FreeFont(font); } ) {};
+    FC_Font_Shared(FC_Font *font = nullptr)
+        : font_shared_ptr(font, [](FC_Font *font) // NOLINT(google-explicit-constructor)
+                          { FC_FreeFont(font); }) {};
 
     // Intentionally implicit for SDL API compatibility - allows transparent wrapper usage
-    operator FC_Font* () { return font_shared_ptr.get(); };  // NOLINT(google-explicit-constructor)
-    FC_Font & operator * () { return *font_shared_ptr.get(); };
-    FC_Font * operator -> () { return font_shared_ptr.get(); };
+    operator FC_Font *() { return font_shared_ptr.get(); }; // NOLINT(google-explicit-constructor)
+    FC_Font &operator*() { return *font_shared_ptr.get(); };
+    FC_Font *operator->() { return font_shared_ptr.get(); };
 };

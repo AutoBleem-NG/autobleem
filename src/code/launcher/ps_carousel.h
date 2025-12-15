@@ -14,7 +14,7 @@
 // PsScreenpoint
 //******************
 class PsScreenpoint {
-public:
+  public:
     int x = 0;
     int y = 0;
     float scale = 0.0;
@@ -28,7 +28,7 @@ public:
 // So more than one PsCarouselGame could be using the same PsGamePtr.
 struct PsCarouselGame : public PsGamePtr {
     PsCarouselGame() = delete;
-    explicit PsCarouselGame(PsGamePtr & game) : PsGamePtr(game) { };
+    explicit PsCarouselGame(PsGamePtr &game) : PsGamePtr(game) {};
 
     PsScreenpoint current;
     PsScreenpoint destination;
@@ -48,7 +48,7 @@ struct PsCarouselGame : public PsGamePtr {
 // PsCarousel
 //******************
 class PsCarousel {
-public:
+  public:
     int activeItem = 0;
     int cycleMax = 0;
     int cycleDuration = 0;

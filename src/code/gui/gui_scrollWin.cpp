@@ -11,9 +11,7 @@ using namespace std;
 //********************
 // GuiScrollWin::init()
 //********************
-void GuiScrollWin::init() {
-    gui = Gui::getInstance();
-}
+void GuiScrollWin::init() { gui = Gui::getInstance(); }
 
 //********************
 // GuiScrollWin::render()
@@ -23,7 +21,7 @@ void GuiScrollWin::render() {
     gui->renderTextBar();
     int yoffset = gui->renderLogo(true);
 
-    for (int i=0; i < lines.size(); ++ i) {
+    for (int i = 0; i < lines.size(); ++i) {
         gui->renderTextLine(lines[i], i, 0, XALIGN_LEFT);
     }
     SDL_RenderPresent(renderer);
@@ -35,12 +33,12 @@ void GuiScrollWin::render() {
 void GuiScrollWin::appendLine(const std::string str) {
     if (lines.size() >= maxLines) {
         // the display is full, shift the lines up so we can overwrite the bottom line
-        for (int i=1; i < maxLines; ++ i)
-            lines[i-1] = lines[i];
+        for (int i = 1; i < maxLines; ++i)
+            lines[i - 1] = lines[i];
 
-        lines[lines.size()-1] = str;    // overwrite the last line
+        lines[lines.size() - 1] = str; // overwrite the last line
     } else
-        lines.emplace_back(str);        // add a line at the end of the existing lines
+        lines.emplace_back(str); // add a line at the end of the existing lines
     if (alsoWriteToCout)
         cout << str << endl;
 }

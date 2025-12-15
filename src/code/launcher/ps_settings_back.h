@@ -10,7 +10,7 @@
 // PsSettingsBack
 //******************
 class PsSettingsBack : public PsObj {
-public:
+  public:
     void setCurLen(int len);
     void update(long time) override;
 

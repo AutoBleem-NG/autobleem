@@ -13,9 +13,9 @@ using namespace std;
 //*******************************
 // Inifile::load
 //*******************************
-void Inifile::load(const string & _path) {
+void Inifile::load(const string &_path) {
     this->path = _path;
-    //cout << "Reading ini file: " << path << endl;
+    // cout << "Reading ini file: " << path << endl;
     ifstream file;
     string iniLine;
     file.open(path);
@@ -26,13 +26,13 @@ void Inifile::load(const string & _path) {
     }
 
     while (Util::getlineRemoveCR(file, iniLine)) {
-        Util::removeComment(iniLine);   // remove '#' to end of line
+        Util::removeComment(iniLine); // remove '#' to end of line
         iniLine = trim(iniLine);
-        if (iniLine.length() == 0) continue;    // blank line
-        if (iniLine[0]=='[')
-        {
+        if (iniLine.length() == 0)
+            continue; // blank line
+        if (iniLine[0] == '[') {
             iniLine = ltrim(iniLine);
-            iniLine = iniLine.substr(1,iniLine.find(']')-1);
+            iniLine = iniLine.substr(1, iniLine.find(']') - 1);
             section = iniLine;
         }
         if (iniLine.find('=') != string::npos) {
@@ -44,7 +44,8 @@ void Inifile::load(const string & _path) {
             values[paramName] = paramVal;
         }
 
-        if (file.eof()) break;
+        if (file.eof())
+            break;
     };
     file.close();
 }
@@ -52,7 +53,7 @@ void Inifile::load(const string & _path) {
 //*******************************
 // Inifile::reload
 //*******************************
-void Inifile::reload(const string & _path) {
+void Inifile::reload(const string &_path) {
     values.clear();
     load(_path);
 }
@@ -60,26 +61,23 @@ void Inifile::reload(const string & _path) {
 //*******************************
 // Inifile::OverwriteAndAppend
 //*******************************
-void Inifile::OverwriteAndAppend(const string & _path) {
-    load(_path);
-}
+void Inifile::OverwriteAndAppend(const string &_path) { load(_path); }
 
 //*******************************
 // Inifile::save
 //*******************************
-void Inifile::save(const string & _path) {
+void Inifile::save(const string &_path) {
     cout << "Writing ini file: " << _path << endl;
     ofstream os;
     os.open(_path);
-    os << "[" << section <<"]" << endl;
-    for (auto & value : values)
-    {
-        string k =  value.first;
+    os << "[" << section << "]" << endl;
+    for (auto &value : values) {
+        string k = value.first;
         string v = value.second;
-        k=lcase(k);
+        k = lcase(k);
         if (k == "publisher")
             Util::cleanPublisherString(v);
-        k[0]=toupper(k[0]);
+        k[0] = toupper(k[0]);
 
         os << k << "=" << v << endl;
     }
@@ -95,7 +93,7 @@ void Inifile::print() {
     cout << "path = " << path << '\n';
     cout << "entry = " << entry << '\n';
 
-    for (auto & item : values)
+    for (auto &item : values)
         cout << item.first << " = " << item.second << '\n';
     cout << flush;
 }

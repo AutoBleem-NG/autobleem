@@ -11,7 +11,7 @@
 // GuiAbout
 //********************
 class GuiAbout : public GuiScreen {
-public:
+  public:
     StarFx fx;
     void init() override;
     void render() override;

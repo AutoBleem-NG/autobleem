@@ -30,8 +30,10 @@ string SerialScanner::fixSerial(string serial) {
         int maxchars = serial[0] == 'L' ? 3 : 4;
         if (!isdigit(serial[i])) {
 
-            if (digitsProcessing) continue;
-            if (serial[i] == '-') continue;
+            if (digitsProcessing)
+                continue;
+            if (serial[i] == '-')
+                continue;
             if (alpha.str().length() < maxchars) {
                 alpha << serial[i];
             }
@@ -46,13 +48,11 @@ string SerialScanner::fixSerial(string serial) {
 //*******************************
 // SerialScanner::scanSerial
 //*******************************
-string SerialScanner::scanSerial(ImageType imageType, string path, string firstBinPath)
-{
-    string serial = scanSerialInternal(imageType,path,firstBinPath);
-    std::cout <<serial<<endl;
-    if (serial.empty())
-    {
-        serial = workarounds(imageType,path,firstBinPath);
+string SerialScanner::scanSerial(ImageType imageType, string path, string firstBinPath) {
+    string serial = scanSerialInternal(imageType, path, firstBinPath);
+    std::cout << serial << endl;
+    if (serial.empty()) {
+        serial = workarounds(imageType, path, firstBinPath);
     }
     return serial;
 }
@@ -63,7 +63,7 @@ string SerialScanner::scanSerial(ImageType imageType, string path, string firstB
 string SerialScanner::scanSerialInternal(ImageType imageType, string path, string firstBinPath) {
     std::cout << imageType << "   " << path << "   " << firstBinPath << endl;
     if (imageType == IMAGE_PBP) {
-        string destinationDir = path ;
+        string destinationDir = path;
         string pbpFileName = DirEntry::findFirstFile(EXT_PBP, destinationDir);
         if (pbpFileName != "") {
             ifstream is;
@@ -85,7 +85,8 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
             if (signature != 1179865088) {
                 return "";
             }
-            unsigned int version = Util::readDword(&is);;
+            unsigned int version = Util::readDword(&is);
+            ;
             unsigned int fields_table_offs = Util::readDword(&is);
             unsigned int values_table_offs = Util::readDword(&is);
             int nitems = Util::readDword(&is);
@@ -120,25 +121,24 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
             }
         }
     }
-    if (DirEntry::imageTypeUsesACueFile(imageType) || (imageType==IMAGE_CHD)) {
-        string prefixes[] = {
-                "CPCS", "ESPM", "HPS", "LPS", "LSP", "SCAJ", "SCED", "SCES", "SCPS", "SCUS", "SIPS", "SLES", "SLKA",
-                "SLPM", "SLPS", "SLUS"};
+    if (DirEntry::imageTypeUsesACueFile(imageType) || (imageType == IMAGE_CHD)) {
+        string prefixes[] = {"CPCS", "ESPM", "HPS",  "LPS",  "LSP",  "SCAJ", "SCED", "SCES",
+                             "SCPS", "SCUS", "SIPS", "SLES", "SLKA", "SLPM", "SLPS", "SLUS"};
         if (firstBinPath == "") {
             return ""; // not at this stage
         }
 
         for (int level = 1; level < 4; level++) {
             Isodir *dirLoader = new Isodir();
-        
-            IsoDirectory dir = dirLoader->getDir(firstBinPath, level, imageType==IMAGE_CHD);
+
+            IsoDirectory dir = dirLoader->getDir(firstBinPath, level, imageType == IMAGE_CHD);
             delete dirLoader;
             string serialFound = "";
             if (!dir.rootDir.empty()) {
-                for (const string & entry:dir.rootDir) {
-                 //   cout << entry << endl;
+                for (const string &entry : dir.rootDir) {
+                    //   cout << entry << endl;
                     string potentialSerial = fixSerial(entry);
-                    for (const string & prefix:prefixes) {
+                    for (const string &prefix : prefixes) {
                         int pos = potentialSerial.find(prefix.c_str(), 0);
                         if (pos == 0) {
                             serialFound = potentialSerial;
@@ -148,7 +148,7 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
                     }
                 }
                 string volume = fixSerial(dir.volumeName);
-                for (const string & prefix:prefixes) {
+                for (const string &prefix : prefixes) {
                     int pos = volume.find(prefix.c_str(), 0);
                     if (pos == 0) {
                         serialFound = volume;
@@ -168,53 +168,48 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
 //*******************************
 // SerialScanner::workarounds
 //*******************************
-string SerialScanner::workarounds(ImageType imageType, string path, string firstBinPath)
-{
+string SerialScanner::workarounds(ImageType imageType, string path, string firstBinPath) {
     string fileToScan = "";
-    if (DirEntry::imageTypeUsesACueFile(imageType))
-    {
+    if (DirEntry::imageTypeUsesACueFile(imageType)) {
         fileToScan = firstBinPath;
     }
-    if (imageType == IMAGE_PBP)
-    {
+    if (imageType == IMAGE_PBP) {
         fileToScan = DirEntry::findFirstFile(EXT_PBP, path);
     }
-    if (imageType == IMAGE_CHD)
-    {
+    if (imageType == IMAGE_CHD) {
         fileToScan = DirEntry::findFirstFile(EXT_CHD, path);
     }
 
     // BH2 - Resident Evil 1.5
-    if (fileToScan.find("BH2")!=string::npos)
-    {
+    if (fileToScan.find("BH2") != string::npos) {
         return serialByMd5(fileToScan);
     }
     return "";
 }
 
-
 //*******************************
 // SerialScanner::serialByMd5
 //*******************************
-string SerialScanner::serialByMd5(string scanFile)
-{
-    string head=Util::execUnixCommand(("head -c 1M \""+scanFile+"\" | md5sum | awk '{print $1}'").c_str());
-    string tail=Util::execUnixCommand(("tail -c 1M \""+scanFile+"\" | md5sum | awk '{print $1}'").c_str());
+string SerialScanner::serialByMd5(string scanFile) {
+    string head = Util::execUnixCommand(("head -c 1M \"" + scanFile + "\" | md5sum | awk '{print $1}'").c_str());
+    string tail = Util::execUnixCommand(("tail -c 1M \"" + scanFile + "\" | md5sum | awk '{print $1}'").c_str());
 
-    return head+tail;
+    return head + tail;
 }
 
 //*******************************
 // SerialScanner::serialToRegion
 //*******************************
-string SerialScanner::serialToRegion(const string & serial)
-{
+string SerialScanner::serialToRegion(const string &serial) {
     string region;
     if (serial.length() >= 3) {
-    	char regionCode = serial[2];
-    	if (regionCode == 'U') region = "US";                 // SLUS, SCUS = NTSC-U
-    	else if (regionCode == 'E') region = "Europe-Aus";    // SLES, SCES = PAL
-    	else if (regionCode == 'P') region = "Japan";         // SLPS, SLPM, SCPS = NTSC-J
+        char regionCode = serial[2];
+        if (regionCode == 'U')
+            region = "US"; // SLUS, SCUS = NTSC-U
+        else if (regionCode == 'E')
+            region = "Europe-Aus"; // SLES, SCES = PAL
+        else if (regionCode == 'P')
+            region = "Japan"; // SLPS, SLPM, SCPS = NTSC-J
     }
 
     return region;

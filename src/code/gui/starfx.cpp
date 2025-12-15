@@ -6,40 +6,38 @@
 #include "starfx.h"
 #include "../gui/gui.h"
 
-StarFx::StarFx()
-{
+StarFx::StarFx() {
     std::default_random_engine generator;
-    std::uniform_int_distribution<int> wdistribution(0,SCREEN_WIDTH);
+    std::uniform_int_distribution<int> wdistribution(0, SCREEN_WIDTH);
     std::uniform_int_distribution<int> hdistribution(0, SCREEN_HEIGHT);
 
-    for (int i=1;i<8;i++)
-    {
-        for (int star=0;star<STARS_PER_LAYER;star++) {
+    for (int i = 1; i < 8; i++) {
+        for (int star = 0; star < STARS_PER_LAYER; star++) {
             Star s;
-            s.speed = i*SPEED_DIFFERENCE;
-            s.size =  i*SIZE_DIFFERENCE;
+            s.speed = i * SPEED_DIFFERENCE;
+            s.size = i * SIZE_DIFFERENCE;
             s.x = wdistribution(generator);
             s.y = hdistribution(generator);
-            float colorval = 255.0f*(i/9.0f);
-            s.color = RGB(colorval,colorval,colorval);
-            s.speed = i*SPEED_DIFFERENCE;
-            s.size=i*SIZE_DIFFERENCE;
+            float colorval = 255.0f * (i / 9.0f);
+            s.color = RGB(colorval, colorval, colorval);
+            s.speed = i * SPEED_DIFFERENCE;
+            s.size = i * SIZE_DIFFERENCE;
 
-            starLayers[i-1].push_back(s);
+            starLayers[i - 1].push_back(s);
         }
     }
 }
 
-void StarFx::render()
-{
-    for (auto& layer : starLayers) {
-        for (auto& star : layer) {
+void StarFx::render() {
+    for (auto &layer : starLayers) {
+        for (auto &star : layer) {
             star.y += star.speed;
-            if (star.y > SCREEN_HEIGHT) star.y -= SCREEN_HEIGHT;
+            if (star.y > SCREEN_HEIGHT)
+                star.y -= SCREEN_HEIGHT;
         }
     }
-    for (auto& layer : starLayers) {
-        for (auto& star : layer) {
+    for (auto &layer : starLayers) {
+        for (auto &star : layer) {
             SDL_Rect rect;
             rect.x = star.x;
             rect.y = star.y;

@@ -31,9 +31,7 @@ void PsMenu::loadAssets() {
 //*******************************
 // PsMenu::freeAssets
 //*******************************
-void PsMenu::freeAssets() {
-    resume = nullptr;
-}
+void PsMenu::freeAssets() { resume = nullptr; }
 
 #define ICON_GAP 130.0f
 
@@ -44,8 +42,10 @@ void PsMenu::update(long time) {
     if (animationStarted != 0) {
         float progress = time - animationStarted;
         progress = progress / (duration * 1.0f);
-        if (progress > 1) progress = 1;
-        if (progress < 0) progress = 0;
+        if (progress > 1)
+            progress = 1;
+        if (progress < 0)
+            progress = 0;
 
         if (transition == TR_MENUON) {
             y = oy + (progress * (targety - oy));
@@ -96,8 +96,10 @@ void PsMenu::update(long time) {
             if (direction == 0) {
                 float progress = time - animationStarted;
                 progress = progress / (duration * 1.0f);
-                if (progress > 1) progress = 1;
-                if (progress < 0) progress = 0;
+                if (progress > 1)
+                    progress = 1;
+                if (progress < 0)
+                    progress = 0;
 
                 x = ox + progress * ICON_GAP;
 
@@ -109,12 +111,12 @@ void PsMenu::update(long time) {
                 yoff[selOption] = -((newh - 118) / 2);
 
                 if (progress >= 1.0f) {
-                    optionscales[selOption]=1.0;
+                    optionscales[selOption] = 1.0;
                     xoff[selOption] = 0;
                     yoff[selOption] = 0;
 
                     selOption--;
-                    optionscales[selOption]=maxZoom;
+                    optionscales[selOption] = maxZoom;
                     int neww = 118 * optionscales[selOption];
                     int newh = 118 * optionscales[selOption];
 
@@ -128,12 +130,14 @@ void PsMenu::update(long time) {
             } else {
                 float progress = time - animationStarted;
                 progress = progress / (duration * 1.0f);
-                if (progress > 1) progress = 1;
-                if (progress < 0) progress = 0;
+                if (progress > 1)
+                    progress = 1;
+                if (progress < 0)
+                    progress = 0;
 
                 x = ox - progress * ICON_GAP;
 
-                optionscales[selOption] =  1 + progress * (maxZoom - 1);
+                optionscales[selOption] = 1 + progress * (maxZoom - 1);
                 int neww = 118 * optionscales[selOption];
                 int newh = 118 * optionscales[selOption];
 
@@ -141,11 +145,11 @@ void PsMenu::update(long time) {
                 yoff[selOption] = -((newh - 118) / 2);
 
                 if (progress >= 1.0f) {
-                    optionscales[selOption]=1.0;
+                    optionscales[selOption] = 1.0;
                     xoff[selOption] = 0;
                     yoff[selOption] = 0;
                     selOption++;
-                    optionscales[selOption]=maxZoom;
+                    optionscales[selOption] = maxZoom;
                     int neww = 118 * optionscales[selOption];
                     int newh = 118 * optionscales[selOption];
 
@@ -168,7 +172,7 @@ void PsMenu::render() {
     int w;
     int h;
 
-    if (enableMenu[0]) {    // SEL_OPTION_AB_SETTINGS
+    if (enableMenu[0]) { // SEL_OPTION_AB_SETTINGS
         // show AutoBleem Options
         w = 118 * optionscales[0];
         h = 118 * optionscales[0];
@@ -183,7 +187,7 @@ void PsMenu::render() {
     }
 
     // Show Game Edit Parameters
-    if (enableMenu[1]) {    // SEL_OPTION_EDIT_GAME_SETTINGS
+    if (enableMenu[1]) { // SEL_OPTION_EDIT_GAME_SETTINGS
         w = 118 * optionscales[1];
         h = 118 * optionscales[1];
 
@@ -198,7 +202,7 @@ void PsMenu::render() {
     }
 
     // Save Game
-    if (enableMenu[2]) {    // SEL_OPTION_EDIT_MEMCARD_INFO
+    if (enableMenu[2]) { // SEL_OPTION_EDIT_MEMCARD_INFO
         w = 118 * optionscales[2];
         h = 118 * optionscales[2];
         input.x = 0, input.y = 0;
@@ -211,8 +215,8 @@ void PsMenu::render() {
         SDL_RenderCopy(renderer, memcard, &input, &output);
     }
 
-        // Restore Game
-    if (enableMenu[3]) {    // SEL_OPTION_RESUME_FROM_SAVESTATE
+    // Restore Game
+    if (enableMenu[3]) { // SEL_OPTION_RESUME_FROM_SAVESTATE
         w = 118 * optionscales[3];
         h = 118 * optionscales[3];
         input.x = 0, input.y = 0;
@@ -245,7 +249,4 @@ void PsMenu::render() {
 //*******************************
 // PsMenu::setResumePic
 //*******************************
-void PsMenu::setResumePic(string picturePath)
-{
-    resume = IMG_LoadTexture(renderer,picturePath.c_str());
-}
+void PsMenu::setResumePic(string picturePath) { resume = IMG_LoadTexture(renderer, picturePath.c_str()); }

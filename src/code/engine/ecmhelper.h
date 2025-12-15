@@ -13,6 +13,6 @@
 // Ecmhelper
 //******************
 class Ecmhelper {
-public:
+  public:
     bool unecm(std::string input, std::string output);
 };

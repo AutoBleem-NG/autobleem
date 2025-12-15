@@ -17,19 +17,19 @@
 // Scanner
 //******************
 class Scanner {
-public:
+  public:
     Scanner() = default;
     USBGames gamesToAddToDB;
-    bool forceScan=false;
-    bool noGamesFoundDuringScan=false;
+    bool forceScan = false;
+    bool noGamesFoundDuringScan = false;
 
     void scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy);
-    void repairBrokenCueFiles(const std::string & path);
+    void repairBrokenCueFiles(const std::string &path);
 
-    void unecm(const std::string & path); // this routine removes Error Correction files from the bin file to save space
+    void unecm(const std::string &path); // this routine removes Error Correction files from the bin file to save space
     void updateRegionalDB(GamesHierarchy &gamesHierarchy, Database *db);
 
-    static bool areThereGameFilesInDir(const std::string & path);
+    static bool areThereGameFilesInDir(const std::string &path);
 
     Scanner(Scanner const &) = delete;
     Scanner &operator=(Scanner const &) = delete;
@@ -39,7 +39,7 @@ public:
         return s;
     }
 
-private:
+  private:
     bool complete;
     void moveFolderIfNeeded(const std::string &gameDirName, std::string gameDataPath, std::string path);
 };

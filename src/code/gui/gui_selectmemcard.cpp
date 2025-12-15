@@ -24,20 +24,16 @@ void GuiSelectMemcard::init() {
 
     shared_ptr<Gui> gui(Gui::getInstance());
     Memcard *memcardOps = new Memcard(gui->pathToGamesDir);
-    if (listType==MC_CUSTOM) {
+    if (listType == MC_CUSTOM) {
         cards = memcardOps->list();
-    } else
-    {
+    } else {
         cards.push_back(_("CONFIGURED"));
         // build memcards list
         vector<string> customList = memcardOps->list();
-        for (const string& mc:customList)
-        {
-            cards.push_back("[1] "+mc);
-            cards.push_back("[2] "+mc);
+        for (const string &mc : customList) {
+            cards.push_back("[1] " + mc);
+            cards.push_back("[2] " + mc);
         }
-
-
     }
     maxVisible = atoi(gui->themeData.values["lines"].c_str());
     firstVisible = 0;
@@ -51,7 +47,7 @@ void GuiSelectMemcard::init() {
         }
     }
 
-    if (listType==MC_CUSTOM) {
+    if (listType == MC_CUSTOM) {
         vector<string>::iterator it;
         it = cards.begin();
         cards.insert(it, string("(" + _("Internal") + ")"));
@@ -95,8 +91,8 @@ void GuiSelectMemcard::render() {
         gui->renderSelectionBox(selected - firstVisible + 1, yoffset);
     }
 
-    gui->renderStatus(_("Card") + " " + to_string(selected + 1) + "/" + to_string(cards.size()) +
-                      "   |@L1|/|@R1| " + _("Page") + "     |@X| " + _("Select") + "  |@O| " + _("Cancel") + "|");
+    gui->renderStatus(_("Card") + " " + to_string(selected + 1) + "/" + to_string(cards.size()) + "   |@L1|/|@R1| " +
+                      _("Page") + "     |@X| " + _("Select") + "  |@O| " + _("Cancel") + "|");
     SDL_RenderPresent(renderer);
 }
 
@@ -122,68 +118,67 @@ void GuiSelectMemcard::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_CONTROLLERHATMOTIONDOWN:
-                case SDL_CONTROLLERHATMOTIONUP:
-                    if (gui->mapper.isDown(&e)) {
+            case SDL_CONTROLLERHATMOTIONDOWN:
+            case SDL_CONTROLLERHATMOTIONUP:
+                if (gui->mapper.isDown(&e)) {
 
-                            Mix_PlayChannel(-1, gui->cursor, 0);
-                            selected++;
-                            if (selected >= cards.size()) {
-                                selected = 0;
-                                firstVisible = selected;
-                                lastVisible = firstVisible + maxVisible;
-                            }
-                            render();
-                        }
-                    if (gui->mapper.isUp(&e)) {
-
-                            Mix_PlayChannel(-1, gui->cursor, 0);
-                            selected--;
-                            if (selected < 0) {
-                                selected = cards.size() - 1;
-                                firstVisible = selected;
-                                lastVisible = firstVisible + maxVisible;
-                            }
-                            render();
-                        }
-
-                    break;
-                case SDL_CONTROLLERBUTTONDOWN:
-                    if (e.cbutton.button == SDL_BTN_R1) {
-
-                        Mix_PlayChannel(-1, gui->home_up, 0);
-                        selected += maxVisible;
-                        if (selected >= cards.size()) {
-                            selected = cards.size() - 1;
-                        }
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    selected++;
+                    if (selected >= cards.size()) {
+                        selected = 0;
                         firstVisible = selected;
                         lastVisible = firstVisible + maxVisible;
-                        render();
-                    };
-                    if (e.cbutton.button == SDL_BTN_L1) {
+                    }
+                    render();
+                }
+                if (gui->mapper.isUp(&e)) {
 
-                        Mix_PlayChannel(-1, gui->home_down, 0);
-                        selected -= maxVisible;
-                        if (selected < 0) {
-                            selected = 0;
-                        }
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    selected--;
+                    if (selected < 0) {
+                        selected = cards.size() - 1;
                         firstVisible = selected;
                         lastVisible = firstVisible + maxVisible;
-                        render();
-                    };
+                    }
+                    render();
+                }
 
-                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
+                break;
+            case SDL_CONTROLLERBUTTONDOWN:
+                if (e.cbutton.button == SDL_BTN_R1) {
 
-                        Mix_PlayChannel(-1, gui->cancel, 0);
-                        selected = -1;
-                        menuVisible = false;
+                    Mix_PlayChannel(-1, gui->home_up, 0);
+                    selected += maxVisible;
+                    if (selected >= cards.size()) {
+                        selected = cards.size() - 1;
+                    }
+                    firstVisible = selected;
+                    lastVisible = firstVisible + maxVisible;
+                    render();
+                };
+                if (e.cbutton.button == SDL_BTN_L1) {
 
-                    };
-                    if (e.cbutton.button == SDL_BTN_CROSS) {
-                        cardSelected = cards[selected];
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        menuVisible = false;
-                    };
+                    Mix_PlayChannel(-1, gui->home_down, 0);
+                    selected -= maxVisible;
+                    if (selected < 0) {
+                        selected = 0;
+                    }
+                    firstVisible = selected;
+                    lastVisible = firstVisible + maxVisible;
+                    render();
+                };
+
+                if (e.cbutton.button == SDL_BTN_CIRCLE) {
+
+                    Mix_PlayChannel(-1, gui->cancel, 0);
+                    selected = -1;
+                    menuVisible = false;
+                };
+                if (e.cbutton.button == SDL_BTN_CROSS) {
+                    cardSelected = cards[selected];
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    menuVisible = false;
+                };
             }
         }
     }

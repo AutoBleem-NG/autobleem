@@ -17,9 +17,8 @@ using namespace std;
 //*******************************
 // Util::powerOff
 //*******************************
-void Util::powerOff()
-{
-#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
+void Util::powerOff() {
+#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     exit(0);
 #else
     Util::execUnixCommand("shutdown -h now");
@@ -74,17 +73,14 @@ bool Util::isInteger(const char *input) {
 //*******************************
 // Util::compareCaseInsensitive
 //*******************************
-bool Util::compareCaseInsensitive(string first, string second) {
-    return lcase(first) == lcase(second);
-}
-
+bool Util::compareCaseInsensitive(string first, string second) { return lcase(first) == lcase(second); }
 
 //*******************************
 // Util::readChar
 //*******************************
 unsigned char Util::readChar(ifstream *stream) {
     unsigned char c;
-    stream->read(reinterpret_cast<char*>(&c), 1);
+    stream->read(reinterpret_cast<char *>(&c), 1);
     return c;
 }
 
@@ -145,20 +141,21 @@ unsigned long Util::readDword(ifstream *stream) {
 /*
  * Return the available space of a usb device
  */
-string Util::getAvailableSpace(){
-#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
+string Util::getAvailableSpace() {
+#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     return "x86 - does not care about free space - Does not work on mac";
-    #else
+#else
     string str;
     int gb = 1024 * 1024;
     string dfResult;
     float freeSpace;
     float totalSpace;
     int freeSpacePerc;
-    freeSpace = ((float)(stoi(execUnixCommand("df | grep \"media\" | head -1 | awk '{print $4}'"))))/gb;
-    totalSpace = ((float)(stoi(execUnixCommand("df | grep \"media\" | head -1 | awk '{print $2}'"))))/gb;
+    freeSpace = ((float)(stoi(execUnixCommand("df | grep \"media\" | head -1 | awk '{print $4}'")))) / gb;
+    totalSpace = ((float)(stoi(execUnixCommand("df | grep \"media\" | head -1 | awk '{print $2}'")))) / gb;
     freeSpacePerc = (freeSpace / totalSpace) * 100;
-    str = floatToString(freeSpace, 2) + " GB / " + floatToString(totalSpace,2)+ " GB (" + to_string(freeSpacePerc)+"%)";
+    str = floatToString(freeSpace, 2) + " GB / " + floatToString(totalSpace, 2) + " GB (" + to_string(freeSpacePerc) +
+          "%)";
     return str;
 #endif
 }
@@ -169,7 +166,7 @@ string Util::getAvailableSpace(){
 /*
  * Convert a float f to a string with precision of n
  */
-string Util::floatToString(float f, int n){
+string Util::floatToString(float f, int n) {
     ostringstream stringStream;
     stringStream << fixed << setprecision(n) << f;
     return stringStream.str();
@@ -178,7 +175,7 @@ string Util::floatToString(float f, int n){
 //*******************************
 // Util::commaSep
 //*******************************
-string Util::commaSep(const string& s, int pos) {
+string Util::commaSep(const string &s, int pos) {
     vector<string> v;
     v.clear();
     char c = ',';
@@ -194,8 +191,7 @@ string Util::commaSep(const string& s, int pos) {
             v.push_back(s.substr(i, s.length()));
         }
     }
-    if (pos<v.size())
-    {
+    if (pos < v.size()) {
         return v[pos];
     }
     return "";
@@ -207,7 +203,7 @@ string Util::commaSep(const string& s, int pos) {
 /*
  * Execute a shell command and return output
  */
-string Util::execUnixCommand(const char* cmd){
+string Util::execUnixCommand(const char *cmd) {
     array<char, 128> buffer;
     string result;
     cout << "Exec:" << cmd << endl;
@@ -227,12 +223,11 @@ string Util::execUnixCommand(const char* cmd){
 //*******************************
 // Util::execFork
 //*******************************
-void Util::execFork(const char *cmd,  vector<const char *> argvNew)
-{
+void Util::execFork(const char *cmd, vector<const char *> argvNew) {
     cout << "calling Util::execFork()" << endl;
     cout << "CMD line to execute: ";
     cout << cmd << " ";
-    for (const char *s:argvNew) {
+    for (const char *s : argvNew) {
         if (s != nullptr) {
             cout << s << " ";
         }
@@ -243,7 +238,7 @@ void Util::execFork(const char *cmd,  vector<const char *> argvNew)
 
     int pid = fork();
     if (!pid) {
-        execvp(link.c_str(), const_cast<char**>(argvNew.data()));
+        execvp(link.c_str(), const_cast<char **>(argvNew.data()));
     }
 
     waitpid(pid, nullptr, 0);
@@ -253,7 +248,7 @@ void Util::execFork(const char *cmd,  vector<const char *> argvNew)
 // Util::ltrim
 //*******************************
 // Left trimming
-string Util::ltrim(const string& s){
+string Util::ltrim(const string &s) {
     size_t start = s.find_first_not_of(" \n\r\t\f\v");
     return (start == string::npos) ? "" : s.substr(start);
 }
@@ -262,7 +257,7 @@ string Util::ltrim(const string& s){
 // Util::rtrim
 //*******************************
 // Right trimming
-string Util::rtrim(const string& s){
+string Util::rtrim(const string &s) {
     size_t end = s.find_last_not_of(" \n\r\t\f\v");
     return (end == string::npos) ? "" : s.substr(0, end + 1);
 }
@@ -271,9 +266,7 @@ string Util::rtrim(const string& s){
 // Util::trim
 //*******************************
 // Trimming both left and right
-string Util::trim(const string &s) {
-    return rtrim(ltrim(s));
-}
+string Util::trim(const string &s) { return rtrim(ltrim(s)); }
 
 //*******************************
 // Util::getStringWithinChar
@@ -287,25 +280,25 @@ string Util::trim(const string &s) {
 string Util::getStringWithinChar(string s, char del) {
     int first = s.find(del);
     int last = s.find_last_of(del);
-    return s.substr(first+1, last-first-1);
+    return s.substr(first + 1, last - first - 1);
 }
 
 //*******************************
 // Util::removeCharsFromString
 //*******************************
-void Util::removeCharsFromString(string& str, string charsToRemove) {
+void Util::removeCharsFromString(string &str, string charsToRemove) {
     for (char ch : charsToRemove)
-        str.erase( std::remove(str.begin(), str.end(), ch), str.end() );
+        str.erase(std::remove(str.begin(), str.end(), ch), str.end());
 }
 
 //*******************************
 // Util::getlineRemoveCR
 // does a getline.  if it's a Windows file the CR at the end is removed.
 //*******************************
-istream& Util::getlineRemoveCR(std::istream& is, std::string& str) {
-    istream& ret = getline(is, str);
+istream &Util::getlineRemoveCR(std::istream &is, std::string &str) {
+    istream &ret = getline(is, str);
     if (!str.empty() && *str.rbegin() == '\r')
-        str.erase(str.length()-1, 1);
+        str.erase(str.length() - 1, 1);
     return ret;
 }
 
@@ -313,7 +306,7 @@ istream& Util::getlineRemoveCR(std::istream& is, std::string& str) {
 // Util::removeComment
 // remove "#" to end of line
 //*******************************
-void Util::removeComment(std::string& str) {
+void Util::removeComment(std::string &str) {
     auto it = str.find("#");
     if (it != str.npos)
         str.erase(it);
@@ -323,8 +316,7 @@ void Util::removeComment(std::string& str) {
 // Util::cleanPublisherString
 // remove any trailing "." or space or " ."
 //*******************************
-void Util::cleanPublisherString(std::string & pub)
-{
+void Util::cleanPublisherString(std::string &pub) {
     if (pub.size() > 0 && pub.back() == '.')
         pub.pop_back();
     if (pub.size() > 0 && pub.back() == ' ')
@@ -334,10 +326,10 @@ void Util::cleanPublisherString(std::string & pub)
 //*******************************
 // Util::dumpMemory
 //*******************************
-void Util::dumpMemory(const  char *p, int count) {
-    for (int i=0; i < count; ++i) {
+void Util::dumpMemory(const char *p, int count) {
+    for (int i = 0; i < count; ++i) {
         printf("%x, ", static_cast<unsigned int>(*p++));
-        if (i %16 == 15 || i == count-1)
+        if (i % 16 == 15 || i == count - 1)
             cout << endl;
     }
 }
@@ -345,7 +337,7 @@ void Util::dumpMemory(const  char *p, int count) {
 //*******************************
 // Util::getTokens
 //*******************************
-vector<string> Util::getTokens(const string& str, char delim) {
+vector<string> Util::getTokens(const string &str, char delim) {
     istringstream ss(str);
     string token;
     vector<string> ret;
@@ -374,16 +366,14 @@ unsigned int Util::getRandomNumber() {
 // Util::getRandomIndex
 // pass 100, get a random index between 0 and 99
 //*******************************
-unsigned int Util::getRandomIndex(unsigned int size) {
-    return getRandomNumber() % size;
-}
+unsigned int Util::getRandomIndex(unsigned int size) { return getRandomNumber() % size; }
 
 //*******************************
 // Read File
 // Return the contents of a text file in a vector of string.
 // note: CR's and LF's are removed.
 //*******************************
-vector<string> Util::ReadTextFileAsAStringArray(const string& filePath, bool removeCRLF) {
+vector<string> Util::ReadTextFileAsAStringArray(const string &filePath, bool removeCRLF) {
     ifstream file;
     string line;
     vector<string> contents;
@@ -410,12 +400,12 @@ vector<string> Util::ReadTextFileAsAStringArray(const string& filePath, bool rem
 // Writes a vector of strings to a file.
 // true for success
 //*******************************
-bool Util::WriteStringsToTextFile(const vector<string>& strings, const std::string& filePath, bool appendLineEnding) {
+bool Util::WriteStringsToTextFile(const vector<string> &strings, const std::string &filePath, bool appendLineEnding) {
     ofstream os(filePath, ios_base::trunc);
     if (!os.is_open())
         return false;
 
-    for (const string& s : strings) {
+    for (const string &s : strings) {
         if (appendLineEnding)
             os << s << endl;
         else
@@ -424,4 +414,3 @@ bool Util::WriteStringsToTextFile(const vector<string>& strings, const std::stri
     os << flush;
     return true;
 }
-

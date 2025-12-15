@@ -18,9 +18,9 @@
 
 using namespace std;
 
-#define OPT_FIRST           5
-#define OPT_LIGHTGUN        5
-#define OPT_LAST            5
+#define OPT_FIRST 5
+#define OPT_LIGHTGUN 5
+#define OPT_LAST 5
 
 //*******************************
 // GuiEditor_RA::processOptionChange
@@ -32,42 +32,38 @@ void GuiEditor_RA::processOptionChange(bool direction) {
     string s;
 
     switch (selOption) {
-        case OPT_LIGHTGUN:
-        {
-            auto &lightgunGames = Gui::getInstance()->lightgunGames;
-            bool isLightgun = lightgunGames.IsGameALightgunGame(gameData);
+    case OPT_LIGHTGUN: {
+        auto &lightgunGames = Gui::getInstance()->lightgunGames;
+        bool isLightgun = lightgunGames.IsGameALightgunGame(gameData);
 
-            if (direction == true) {
-                if (isLightgun == false) {
-                    lightgunGames.AddGame(gameData);
-                    isLightgun = true;
-                }
-            } else {
-                if (isLightgun == true) {
-                    lightgunGames.RemoveGame(gameData);
-                    isLightgun = false;
-                }
+        if (direction == true) {
+            if (isLightgun == false) {
+                lightgunGames.AddGame(gameData);
+                isLightgun = true;
+            }
+        } else {
+            if (isLightgun == true) {
+                lightgunGames.RemoveGame(gameData);
+                isLightgun = false;
             }
         }
-            break;
+    } break;
     }
 }
 
 //*******************************
 // GuiEditor_RA::refreshData
 //*******************************
-void GuiEditor_RA::refreshData() {
-    shared_ptr<Gui> gui(Gui::getInstance());
-}
+void GuiEditor_RA::refreshData() { shared_ptr<Gui> gui(Gui::getInstance()); }
 
 //*******************************
 // GuiEditor_RA::GetBoxArtTexture
 //*******************************
 SDL_Shared<SDL_Texture> GuiEditor_RA::GetBoxArtTexture() {
-    auto makeBoxArtPath = [&] (const string& boxartDir) -> string
-    { return Env::getPathToRetroarchDir() + sep + "thumbnails" + sep +
-             DirEntry::getFileNameWithoutExtension(gameData->db_name) + sep +
-             boxartDir + sep + RAIntegrator::escapeName(gameData->title) + ".png";
+    auto makeBoxArtPath = [&](const string &boxartDir) -> string {
+        return Env::getPathToRetroarchDir() + sep + "thumbnails" + sep +
+               DirEntry::getFileNameWithoutExtension(gameData->db_name) + sep + boxartDir + sep +
+               RAIntegrator::escapeName(gameData->title) + ".png";
     };
 
     SDL_Shared<SDL_Texture> coverPng;
@@ -119,13 +115,14 @@ void GuiEditor_RA::render() {
     gui->renderTextLine(_("Game File:") + " " + gameData->image_path, line++, yoffset, XALIGN_CENTER);
     gui->renderTextLine(_("Game Core:") + " " + gameData->core_name, line++, yoffset, XALIGN_CENTER);
 
-    gui->renderTextLineOptions(
-            _("Lightgun Game:") + (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gameData) ? string("|@Check|") : string("|@Uncheck|")),
-            OPT_LIGHTGUN, yoffset, XALIGN_LEFT, 300);
+    gui->renderTextLineOptions(_("Lightgun Game:") + (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gameData)
+                                                          ? string("|@Check|")
+                                                          : string("|@Uncheck|")),
+                               OPT_LIGHTGUN, yoffset, XALIGN_LEFT, 300);
 
     gui->renderSelectionBox(selOption, yoffset, 300);
 
-    //string guiMenu = "|@T| " + _("Rename");
+    // string guiMenu = "|@T| " + _("Rename");
 
     string guiMenu = " |@O| " + _("Go back") + "|";
 
@@ -149,8 +146,8 @@ void GuiEditor_RA::render() {
     outputRect.y = atoi(gui->themeData.values["ecovery"].c_str());
     outputRect.w = cover_w * magnify;
     outputRect.h = cover_h * magnify;
-    outputRect.x += (226-outputRect.w)/2;
-    outputRect.y += (226-outputRect.h)/2;
+    outputRect.x += (226 - outputRect.w) / 2;
+    outputRect.y += (226 - outputRect.h) / 2;
 
     SDL_RenderCopy(renderer, cover, nullptr, &outputRect);
 
@@ -179,54 +176,52 @@ void GuiEditor_RA::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_CONTROLLERHATMOTIONDOWN:  /* Handle Joystick Motion */
-                case SDL_CONTROLLERHATMOTIONUP:
+            case SDL_CONTROLLERHATMOTIONDOWN: /* Handle Joystick Motion */
+            case SDL_CONTROLLERHATMOTIONUP:
 
-                    if (gui->mapper.isDown(&e)) {
-                        do {
-                            Mix_PlayChannel(-1, gui->cursor, 0);
-                            selOption++;
-                            if (selOption > OPT_LAST) {
-                                selOption = OPT_LAST;
-                            }
-                            render();
-                        } while (fastForwardUntilAnotherEvent(120));
-                    }
-                    if (gui->mapper.isUp(&e)) {
-                        do {
-                            Mix_PlayChannel(-1, gui->cursor, 0);
-                            selOption--;
-                            if (selOption < OPT_FIRST) {
-                                selOption = OPT_FIRST;
-                            }
-                            render();
-                        } while (fastForwardUntilAnotherEvent(120));
-                    }
+                if (gui->mapper.isDown(&e)) {
+                    do {
+                        Mix_PlayChannel(-1, gui->cursor, 0);
+                        selOption++;
+                        if (selOption > OPT_LAST) {
+                            selOption = OPT_LAST;
+                        }
+                        render();
+                    } while (fastForwardUntilAnotherEvent(120));
+                }
+                if (gui->mapper.isUp(&e)) {
+                    do {
+                        Mix_PlayChannel(-1, gui->cursor, 0);
+                        selOption--;
+                        if (selOption < OPT_FIRST) {
+                            selOption = OPT_FIRST;
+                        }
+                        render();
+                    } while (fastForwardUntilAnotherEvent(120));
+                }
 
+                if (gui->mapper.isRight(&e)) {
+                    do {
+                        Mix_PlayChannel(-1, gui->cursor, 0);
+                        processOptionChange(true);
+                        render();
+                    } while (fastForwardUntilAnotherEvent(80));
+                }
+                if (gui->mapper.isLeft(&e)) {
+                    do {
+                        Mix_PlayChannel(-1, gui->cursor, 0);
+                        processOptionChange(false);
+                        render();
+                    } while (fastForwardUntilAnotherEvent(80));
+                }
+                break;
 
-                    if (gui->mapper.isRight(&e)) {
-                        do {
-                            Mix_PlayChannel(-1, gui->cursor, 0);
-                            processOptionChange(true);
-                            render();
-                        } while (fastForwardUntilAnotherEvent(80));
-                    }
-                    if (gui->mapper.isLeft(&e)) {
-                        do {
-                            Mix_PlayChannel(-1, gui->cursor, 0);
-                            processOptionChange(false);
-                            render();
-                        } while (fastForwardUntilAnotherEvent(80));
-                    }
-                    break;
-
-                case SDL_CONTROLLERBUTTONDOWN:
-                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
-                        Mix_PlayChannel(-1, gui->cancel, 0);
-                        cover = nullptr;
-                        menuVisible = false;
-
-                    };
+            case SDL_CONTROLLERBUTTONDOWN:
+                if (e.cbutton.button == SDL_BTN_CIRCLE) {
+                    Mix_PlayChannel(-1, gui->cancel, 0);
+                    cover = nullptr;
+                    menuVisible = false;
+                };
             }
         }
         render();

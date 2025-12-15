@@ -15,7 +15,7 @@
 // PsMenu
 //******************
 class PsMenu : public PsObj {
-public:
+  public:
     SDL_Shared<SDL_Texture> settings;
     SDL_Shared<SDL_Texture> guide;
     SDL_Shared<SDL_Texture> memcard;
@@ -23,21 +23,24 @@ public:
     SDL_Shared<SDL_Texture> resume;
 
     int x = 0, y = 0, oy = 0, ox = 0;
-    int xoff[4] = {0,0,0,0};
-    int yoff[4] = {0,0,0,0};
+    int xoff[4] = {0, 0, 0, 0};
+    int yoff[4] = {0, 0, 0, 0};
 
-    float optionscales[4] = {1.0f,1.0f,1.0f,1.0f};
+    float optionscales[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
     float maxZoom = 1.5;
 
-    int selOption=0;    // SEL_OPTION_AB_SETTINGS=0, SEL_OPTION_EDIT_GAME_SETTINGS, SEL_OPTION_EDIT_MEMCARD_INFO, SEL_OPTION_RESUME_FROM_SAVESTATE
-    int animationStarted=0;
+    int selOption = 0; // SEL_OPTION_AB_SETTINGS=0, SEL_OPTION_EDIT_GAME_SETTINGS, SEL_OPTION_EDIT_MEMCARD_INFO,
+                       // SEL_OPTION_RESUME_FROM_SAVESTATE
+    int animationStarted = 0;
     int targety = 0;
     int duration = 0;
     bool active = false;
 
     PsGamePtr psGame;
-    std::vector<bool> enableMenu { true, false, false, false };    // SEL_OPTION_AB_SETTINGS=0, SEL_OPTION_EDIT_GAME_SETTINGS, SEL_OPTION_EDIT_MEMCARD_INFO, SEL_OPTION_RESUME_FROM_SAVESTATE
+    std::vector<bool> enableMenu{true, false, false,
+                                 false}; // SEL_OPTION_AB_SETTINGS=0, SEL_OPTION_EDIT_GAME_SETTINGS,
+                                         // SEL_OPTION_EDIT_MEMCARD_INFO, SEL_OPTION_RESUME_FROM_SAVESTATE
     int enableMenuLastIndex = 3;
     int direction = 0;
 
@@ -50,7 +53,7 @@ public:
 
     void setResumePic(std::string picturePath);
 
-    int transition =0;
+    int transition = 0;
 
     explicit PsMenu(std::string name1, std::string texPath = "");
 };

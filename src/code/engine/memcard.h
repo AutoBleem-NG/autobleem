@@ -10,10 +10,10 @@
 // Memcard
 //******************
 class Memcard {
-public:
+  public:
     void newCard(std::string name);
     void deleteCard(std::string name);
-    void backup(const std::string & path);
+    void backup(const std::string &path);
     void restore(std::string path);
     bool swapIn(std::string path, std::string name);
     void swapOut(std::string path, std::string name);
@@ -22,9 +22,8 @@ public:
     void rename(std::string oldName, std::string newName);
     void restoreAll(std::string mainDir);
 
-    explicit Memcard(std::string path) {
-        this->path = path;
-    }
-private:
+    explicit Memcard(std::string path) { this->path = path; }
+
+  private:
     std::string path;
 };

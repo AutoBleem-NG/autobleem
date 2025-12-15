@@ -8,12 +8,13 @@
 // class GuiPlaylists
 //*******************************
 class GuiPlaylists : public GuiStringMenu {
-public:
+  public:
     explicit GuiPlaylists(SDL_Shared<SDL_Renderer> _renderer) : GuiStringMenu(_renderer) {}
 
     void init() override {
-        for (const string& playlist : playlists) {
-            lines.emplace_back(playlist + " (" + to_string(integrator->getGamesNumber(playlist)) + " " + _("games") + ")");
+        for (const string &playlist : playlists) {
+            lines.emplace_back(playlist + " (" + to_string(integrator->getGamesNumber(playlist)) + " " + _("games") +
+                               ")");
         }
         GuiStringMenu::init();
     }
@@ -27,5 +28,3 @@ public:
     std::vector<std::string> playlists;
     shared_ptr<RAIntegrator> integrator;
 };
-
-

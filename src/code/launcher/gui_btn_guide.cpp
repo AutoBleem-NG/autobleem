@@ -30,29 +30,29 @@ void GuiBtnGuide::render() {
     int line = 0;
     auto font = gui->sonyFonts[FONT_20_BOLD];
 
-    auto renderTextLineToColumns = [&] (const string &textLeft, const string &textRight) {
+    auto renderTextLineToColumns = [&](const string &textLeft, const string &textRight) {
         gui->renderTextLineToColumns(textLeft, textRight, xLeft, xRight, line++, yoffset, font);
     };
 
-    renderTextLineToColumns("",                          "-=" + _("Button Guide") + "=-");
+    renderTextLineToColumns("", "-=" + _("Button Guide") + "=-");
     line++;
-    renderTextLineToColumns("|@X| / |@O|",               _("Select or cancel highlighted option"));
-    renderTextLineToColumns("|@S|",                      _("Run using RetroBoot"));
-    renderTextLineToColumns("|@R1| / |@L1|",             _("Quick scroll to next letter"));
-    renderTextLineToColumns("|@Start|",                  _("Random Game"));
-    renderTextLineToColumns("|@Select|",                 _("Next Game Platform"));
-    renderTextLineToColumns("|@L2| + |@Select|",         _("Change USB Games Sub-Directory"));
-    renderTextLineToColumns("|@L2| + |@Select|",         _("Change RetroBoot System"));
+    renderTextLineToColumns("|@X| / |@O|", _("Select or cancel highlighted option"));
+    renderTextLineToColumns("|@S|", _("Run using RetroBoot"));
+    renderTextLineToColumns("|@R1| / |@L1|", _("Quick scroll to next letter"));
+    renderTextLineToColumns("|@Start|", _("Random Game"));
+    renderTextLineToColumns("|@Select|", _("Next Game Platform"));
+    renderTextLineToColumns("|@L2| + |@Select|", _("Change USB Games Sub-Directory"));
+    renderTextLineToColumns("|@L2| + |@Select|", _("Change RetroBoot System"));
     line++;
-    renderTextLineToColumns("",                          "-=" + _("In Game") + "=-");
-    renderTextLineToColumns("|@Select| + |@Start|",          _("Emulator config MENU"));
-    renderTextLineToColumns(_("RESET"),                  _("Quit emulation - back to AutoBleem"));
+    renderTextLineToColumns("", "-=" + _("In Game") + "=-");
+    renderTextLineToColumns("|@Select| + |@Start|", _("Emulator config MENU"));
+    renderTextLineToColumns(_("RESET"), _("Quit emulation - back to AutoBleem"));
     line++;
-    renderTextLineToColumns("",                          "-=" + _("In Retroarch Game") + "=-");
-    renderTextLineToColumns("|@Select| + |@Start|",      _("Open Retroarch Menu"));
-    renderTextLineToColumns(_("POWER"),                  _("Exit to EvoUI"));
+    renderTextLineToColumns("", "-=" + _("In Retroarch Game") + "=-");
+    renderTextLineToColumns("|@Select| + |@Start|", _("Open Retroarch Menu"));
+    renderTextLineToColumns(_("POWER"), _("Exit to EvoUI"));
     line++;
-    renderTextLineToColumns("|@L2| + |@R2|",             _("In Boot Menu: Safe Power Off The Console"));
+    renderTextLineToColumns("|@L2| + |@R2|", _("In Boot Menu: Safe Power Off The Console"));
 
     gui->renderStatus("|@O| " + _("Go back") + "|");
     SDL_RenderPresent(renderer);
@@ -80,11 +80,11 @@ void GuiBtnGuide::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_CONTROLLERBUTTONUP:
-                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
-                        Mix_PlayChannel(-1, gui->cancel, 0);
-                        menuVisible = false;
-                    };
+            case SDL_CONTROLLERBUTTONUP:
+                if (e.cbutton.button == SDL_BTN_CIRCLE) {
+                    Mix_PlayChannel(-1, gui->cancel, 0);
+                    menuVisible = false;
+                };
             }
         }
     }

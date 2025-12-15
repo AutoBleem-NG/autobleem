@@ -10,7 +10,7 @@
 #include "ps_game.h"
 
 class GuiAppStart : public GuiScreen {
-private:
+  private:
     FC_Font_Shared font;
     PsGamePtr game;
     int firstLine = 0;
@@ -20,10 +20,11 @@ private:
     std::string buffer;
     int scrolling = 0;
     int totalLines = 0;
-    std::string getStringLine(const std::string& str, int lineNo);
-public:
+    std::string getStringLine(const std::string &str, int lineNo);
+
+  public:
     bool result = false;
-    void setGame(PsGamePtr game) {this->game=game;};
+    void setGame(PsGamePtr game) { this->game = game; };
     void init() override;
     void render() override;
     void loop() override;
@@ -31,5 +32,4 @@ public:
     using GuiScreen::GuiScreen;
 };
 
-
-#endif //AUTOBLEEM_GUI_GUI_APP_START_H
+#endif // AUTOBLEEM_GUI_GUI_APP_START_H

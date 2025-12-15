@@ -20,13 +20,13 @@ struct LightgunGames {
     static std::string PathForLightgunFile(PsGamePtr game);
 
     bool IsGameALightgunGame(PsGamePtr game);
-    bool IsGameALightgunGame(const std::string& gamepath);
+    bool IsGameALightgunGame(const std::string &gamepath);
 
     void AddGame(PsGamePtr game);
-    void AddGame(const std::string& gamepath);
+    void AddGame(const std::string &gamepath);
 
     void RemoveGame(PsGamePtr game);
-    void RemoveGame(const std::string& gamepath);
+    void RemoveGame(const std::string &gamepath);
 
     void PurgeGamesNotFound();
 

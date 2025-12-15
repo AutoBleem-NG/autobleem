@@ -10,31 +10,26 @@
 
 #define SECTOR_SIZE 2352
 
-
-
 //******************
 // IsoDirectory
 //******************
-class IsoDirectory
-{
-public:
+class IsoDirectory {
+  public:
     std::string systemName;
     std::string volumeName;
     std::vector<std::string> rootDir;
 };
 
-
 //******************
 // Isodir
 //******************
-class Isodir  {
-public:
-    IsoDirectory getDir(std::string binPath,int maxlevel, bool useCHD);
+class Isodir {
+  public:
+    IsoDirectory getDir(std::string binPath, int maxlevel, bool useCHD);
     void readDir(vector<string> *data, CDReader *reader, unsigned int sector, int maxlevel, int level);
     IsoDirectory getEmptyDir();
-   
-private:
 
+  private:
     std::string removeVersion(std::string input);
-    std::ifstream * stream;
+    std::ifstream *stream;
 };

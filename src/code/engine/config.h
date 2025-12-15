@@ -9,7 +9,7 @@
 // Config
 //******************
 class Config {
-public:
+  public:
     Inifile inifile;
     Config();
     void save();

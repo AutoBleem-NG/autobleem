@@ -21,14 +21,13 @@ using namespace std;
 #define SEL_OPTION_EDIT_MEMCARD_INFO 2
 #define SEL_OPTION_RESUME_FROM_SAVESTATE 3
 
-
 //*******************************
 // GuiLauncher::loop
 // event loop
 //*******************************
 void GuiLauncher::loop() {
     cout << "Main Loop" << endl;
-    powerOffShift = false;  // L2 shift used for power off and selecting game sub dir or RA playlist
+    powerOffShift = false; // L2 shift used for power off and selecting game sub dir or RA playlist
 
     menuVisible = true;
     motionStart = 0;
@@ -38,11 +37,11 @@ void GuiLauncher::loop() {
     while (menuVisible) {
         // get the current translated string values
         headers = {_("SETTINGS"), _("GAME"), _("MEMORY CARD"), _("RESUME")};
-        texts = {_("Customize AutoBleem settings"), _("Edit game parameters"),
-                 _("Edit Memory Card information"), _("Resume game from saved state point")};
+        texts = {_("Customize AutoBleem settings"), _("Edit game parameters"), _("Edit Memory Card information"),
+                 _("Resume game from saved state point")};
 
         time = SDL_GetTicks();
-        for (auto obj:staticElements) {
+        for (auto obj : staticElements) {
             obj->update(time);
         }
 
@@ -81,50 +80,46 @@ void GuiLauncher::loop() {
                 menuVisible = false;
             }
             switch (e.type) {
-                case SDL_KEYDOWN:
-                    if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
-                        gui->drawText(_("POWERING OFF... PLEASE WAIT"));
-                        Util::powerOff();
-                    }
-                    break;
-                case SDL_CONTROLLERHATMOTIONDOWN:  /* Handle Joystick Motion */
-                case SDL_CONTROLLERHATMOTIONUP:
-                    if (powerOffShift)
-                        continue;
-                    if (gui->mapper.isCenter(&e)) {
-                        if (state == STATE_GAMES) {
-                            if (carouselGames.empty()) {
-                                continue;
-                            }
+            case SDL_KEYDOWN:
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
+                    gui->drawText(_("POWERING OFF... PLEASE WAIT"));
+                    Util::powerOff();
+                }
+                break;
+            case SDL_CONTROLLERHATMOTIONDOWN: /* Handle Joystick Motion */
+            case SDL_CONTROLLERHATMOTIONUP:
+                if (powerOffShift)
+                    continue;
+                if (gui->mapper.isCenter(&e)) {
+                    if (state == STATE_GAMES) {
+                        if (carouselGames.empty()) {
+                            continue;
                         }
-                        motionStart = 0;
                     }
-                    if (gui->mapper.isLeft(&e)) {
-                        loop_joyMoveLeft();
-                    }
-                    else if (gui->mapper.isRight(&e)) {
-                        loop_joyMoveRight();
-                    }
-                    else if (gui->mapper.isUp(&e)) {
-                        loop_joyMoveUp();
-                    }
-                    else if (gui->mapper.isDown(&e)) {
-                        loop_joyMoveDown();
-                    }
-                    else {
-                        ;
-                    }
-                    break;
+                    motionStart = 0;
+                }
+                if (gui->mapper.isLeft(&e)) {
+                    loop_joyMoveLeft();
+                } else if (gui->mapper.isRight(&e)) {
+                    loop_joyMoveRight();
+                } else if (gui->mapper.isUp(&e)) {
+                    loop_joyMoveUp();
+                } else if (gui->mapper.isDown(&e)) {
+                    loop_joyMoveDown();
+                } else {
+                    ;
+                }
+                break;
 
-                case SDL_CONTROLLERBUTTONDOWN:
-                    loop_joyButton_Pressed();    // button pressed
-                    break;
-                case SDL_CONTROLLERBUTTONUP:
-                    loop_joyButtonReleased();   // button released
-                    break;
+            case SDL_CONTROLLERBUTTONDOWN:
+                loop_joyButton_Pressed(); // button pressed
+                break;
+            case SDL_CONTROLLERBUTTONUP:
+                loop_joyButtonReleased(); // button released
+                break;
 
-            }   // switch (e.type)
-        // end if (SDL_PollEvent(&e))
+            } // switch (e.type)
+            // end if (SDL_PollEvent(&e))
         }
 
         { // no event.  see if we're holding down L1 or R1 for fast forward first letter
@@ -142,7 +137,7 @@ void GuiLauncher::loop() {
                 }
             }
         }
-    }   // while (menuVisible)
+    } // while (menuVisible)
 
     freeAssets();
 }
@@ -163,7 +158,7 @@ void GuiLauncher::loop_joyMoveLeft() {
         }
     } else if (state == STATE_SET) {
 
-        if (psOptionsMenu->enableMenu[1]) {     // if more than one menu
+        if (psOptionsMenu->enableMenu[1]) { // if more than one menu
             if (psOptionsMenu->selOption != SEL_OPTION_AB_SETTINGS) {
                 if (psOptionsMenu->animationStarted == 0) {
                     Mix_PlayChannel(-1, gui->cursor, 0);
@@ -201,7 +196,8 @@ void GuiLauncher::loop_joyMoveRight() {
         }
     } else if (state == STATE_SET) {
         // if there is an option menu item to the right
-        if (psOptionsMenu->selOption != psOptionsMenu->enableMenuLastIndex && psOptionsMenu->enableMenu[psOptionsMenu->selOption+1]) {
+        if (psOptionsMenu->selOption != psOptionsMenu->enableMenuLastIndex &&
+            psOptionsMenu->enableMenu[psOptionsMenu->selOption + 1]) {
             if (psOptionsMenu->animationStarted == 0) {
                 Mix_PlayChannel(-1, gui->cursor, 0);
                 psOptionsMenu->transition = TR_OPTION;
@@ -272,7 +268,6 @@ void GuiLauncher::loop_joyButton_Pressed() {
         }
     }
 
-
     if (e.cbutton.button == SDL_BTN_SELECT) {
         loop_selectButton_Pressed();
     };
@@ -309,7 +304,7 @@ void GuiLauncher::loop_joyButton_Pressed() {
 //*******************************
 // GuiLauncher::loop_prevNextGameFirstLetter
 //*******************************
-void GuiLauncher::loop_prevNextGameFirstLetter(bool next) {  // false is prev, true is next
+void GuiLauncher::loop_prevNextGameFirstLetter(bool next) { // false is prev, true is next
     Mix_PlayChannel(-1, gui->cursor, 0);
 
     if (state == STATE_GAMES) {
@@ -323,11 +318,11 @@ void GuiLauncher::loop_prevNextGameFirstLetter(bool next) {  // false is prev, t
 
         // find the index of all the first letters
         map<char, int> firstLetterToIndex;
-        for (int index = 0; index < carouselGames.size() ; ++index) {
+        for (int index = 0; index < carouselGames.size(); ++index) {
             if (carouselGames[index]->title != "") {
                 char firstLetter = toupper(carouselGames[index]->title[0]);
-                if (firstLetterToIndex.find(firstLetter) == firstLetterToIndex.end())   // if letter not in map
-                    firstLetterToIndex[firstLetter] = index;    // add the first letter to the map
+                if (firstLetterToIndex.find(firstLetter) == firstLetterToIndex.end()) // if letter not in map
+                    firstLetterToIndex[firstLetter] = index;                          // add the first letter to the map
             }
         }
 
@@ -338,19 +333,20 @@ void GuiLauncher::loop_prevNextGameFirstLetter(bool next) {  // false is prev, t
             char currentLetter = toupper(carouselGames[selGameIndex]->title[0]);
             int nextGame = selGameIndex;
             if (firstLetterToIndex.size() == 1) {
-                nextGame = firstLetterToIndex[currentLetter];   // there is only one first letter in the games
+                nextGame = firstLetterToIndex[currentLetter]; // there is only one first letter in the games
             } else {
                 auto iter = firstLetterToIndex.find(currentLetter);
                 if (next) {
-                    if (firstLetterToIndex.upper_bound(currentLetter) == firstLetterToIndex.end()) // if this is the last letter
-                        nextGame = firstLetterToIndex.begin()->second;  // wrap around to first letter
+                    if (firstLetterToIndex.upper_bound(currentLetter) ==
+                        firstLetterToIndex.end())                      // if this is the last letter
+                        nextGame = firstLetterToIndex.begin()->second; // wrap around to first letter
                     else
-                        nextGame = (++iter)->second;                    // next letter
+                        nextGame = (++iter)->second; // next letter
                 } else {
                     if (iter == firstLetterToIndex.begin())             // if this is the first letter
-                        nextGame = firstLetterToIndex.rbegin()->second;  // wrap around to last letter
+                        nextGame = firstLetterToIndex.rbegin()->second; // wrap around to last letter
                     else
-                        nextGame = (--iter)->second;                    // prev letter
+                        nextGame = (--iter)->second; // prev letter
                 }
             }
 
@@ -358,7 +354,7 @@ void GuiLauncher::loop_prevNextGameFirstLetter(bool next) {  // false is prev, t
                 // we have prev/next game first letter;
                 selGameIndex = nextGame;
                 Mix_PlayChannel(-1, gui->cursor, 0);
-                notificationLines[1].setText(ReturnUpperCase(carouselGames[selGameIndex]->title.substr(0,1)),
+                notificationLines[1].setText(ReturnUpperCase(carouselGames[selGameIndex]->title.substr(0, 1)),
                                              DefaultShowingTimeout, brightWhite, FONT_22_MED);
                 setInitialPositions(selGameIndex);
                 updateMeta();
@@ -371,7 +367,7 @@ void GuiLauncher::loop_prevNextGameFirstLetter(bool next) {  // false is prev, t
             } else {
                 // no change
                 Mix_PlayChannel(-1, gui->cancel, 0);
-                notificationLines[1].setText(ReturnUpperCase(carouselGames[selGameIndex]->title.substr(0,1)),
+                notificationLines[1].setText(ReturnUpperCase(carouselGames[selGameIndex]->title.substr(0, 1)),
                                              DefaultShowingTimeout, brightWhite, FONT_22_MED);
             }
         }
@@ -389,8 +385,7 @@ void GuiLauncher::loop_prevGameFirstLetter() {
 //*******************************
 // GuiLauncher::loop_nextGameFirstLetter
 //*******************************
-void GuiLauncher::loop_nextGameFirstLetter()
-{
+void GuiLauncher::loop_nextGameFirstLetter() {
     loop_prevNextGameFirstLetter(true);
     R1_fastForwardTimeStart = SDL_GetTicks();
 };
@@ -409,7 +404,7 @@ void GuiLauncher::loop_chooseGameDir() {
     auto guiGameDirMenu = new GuiGameDirMenu(renderer);
 
     // add All Games and Internal Games only if origames is true in the config.ini
-    int offsetToGamesSubDirs {0};
+    int offsetToGamesSubDirs{0};
     bool showInternalGames = (gui->cfg.inifile.values["origames"] == "true");
     if (showInternalGames) {
         // show internal is enabled.  show usbgames + internal, and show internal only menu items.
@@ -418,7 +413,8 @@ void GuiLauncher::loop_chooseGameDir() {
         int usbOnly = gamesList.size();
         appendGames_SET_INTERNAL(&gamesList);
         guiGameDirMenu->lines.emplace_back(_("All Games") + " ( " + to_string(gamesList.size()) + ")");
-        guiGameDirMenu->lines.emplace_back(_("Internal Games") + " ( " + to_string(gamesList.size() - usbOnly) + ")"); // 20 games
+        guiGameDirMenu->lines.emplace_back(_("Internal Games") + " ( " + to_string(gamesList.size() - usbOnly) +
+                                           ")"); // 20 games
         offsetToGamesSubDirs = 2;
     } else {
         // show internal is disabled.  top game row 0 shows all usb games from /Games down.
@@ -434,20 +430,19 @@ void GuiLauncher::loop_chooseGameDir() {
                                                " ( " + to_string(rowInfo.numGames) + ")");
             top = false;
         } else {
-            guiGameDirMenu->lines.emplace_back(string(rowInfo.indentLevel * 4, ' ') +
-                                               rowInfo.rowName +
-                                               " ( " + to_string(rowInfo.numGames) + ")");
+            guiGameDirMenu->lines.emplace_back(string(rowInfo.indentLevel * 4, ' ') + rowInfo.rowName + " ( " +
+                                               to_string(rowInfo.numGames) + ")");
         }
     }
 
     // add Favorite Games at the bottom
-    int favoritesIndex = guiGameDirMenu->lines.size();  // favorites is the last line
+    int favoritesIndex = guiGameDirMenu->lines.size(); // favorites is the last line
     PsGames gamesList;
     getGames_SET_FAVORITE(&gamesList);
     guiGameDirMenu->lines.emplace_back(_("Favorite Games") + " ( " + to_string(gamesList.size()) + ")");
 
     // add History Games at the bottom
-    int historyIndex = guiGameDirMenu->lines.size();  // history is the last line
+    int historyIndex = guiGameDirMenu->lines.size(); // history is the last line
     gamesList.clear();
     getGames_SET_HISTORY(&gamesList);
     guiGameDirMenu->lines.emplace_back(_("Game History") + " ( " + to_string(gamesList.size()) + ")");
@@ -456,18 +451,17 @@ void GuiLauncher::loop_chooseGameDir() {
     int nextSel = offsetToGamesSubDirs; // set to game dir as default
     if (currentPS1_SelectState == SET_PS1_Games_Subdir) {
         nextSel = offsetToGamesSubDirs + currentUSBGameDirIndex;
-    }
-    else {
+    } else {
         if (currentPS1_SelectState == SET_PS1_Favorites)
             nextSel = favoritesIndex; // favorites is the next to the last line
         else if (currentPS1_SelectState == SET_PS1_History)
             nextSel = historyIndex; // history is the last line
         else {
             if (showInternalGames)
-                nextSel = currentPS1_SelectState;   // SET_PS1_All_Games is on row 0, SET_PS1_Internal_Only is on row 1
+                nextSel = currentPS1_SelectState; // SET_PS1_All_Games is on row 0, SET_PS1_Internal_Only is on row 1
             else {
-                    cout << "Error: loop_chooseGameDir() called with \"origames\" off and currentPS1_SelectState = " <<
-                    currentPS1_SelectState << endl;
+                cout << "Error: loop_chooseGameDir() called with \"origames\" off and currentPS1_SelectState = "
+                     << currentPS1_SelectState << endl;
             }
         }
     }
@@ -481,7 +475,7 @@ void GuiLauncher::loop_chooseGameDir() {
     // set the select state to the user selection
     if (!cancelled) {
         if (showInternalGames && guiGameDirMenu->selected < offsetToGamesSubDirs)
-            currentPS1_SelectState = guiGameDirMenu->selected;  // SET_PS1_All_Games or SET_PS1_Internal_Only
+            currentPS1_SelectState = guiGameDirMenu->selected; // SET_PS1_All_Games or SET_PS1_Internal_Only
         else if (guiGameDirMenu->selected == favoritesIndex)
             currentPS1_SelectState = SET_PS1_Favorites;
         else if (guiGameDirMenu->selected == historyIndex)
@@ -499,7 +493,7 @@ void GuiLauncher::loop_chooseGameDir() {
 
     if (cancelled)
         return;
-    switchSet(currentSet,true);
+    switchSet(currentSet, true);
     menuHead->setText(headers[0], fgColor);
     menuText->setText(texts[0], fgColor);
     showSetName();
@@ -529,7 +523,7 @@ void GuiLauncher::loop_chooseRAPlaylist() {
     // set the selected menu line to be the current playlist
     int nextSel = 0;
     int i = 0;
-    for (string plist:playlists->playlists) {
+    for (string plist : playlists->playlists) {
         if (plist == currentRAPlaylistName) {
             nextSel = i;
             break;
@@ -549,7 +543,7 @@ void GuiLauncher::loop_chooseRAPlaylist() {
     currentRAPlaylistIndex = selected;
     currentRAPlaylistName = raPlaylists[selected];
     currentSet = SET_RETROARCH;
-    switchSet(currentSet,false);
+    switchSet(currentSet, false);
     menuHead->setText(headers[0], fgColor);
     menuText->setText(texts[0], fgColor);
     showSetName();
@@ -573,8 +567,7 @@ void GuiLauncher::loop_selectButton_Pressed() {
                 loop_chooseRAPlaylist();
             else
                 return; // if L2 is pressed then Select should only work if current_set is SET_EXTERNAL or SET_RETROARCH
-        }
-        else {
+        } else {
             // switch to next Select Mode
             Mix_PlayChannel(-1, gui->cursor, 0);
 
@@ -595,7 +588,7 @@ void GuiLauncher::loop_selectButton_Pressed() {
 
             if (currentSet > SET_LAST)
                 currentSet = 0;
-            switchSet(currentSet,false);
+            switchSet(currentSet, false);
             showOptions();
             showSetName();
             if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
@@ -709,7 +702,7 @@ void GuiLauncher::loop_squareButton_Pressed() {
                 return;
             }
             if (selGameIndexInCarouselGamesIsValid() && carouselGames[selGameIndex]->foreign) {
-                return;     // pressing square is only valid for PS1 games
+                return; // pressing square is only valid for PS1 games
             }
             gui->startingGame = true;
             if (selGameIndexInCarouselGamesIsValid()) {
@@ -757,8 +750,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
     if (selGameIndexInCarouselGamesIsValid()) {
         gui->runningGame = carouselGames[selGameIndex];
         gui->lastSelIndex = selGameIndex;
-    }
-    else
+    } else
         return;
 
     gui->resumepoint = -1;
@@ -776,7 +768,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
         gui->emuMode = EMU_PCSX;
 
         // if it's a PS1 game see if the user wants to play it in RetroArch instead
-        bool play_using_ra { false };
+        bool play_using_ra{false};
         if (currentSet == SET_LIGHTGUN)
             play_using_ra = true;
         else if (gui->runningGame->internal && gui->runningGame->play_using_ra)
@@ -792,7 +784,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
 
         // if any of the above conditions are true play the PS1 game in RA
         if (play_using_ra)
-            return loop_squareButton_Pressed();     // play internal PSX game in RA
+            return loop_squareButton_Pressed(); // play internal PSX game in RA
 
     } else if (gui->runningGame->isRA()) {
         gui->emuMode = EMU_RETROARCH;
@@ -805,8 +797,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_GAMES() {
         bool result = appStartScreen->result;
         delete appStartScreen;
         // Do not run
-        if (!result)
-        {
+        if (!result) {
             gui->startingGame = false;
             menuVisible = true;
         }
@@ -836,8 +827,8 @@ void GuiLauncher::addGameToPS1GameHistoryAsLatestGamePlayed(PsGamePtr game) {
 
     // change the history number to 2 thru N
     int h = 2;
-    for (auto & g : histGamesList) {
-        if (h <= 100)               // 100 is the limit to match the RA history limit of 100 games
+    for (auto &g : histGamesList) {
+        if (h <= 100) // 100 is the limit to match the RA history limit of 100 games
             g->history = h++;
         else
             g->history = 0;
@@ -847,7 +838,7 @@ void GuiLauncher::addGameToPS1GameHistoryAsLatestGamePlayed(PsGamePtr game) {
     game->history = 1;
     histGamesList.emplace_back(game);
 
-    for (auto & g : histGamesList) {
+    for (auto &g : histGamesList) {
         if (g->internal)
             gui->internalDB->updateHistory(g->gameId, g->history);
         else
@@ -862,14 +853,11 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET() {
     gui->resumingGui = false;
     if (psOptionsMenu->selOption == SEL_OPTION_RESUME_FROM_SAVESTATE) {
         loop_crossButtonPressed_STATE_SET__OPT_RESUME_FROM_SAVESTATE();
-    }
-    else if (psOptionsMenu->selOption == SEL_OPTION_EDIT_MEMCARD_INFO) {
+    } else if (psOptionsMenu->selOption == SEL_OPTION_EDIT_MEMCARD_INFO) {
         loop_crossButtonPressed_STATE_SET__OPT_EDIT_MEMCARD();
-    }
-    else if (psOptionsMenu->selOption == SEL_OPTION_EDIT_GAME_SETTINGS) {
+    } else if (psOptionsMenu->selOption == SEL_OPTION_EDIT_GAME_SETTINGS) {
         loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS();
-    }
-    else if (psOptionsMenu->selOption == SEL_OPTION_AB_SETTINGS) {
+    } else if (psOptionsMenu->selOption == SEL_OPTION_AB_SETTINGS) {
         loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS();
     }
 }
@@ -901,7 +889,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_AB_SETTINGS() {
         selGameIndex = lastGame;
         bool resetCarouselPosition = false;
 
-        switchSet(currentSet,false);
+        switchSet(currentSet, false);
         showSetName();
 
         if (resetCarouselPosition) {
@@ -950,7 +938,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
 
     PsGamePtr psGame = GetSelectedCarouselGame();
     if (psGame == nullptr) {
-        GuiEditor* editor = new GuiEditor(renderer);
+        GuiEditor *editor = new GuiEditor(renderer);
         editor->show();
     }
     //
@@ -958,7 +946,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
     //
     else if (!psGame->foreign) {
         Mix_PlayChannel(-1, gui->cursor, 0);
-        GuiEditor* editor = new GuiEditor(renderer);
+        GuiEditor *editor = new GuiEditor(renderer);
         Inifile gameIni;
         if (selGameIndexInCarouselGamesIsValid()) {
             editor->internal = carouselGames[selGameIndex]->internal;
@@ -970,8 +958,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                 // change "/media/Games/Racing/Driver 2" to "Driver 2"
                 gameIni.entry = DirEntry::getFileNameFromPath(folderNoLast);
                 editor->gameIni = gameIni;
-            }
-            else {
+            } else {
                 editor->gameData = carouselGames[selGameIndex];
             }
         }
@@ -989,10 +976,9 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                     editor->gameIni.values["favorite"] == "0") {
                     gui->lastSet = SET_PS1;
                     gui->lastPS1_SelectState = SET_PS1_Favorites;
-                    loadAssets();   // reload - one less favorite game in display
+                    loadAssets(); // reload - one less favorite game in display
                 }
-            }
-            else {
+            } else {
                 if (editor->changes) {
                     gui->internalDB->updateTitle(carouselGames[selGameIndex]->gameId, editor->lastName);
                 }
@@ -1001,7 +987,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                     editor->gameData->favorite == false) {
                     gui->lastSet = SET_PS1;
                     gui->lastPS1_SelectState = SET_PS1_Favorites;
-                    loadAssets();   // reload - one less favorite game in display
+                    loadAssets(); // reload - one less favorite game in display
                 }
             }
         }
@@ -1039,7 +1025,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
     //
     else {
         Mix_PlayChannel(-1, gui->cursor, 0);
-        GuiEditor_RA* editor = new GuiEditor_RA(renderer);
+        GuiEditor_RA *editor = new GuiEditor_RA(renderer);
         if (selGameIndexInCarouselGamesIsValid()) {
             editor->gameData = carouselGames[selGameIndex];
             string folderNoLast = DirEntry::removeSeparatorFromEndOfPath(carouselGames[selGameIndex]->folder);
@@ -1080,7 +1066,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
         // if the selected game is no longer a lightgun game
         if (!gui->lightgunGames.IsGameALightgunGame(psGame)) {
             gui->lastSet = SET_LIGHTGUN;
-            loadAssets();   // reload - one less lightgun game in display
+            loadAssets(); // reload - one less lightgun game in display
 
             // if the current set is lightguns and the user removes the last lightgun selGameIndex will be -1
             if (selGameIndex == -1) {
@@ -1121,8 +1107,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_MEMCARD() {
     if (carouselGames.empty()) {
         return;
     }
-    if (selGameIndexInCarouselGamesIsValid() && carouselGames[selGameIndex]->foreign)
-    {
+    if (selGameIndexInCarouselGamesIsValid() && carouselGames[selGameIndex]->foreign) {
         return;
     }
 
@@ -1144,17 +1129,16 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_MEMCARD() {
             memcard = gameini.values["memcard"];
         }
     }
-    if (memcard!="SONY")
-    {
-        cardPath1 =  Env::getPathToMemCardsDir() + sep + memcard  +"card1.mcd";
-        cardPath1 =  Env::getPathToMemCardsDir() + sep + memcard  +"card2.mcd";
-        leftCardName = "[1]"+ memcard;
-        rightCardName = "[2]"+ memcard;
+    if (memcard != "SONY") {
+        cardPath1 = Env::getPathToMemCardsDir() + sep + memcard + "card1.mcd";
+        cardPath1 = Env::getPathToMemCardsDir() + sep + memcard + "card2.mcd";
+        leftCardName = "[1]" + memcard;
+        rightCardName = "[2]" + memcard;
     }
 
     Mix_PlayChannel(-1, gui->cursor, 0);
     auto mcManager = new GuiMcManager(renderer);
-    mcManager->backgroundImg=background->tex;
+    mcManager->backgroundImg = background->tex;
     mcManager->leftCardName = leftCardName;
     mcManager->rightCardName = rightCardName;
     mcManager->card1path = cardPath1;
@@ -1217,7 +1201,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_RESUME() {
                 Mix_PlayChannel(-1, gui->cancel, 0);
             }
         } else {
-            //Mix_PlayChannel(-1, gui->cursor, 0);
+            // Mix_PlayChannel(-1, gui->cursor, 0);
             PcsxInterceptor *interceptor = new PcsxInterceptor();
             interceptor->saveResumePoint(carouselGames[selGameIndex], sselector->selSlot);
             delete interceptor;
@@ -1225,9 +1209,8 @@ void GuiLauncher::loop_crossButtonPressed_STATE_RESUME() {
             sselector->visible = false;
             arrow->visible = true;
             Mix_PlayChannel(-1, gui->resume, 0);
-            notificationLines[1].setText(
-                    _("Resume point saved to slot") + " " + to_string(sselector->selSlot + 1),
-                    DefaultShowingTimeout);
+            notificationLines[1].setText(_("Resume point saved to slot") + " " + to_string(sselector->selSlot + 1),
+                                         DefaultShowingTimeout);
 
             psOptionsMenu->setResumePic(carouselGames[selGameIndex]->findResumePicture(sselector->selSlot));
 
@@ -1252,8 +1235,7 @@ void GuiLauncher::loop_joyButtonReleased() {
 
     if (L1_isPressedForFastForward && (e.cbutton.button == SDL_BTN_L1)) {
         L1_isPressedForFastForward = false;
-    }
-    else if (R1_isPressedForFastForward && (e.cbutton.button == SDL_BTN_R1)) {
+    } else if (R1_isPressedForFastForward && (e.cbutton.button == SDL_BTN_R1)) {
         R1_isPressedForFastForward = false;
     }
 }

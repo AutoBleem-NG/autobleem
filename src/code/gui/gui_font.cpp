@@ -10,12 +10,10 @@ using namespace std;
 //********************
 // static Fonts::allFontInfos
 //********************
-Fonts::FontInfo Fonts::allFontInfos[] = {
-        { FONT_15_BOLD, 15, FONT_BOLD },
-        { FONT_20_BOLD, 20, FONT_BOLD},
-        { FONT_22_MED,  22, FONT_MED },
-        { FONT_28_BOLD, 28, FONT_BOLD }
-};
+Fonts::FontInfo Fonts::allFontInfos[] = {{FONT_15_BOLD, 15, FONT_BOLD},
+                                         {FONT_20_BOLD, 20, FONT_BOLD},
+                                         {FONT_22_MED, 22, FONT_MED},
+                                         {FONT_28_BOLD, 28, FONT_BOLD}};
 
 //********************
 // Fonts::Fonts
@@ -27,11 +25,11 @@ Fonts::Fonts() = default;
 // low level open shared font.  filename is the full path to the ttf file.  fontSize is the font point size.
 //********************
 FC_Font_Shared Fonts::openNewSharedCachedFont(const string &filename, int fontSize, SDL_Shared<SDL_Renderer> renderer) {
-    FC_Font* fc_font = FC_CreateFont();
+    FC_Font *fc_font = FC_CreateFont();
     FC_LoadFont(fc_font, renderer, filename.c_str(), fontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
     FC_Font_Shared font = FC_Font_Shared(fc_font);
     if (font) {
-        //cout << "Success opening font " << filename << " of size " << fontSize << endl;
+        // cout << "Success opening font " << filename << " of size " << fontSize << endl;
     } else {
         cout << "FAILURE opening font " << filename << " of size " << fontSize << endl;
         font = nullptr;
@@ -40,7 +38,6 @@ FC_Font_Shared Fonts::openNewSharedCachedFont(const string &filename, int fontSi
 
     return font;
 }
-
 
 //********************
 // Fonts::openSpecificSharedCachedFont
@@ -57,11 +54,11 @@ FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) 
     else
         fontPath = rootPath + sep + "SST-Bold.ttf";
 
-    FC_Font* fc_font = FC_CreateFont();
+    FC_Font *fc_font = FC_CreateFont();
     FC_LoadFont(fc_font, renderer, fontPath.c_str(), fontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
     FC_Font_Shared font = FC_Font_Shared(fc_font);
     if (font) {
-        //cout << "Success opening font " << fontPath << " of size " << fontSize << endl;
+        // cout << "Success opening font " << fontPath << " of size " << fontSize << endl;
     } else {
         cout << "FAILURE opening font " << fontPath << " of size " << fontSize << endl;
         font = nullptr;
@@ -94,15 +91,14 @@ void Fonts::openAllFonts(const std::string &_rootPath, SDL_Shared<SDL_Renderer> 
 //********************
 // SizesOfBoldThemeFont::AddFont
 // If you ever need to change this to handle both bold and medium fonts change the map key to pair<FontType, pointSize>
-// This class is used by ps_meta.cpp to make the game title font smaller if the game name is do long that it 
+// This class is used by ps_meta.cpp to make the game title font smaller if the game name is do long that it
 // displays beyond the right edge of the screen.
 //********************
 
 //********************
 // SizesOfBoldThemeFont::AddFont
 //********************
-FC_Font_Shared SizesOfBoldThemeFont::AddFont(int size, FC_Font_Shared font)
-{
+FC_Font_Shared SizesOfBoldThemeFont::AddFont(int size, FC_Font_Shared font) {
     auto it = boldFonts.find(size);
     if (it != boldFonts.end())
         return it->second;
@@ -115,15 +111,13 @@ FC_Font_Shared SizesOfBoldThemeFont::AddFont(int size, FC_Font_Shared font)
 //********************
 // SizesOfBoldThemeFont::GetFont
 //********************
-FC_Font_Shared SizesOfBoldThemeFont::GetFont(int size, const Fonts& fonts)
-{
+FC_Font_Shared SizesOfBoldThemeFont::GetFont(int size, const Fonts &fonts) {
     auto it = boldFonts.find(size);
     if (it != boldFonts.end())
-        return it->second;     // we already have that size
+        return it->second; // we already have that size
     else {
         FC_Font_Shared font = fonts.openSpecificSharedCachedFont(FONT_BOLD, size);
         boldFonts[size] = font;
         return font;
     }
 }
-

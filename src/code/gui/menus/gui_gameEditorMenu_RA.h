@@ -10,8 +10,8 @@
 //********************
 // GuiEditor_RA
 //********************
-class GuiEditor_RA : public GuiScreen{
-public:
+class GuiEditor_RA : public GuiScreen {
+  public:
     void init() override;
     void render() override;
     void loop() override;
@@ -21,7 +21,7 @@ public:
     PsGamePtr gameData;
 
     int selOption = 5;
-    bool changes=false;
+    bool changes = false;
     SDL_Shared<SDL_Texture> cover;
 
     void processOptionChange(bool direction);

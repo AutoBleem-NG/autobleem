@@ -9,7 +9,7 @@
 // GuiSplash
 //********************
 class GuiSplash : public GuiScreen {
-public:
+  public:
     void render() override;
     void loop() override;
 
@@ -18,4 +18,3 @@ public:
 
     using GuiScreen::GuiScreen;
 };
-

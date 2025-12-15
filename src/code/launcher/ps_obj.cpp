@@ -21,7 +21,7 @@ PsObj::PsObj(string name1, string texPath) : name(name1) {
 //*******************************
 // PsObj::load
 //*******************************
-void PsObj::load(const string & imagePath) {
+void PsObj::load(const string &imagePath) {
     tex = IMG_LoadTexture(renderer, imagePath.c_str());
     Uint32 format;
     int access;
@@ -35,8 +35,7 @@ void PsObj::load(const string & imagePath) {
 //*******************************
 // PsObj::destroy
 //*******************************
-void PsObj::destroy() {
-}
+void PsObj::destroy() {}
 
 //*******************************
 // PsObj::render

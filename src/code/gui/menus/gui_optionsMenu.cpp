@@ -34,7 +34,7 @@ vector<string> GuiOptions::getThemes() {
 vector<string> GuiOptions::getJewels() {
     vector<string> list;
     DirEntries folders = DirEntry::diru_FilesOnly(Env::getWorkingPath() + sep + "evoimg/frames");
-    for (const DirEntry & entry : folders) {
+    for (const DirEntry &entry : folders) {
         if (DirEntry::getFileExtension(entry.name) == "png") {
             list.push_back(entry.name);
         }
@@ -50,7 +50,7 @@ vector<string> GuiOptions::getMusic() {
     vector<string> list;
     list.push_back("--");
     DirEntries folders = DirEntry::diru_FilesOnly(Env::getWorkingPath() + sep + "music");
-    for (const DirEntry & entry:folders) {
+    for (const DirEntry &entry : folders) {
         if (DirEntry::getFileExtension(entry.name) == "ogg") {
             list.push_back(entry.name);
         }
@@ -64,7 +64,7 @@ vector<string> GuiOptions::getMusic() {
 //*******************************
 vector<string> GuiOptions::getTimeoutValues() {
     vector<string> list;
-    for (int i=0; i <= 20; ++i) {
+    for (int i = 0; i <= 20; ++i) {
         list.push_back(to_string(i));
     }
 
@@ -82,15 +82,19 @@ void GuiOptions::fill() {
     lang->load("English");
 
     lines.emplace_back(CFG_THEME, _("AutoBleem Theme:"), "theme", false, getThemes());
-    lines.emplace_back(CFG_SHOW_ORIGAMES, _("Show Internal Games:"), "origames", true, vector<string> ({ "false", "true" }) );
+    lines.emplace_back(CFG_SHOW_ORIGAMES, _("Show Internal Games:"), "origames", true,
+                       vector<string>({"false", "true"}));
     lines.emplace_back(CFG_JEWEL, _("Cover Style:"), "jewel", false, getJewels());
     lines.emplace_back(CFG_MUSIC, _("Music:"), "music", false, getMusic());
-    lines.emplace_back(CFG_ENABLE_BACKGROUND_MUSIC, _("Background Music:"), "nomusic", true, vector<string> ({ "true", "false" }) );
-    lines.emplace_back(CFG_WIDESCREEN, _("Widescreen:"), "aspect", true, vector<string> ({ "false", "true" }) );
-    lines.emplace_back(CFG_GFX_FILTER, _("GFX Filter:"), "mip", true, vector<string> ({ "true", "false" }) );
-    lines.emplace_back(CFG_RACONFIG, _("Update RA Config:"), "raconfig", true, vector<string> ({ "false", "true" }) );
-    lines.emplace_back(CFG_PLAY_ALL_PSX_WITH_RA, _("Play all PSX games with RA:"), "play_all_psx_with_ra", true, vector<string> ({ "false", "true" }) );
-    lines.emplace_back(CFG_SHOWINGTIMEOUT, _("Showing Timeout (0 = no timeout):"), "showingtimeout", false, getTimeoutValues());
+    lines.emplace_back(CFG_ENABLE_BACKGROUND_MUSIC, _("Background Music:"), "nomusic", true,
+                       vector<string>({"true", "false"}));
+    lines.emplace_back(CFG_WIDESCREEN, _("Widescreen:"), "aspect", true, vector<string>({"false", "true"}));
+    lines.emplace_back(CFG_GFX_FILTER, _("GFX Filter:"), "mip", true, vector<string>({"true", "false"}));
+    lines.emplace_back(CFG_RACONFIG, _("Update RA Config:"), "raconfig", true, vector<string>({"false", "true"}));
+    lines.emplace_back(CFG_PLAY_ALL_PSX_WITH_RA, _("Play all PSX games with RA:"), "play_all_psx_with_ra", true,
+                       vector<string>({"false", "true"}));
+    lines.emplace_back(CFG_SHOWINGTIMEOUT, _("Showing Timeout (0 = no timeout):"), "showingtimeout", false,
+                       getTimeoutValues());
     lines.emplace_back(CFG_LANG, _("Language:"), "language", false, lang->getListOfLanguages());
 
     lang->load(saveCurrentLang);
@@ -108,13 +112,13 @@ void GuiOptions::init() {
 //*******************************
 // void GuiOptions::getLineText
 //*******************************
-std::string GuiOptions::getLineText(const OptionsInfo& info) {
+std::string GuiOptions::getLineText(const OptionsInfo &info) {
     std::string temp = lang->translate(info.descriptionToTranslate) + " ";
     auto value = gui->cfg.inifile.values[info.iniKey];
     if (info.keyIsBoolean) {
         temp += getBooleanSymbolText(info, value);
     } else {
-        temp += value;  // append the current text value in the options list
+        temp += value; // append the current text value in the options list
     }
 
     return temp;
@@ -123,7 +127,7 @@ std::string GuiOptions::getLineText(const OptionsInfo& info) {
 //*******************************
 // GuiOptions::doPrevNextOption
 //*******************************
-string GuiOptions::doPrevNextOption(OptionsInfo& info, bool next) {
+string GuiOptions::doPrevNextOption(OptionsInfo &info, bool next) {
     int id = info.id;
 
     // do the default action
@@ -132,7 +136,7 @@ string GuiOptions::doPrevNextOption(OptionsInfo& info, bool next) {
     // after doing the default these need special action afterwards
     if (id == CFG_THEME) {
         gui->loadAssets();
-        font = gui->themeFont;  // get the new font for the menu
+        font = gui->themeFont; // get the new font for the menu
     } else if (id == CFG_LANG) {
         lang->load(nextValue);
     } else if (id == CFG_MUSIC || id == CFG_ENABLE_BACKGROUND_MUSIC) {
@@ -149,7 +153,7 @@ string GuiOptions::doPrevNextOption(OptionsInfo& info, bool next) {
 string GuiOptions::doRandomOption() {
     int id = lines[selected].id;
     if (id == CFG_THEME || id == CFG_MUSIC) {
-        auto & choices = lines[selected].choices;
+        auto &choices = lines[selected].choices;
         unsigned int size = choices.size();
         if (size > 1)
             return doOptionIndex(Util::getRandomIndex(size));
@@ -169,7 +173,7 @@ string GuiOptions::doOptionIndex(uint index) {
         // after doing the default these need special action afterwards
         if (id == CFG_THEME) {
             gui->loadAssets();
-            font = gui->themeFont;  // get the new font for the menu
+            font = gui->themeFont; // get the new font for the menu
         } else if (id == CFG_LANG) {
             lang->load(nextValue);
         } else if (id == CFG_MUSIC || id == CFG_ENABLE_BACKGROUND_MUSIC) {
@@ -187,9 +191,9 @@ string GuiOptions::doOptionIndex(uint index) {
 void GuiOptions::doCircle_Pressed() {
     Mix_PlayChannel(-1, gui->cancel, 0);
     string cfg_path = Env::getWorkingPath() + sep + "config.ini";
-    gui->cfg.inifile.load(cfg_path);    // restore the original config.ini settings
-    lang->load(gui->cfg.inifile.values["language"]);    // restore the original lang
-    gui->loadAssets();                                  // restore original themes
+    gui->cfg.inifile.load(cfg_path);                 // restore the original config.ini settings
+    lang->load(gui->cfg.inifile.values["language"]); // restore the original lang
+    gui->loadAssets();                               // restore original themes
     menuVisible = false;
     exitCode = -1;
 }

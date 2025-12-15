@@ -13,7 +13,7 @@
 // PsObj
 //******************
 class PsObj {
-public:
+  public:
     virtual ~PsObj() = default;
 
     std::shared_ptr<Gui> gui;
@@ -30,7 +30,7 @@ public:
 
     explicit PsObj(std::string name1, std::string texPath = "");
 
-    virtual void load(const std::string & imagePath);
+    virtual void load(const std::string &imagePath);
 
     virtual void destroy();
 

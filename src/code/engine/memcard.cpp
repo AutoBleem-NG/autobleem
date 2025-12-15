@@ -12,12 +12,10 @@ using namespace std;
 //*******************************
 // Memcard::newCard
 //*******************************
-void Memcard::newCard(string name)
-{
-    string curPath = path + sep + "!MemCards/"+name;
+void Memcard::newCard(string name) {
+    string curPath = path + sep + "!MemCards/" + name;
     string autobleemPath = Env::getWorkingPath();
-    if (!DirEntry::exists(curPath))
-    {
+    if (!DirEntry::exists(curPath)) {
         DirEntry::createDir(curPath);
         DirEntry::copy(autobleemPath + sep + "memcard/card1.mcd", curPath + sep + "card1.mcd");
         DirEntry::copy(autobleemPath + sep + "memcard/card2.mcd", curPath + sep + "card2.mcd");
@@ -29,12 +27,10 @@ void Memcard::newCard(string name)
 //*******************************
 // Memcard::deleteCard
 //*******************************
-void Memcard::deleteCard(string name)
-{
+void Memcard::deleteCard(string name) {
     string curPath = path + sep + "!MemCards/" + name;
     string autobleemPath = Env::getWorkingPath();
-    if (DirEntry::exists(curPath))
-    {
+    if (DirEntry::exists(curPath)) {
         DirEntry::rmDir(curPath);
     }
 }
@@ -42,20 +38,16 @@ void Memcard::deleteCard(string name)
 //*******************************
 // Memcard::swapIn
 //*******************************
-bool Memcard::swapIn(string path, string name)
-{
+bool Memcard::swapIn(string path, string name) {
     backup(path);
     string customPath = this->path + sep + "!MemCards/" + name;
-    if (!DirEntry::exists(customPath))
-    {
+    if (!DirEntry::exists(customPath)) {
         restore(path);
         return false;
-    } else
-    {
+    } else {
         DirEntry::rmDir(path + sep + "memcards");
         DirEntry::createDir(path + sep + "memcards");
-        for (const DirEntry & entry : DirEntry::diru(customPath))
-        {
+        for (const DirEntry &entry : DirEntry::diru(customPath)) {
             DirEntry::copy(customPath + sep + entry.name, path + sep + "memcards" + sep + entry.name);
         }
         return true;
@@ -65,54 +57,50 @@ bool Memcard::swapIn(string path, string name)
 //*******************************
 // Memcard::storeToRepo
 //*******************************
-void Memcard::storeToRepo(string path, string name)
-{
+void Memcard::storeToRepo(string path, string name) {
     string customPath = this->path + sep + "!MemCards/" + name;
-    if (!DirEntry::exists(customPath))
-    {
+    if (!DirEntry::exists(customPath)) {
         DirEntry::createDir(customPath);
     }
 
     // copy memcard from game to repository
-    for (const DirEntry & entry : DirEntry::diru(path))
-    {
+    for (const DirEntry &entry : DirEntry::diru(path)) {
         string input = path + sep + entry.name;
         string output = customPath + sep + entry.name;
-        DirEntry::copy(input,output);
+        DirEntry::copy(input, output);
     }
 }
 
 //*******************************
 // Memcard::rename
 //*******************************
-void Memcard::rename(string oldName, string newName)
-{
-    string oldPath = this->path + sep + "!MemCards/"+oldName;
-    string newPath = this->path + sep + "!MemCards/"+newName;
+void Memcard::rename(string oldName, string newName) {
+    string oldPath = this->path + sep + "!MemCards/" + oldName;
+    string newPath = this->path + sep + "!MemCards/" + newName;
 
-    if (DirEntry::exists(newPath))
-    {
+    if (DirEntry::exists(newPath)) {
         // we already have memcard with this name
         return;
     }
 
-    DirEntry::renameFile(oldPath,newPath);
+    DirEntry::renameFile(oldPath, newPath);
 
     // now go to all game ini's and find out if needs updated
-    for (const DirEntry & entry: DirEntry::diru(path)) {
-        if (!DirEntry::isDirectory(path + sep + entry.name)) continue;
-        if (entry.name == "!SaveStates") continue;
-        if (entry.name == "!MemCards") continue;
+    for (const DirEntry &entry : DirEntry::diru(path)) {
+        if (!DirEntry::isDirectory(path + sep + entry.name))
+            continue;
+        if (entry.name == "!SaveStates")
+            continue;
+        if (entry.name == "!MemCards")
+            continue;
 
         string gameIniPath = this->path + sep + entry.name + sep + "Game.ini";
-        if (DirEntry::exists(gameIniPath))
-        {
+        if (DirEntry::exists(gameIniPath)) {
             Inifile inifile;
             inifile.load(gameIniPath);
 
-            if (inifile.values["memcard"]==oldName)
-            {
-                inifile.values["memcard"]=newName;
+            if (inifile.values["memcard"] == oldName) {
+                inifile.values["memcard"] = newName;
                 inifile.save(gameIniPath);
             }
         }
@@ -122,12 +110,10 @@ void Memcard::rename(string oldName, string newName)
 //*******************************
 // Memcard::list
 //*******************************
-vector<string> Memcard::list()
-{
+vector<string> Memcard::list() {
     vector<string> memcards;
     string customPath = this->path + sep + "!MemCards";
-    for (const DirEntry & entry: DirEntry::diru(customPath))
-    {
+    for (const DirEntry &entry : DirEntry::diru(customPath)) {
         if (DirEntry::isDirectory(customPath + sep + entry.name)) {
             memcards.push_back(entry.name);
         }
@@ -138,16 +124,12 @@ vector<string> Memcard::list()
 //*******************************
 // Memcard::swapOut
 //*******************************
-void Memcard::swapOut(string path, string name)
-{
-    string customPath = this->path + sep + "!MemCards/"+name;
-    if (!DirEntry::exists(customPath))
-    {
+void Memcard::swapOut(string path, string name) {
+    string customPath = this->path + sep + "!MemCards/" + name;
+    if (!DirEntry::exists(customPath)) {
         restore(path);
-    } else
-    {
-        for (const DirEntry & entry : DirEntry::diru(customPath))
-        {
+    } else {
+        for (const DirEntry &entry : DirEntry::diru(customPath)) {
             DirEntry::copy(path + sep + "memcards" + sep + entry.name, customPath + sep + entry.name);
         }
         restore(path);
@@ -157,10 +139,8 @@ void Memcard::swapOut(string path, string name)
 //*******************************
 // Memcard::restoreAll
 //*******************************
-void Memcard::restoreAll(string mainDir)
-{
-    for (const DirEntry & entry: DirEntry::diru(mainDir))
-    {
+void Memcard::restoreAll(string mainDir) {
+    for (const DirEntry &entry : DirEntry::diru(mainDir)) {
         string path = mainDir + sep + entry.name;
         restore(path);
     }
@@ -169,19 +149,16 @@ void Memcard::restoreAll(string mainDir)
 //*******************************
 // Memcard::backup
 //*******************************
-void Memcard::backup(const string & path)
-{
+void Memcard::backup(const string &path) {
     string curPath = path + sep + "backup";
     if (!DirEntry::exists(curPath)) {
         DirEntry::createDir(curPath);
-    } else
-    {
+    } else {
         return;
     }
 
     string original = path + sep + "memcards";
-    for (const DirEntry & entry : DirEntry::diru(original))
-    {
+    for (const DirEntry &entry : DirEntry::diru(original)) {
         DirEntry::copy(original + sep + entry.name, curPath + sep + entry.name);
     }
 }
@@ -189,8 +166,7 @@ void Memcard::backup(const string & path)
 //*******************************
 // Memcard::restore
 //*******************************
-void Memcard::restore(string path)
-{
+void Memcard::restore(string path) {
     string curPath = path + sep + "backup";
     if (!DirEntry::exists(curPath)) {
         return;
@@ -200,8 +176,7 @@ void Memcard::restore(string path)
     DirEntry::rmDir(original);
     DirEntry::createDir(original);
 
-    for (const DirEntry & entry : DirEntry::diru(curPath))
-    {
+    for (const DirEntry &entry : DirEntry::diru(curPath)) {
         DirEntry::copy(curPath + sep + entry.name, original + sep + entry.name);
     }
     DirEntry::rmDir(curPath);

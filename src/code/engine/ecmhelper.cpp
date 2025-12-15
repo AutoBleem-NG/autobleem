@@ -9,8 +9,7 @@
 
 using namespace std;
 
-extern "C"
-{
+extern "C" {
 void eccedc_init(void);
 int unecmify(FILE *in, FILE *out);
 }

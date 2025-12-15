@@ -42,7 +42,7 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
 
     if (!game->foreign) {
         gameFile += (game->folder + sep + game->base);
-        if (! (DirEntry::matchExtension(game->base, ".pbp") || DirEntry::matchExtension(game->base, ".chd"))){
+        if (!(DirEntry::matchExtension(game->base, ".pbp") || DirEntry::matchExtension(game->base, ".chd"))) {
             gameFile += ".cue";
         }
         gameFile += "";
@@ -92,7 +92,7 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     argvNew.push_back(nullptr);
 
     cout << "CMD line to execute: ";
-    for (const char *s:argvNew) {
+    for (const char *s : argvNew) {
         if (s != nullptr) {
             cout << s << " ";
         }
@@ -100,24 +100,24 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     cout << endl;
 
     // core config here - to be optional
-    if (gui->cfg.inifile.values["raconfig"]=="true") {
+    if (gui->cfg.inifile.values["raconfig"] == "true") {
         backupCoreConfig();
         transferConfig(game);
     }
 
-#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
+#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     Gui::splash("I'm sorry Dave.  I'm afraid I can't do that.");
 #else
     int pid = fork();
     if (!pid) {
-        execvp(link.c_str(), (char **) argvNew.data());
+        execvp(link.c_str(), (char **)argvNew.data());
     }
     waitpid(pid, NULL, 0);
     usleep(3 * 1000);
 #endif
 
     // core config here - to be optional
-    if (gui->cfg.inifile.values["raconfig"]=="true") {
+    if (gui->cfg.inifile.values["raconfig"] == "true") {
         restoreCoreConfig();
     }
     return true;
@@ -133,7 +133,6 @@ void RetroArchInterceptor::memcardIn(PsGamePtr &game) {
             Inifile gameini;
             gameini.load(game->folder + sep + GAME_INI);
             memcard = gameini.values["memcard"];
-
         }
         if (memcard != "SONY") {
             if (DirEntry::exists(Env::getPathToMemCardsDir() + sep + game->memcard)) {
@@ -197,14 +196,12 @@ void RetroArchInterceptor::memcardOut(PsGamePtr &game) {
             DirEntry::copy(inpath, outpath);
         }
 
-
         if (DirEntry::exists(backup)) {
             DirEntry::removeFile(inpath);
             DirEntry::renameFile(backup, inpath);
         }
     }
 }
-
 
 void RetroArchInterceptor::backupCoreConfig() {
 
@@ -237,15 +234,13 @@ void RetroArchInterceptor::transferConfig(PsGamePtr &game) {
         int speedhack = atoi(processor->getValue(path, "gpu_neon.enhancement_no_main").c_str());
         int clock = strtol(processor->getValue(path, "psx_clock").c_str(), nullptr, 16);
         int dither = atoi(processor->getValue(path, "gpu_peops.iUseDither").c_str());
-        int interpolation = strtol(
-                processor->getValue(path, "spu_config.iUseInterpolation").c_str(), nullptr, 16);
+        int interpolation = strtol(processor->getValue(path, "spu_config.iUseInterpolation").c_str(), nullptr, 16);
 
         int scanlines = atoi(processor->getValue(path, "scanlines").c_str());
         int scanline_level = strtol(processor->getValue(path, "scanline_level").c_str(), nullptr, 16);
         int frameskip = atoi(processor->getValue(path, "frameskip3").c_str());
 
-
-        //RA_CORE_CONFIG
+        // RA_CORE_CONFIG
         if (highres != 0)
 
             processor->replaceRaConf(RA_CORE_CONFIG, "pcsx_rearmed_neon_enhancement_enable",
@@ -257,8 +252,7 @@ void RetroArchInterceptor::transferConfig(PsGamePtr &game) {
 
         if (dither != 0)
 
-            processor->replaceRaConf(RA_CORE_CONFIG, "pcsx_rearmed_dithering",
-                                     "pcsx_rearmed_dithering = \"enabled\" ");
+            processor->replaceRaConf(RA_CORE_CONFIG, "pcsx_rearmed_dithering", "pcsx_rearmed_dithering = \"enabled\" ");
         else
 
             processor->replaceRaConf(RA_CORE_CONFIG, "pcsx_rearmed_dithering",
@@ -277,8 +271,7 @@ void RetroArchInterceptor::transferConfig(PsGamePtr &game) {
                                  "pcsx_rearmed_psxclock = \"" + to_string(clock) + "\" ");
         processor->replaceRaConf(RA_CORE_CONFIG, "pcsx_rearmed_show_bios_bootlogo",
                                  "pcsx_rearmed_show_bios_bootlogo  = \"enabled\" ");
-        processor->replaceRaConf(RA_CORE_CONFIG, "pcsx_rearmed_nocdaudio",
-                                 "pcsx_rearmed_nocdaudio  = \"enabled\" ");
+        processor->replaceRaConf(RA_CORE_CONFIG, "pcsx_rearmed_nocdaudio", "pcsx_rearmed_nocdaudio  = \"enabled\" ");
 
         if (interpolation == 0) {
             processor->replaceRaConf(RA_CORE_CONFIG, "pcsx_rearmed_spu_interpolation",
@@ -302,10 +295,8 @@ void RetroArchInterceptor::transferConfig(PsGamePtr &game) {
         if (scanlines == 1) {
 
             float opacity = scanline_level / 100.0f;
-            processor->replaceRaConf(RA_CONFIG, "input_overlay",
-                                     "input_overlay  = \":/overlay/scanlines.cfg\" ");
-            processor->replaceRaConf(RA_CONFIG, "input_overlay_enable",
-                                     "input_overlay_enable  = \"true\" ");
+            processor->replaceRaConf(RA_CONFIG, "input_overlay", "input_overlay  = \":/overlay/scanlines.cfg\" ");
+            processor->replaceRaConf(RA_CONFIG, "input_overlay_enable", "input_overlay_enable  = \"true\" ");
             processor->replaceRaConf(RA_CONFIG, "input_overlay_opacity",
                                      "input_overlay_opacity  = \"" + to_string(opacity) + "\" ");
         }
@@ -315,42 +306,28 @@ void RetroArchInterceptor::transferConfig(PsGamePtr &game) {
     // RA_CONFIG
     CfgProcessor *processor = new CfgProcessor();
     string aspect = gui->cfg.inifile.values["aspect"]; // true - 1280x720 - false 960x720
-    string filter = gui->cfg.inifile.values["mip"]; // true - billiner
+    string filter = gui->cfg.inifile.values["mip"];    // true - billiner
     if (aspect == "true") {
         // widescreen
-        processor->replaceRaConf(RA_CONFIG, "custom_viewport_width",
-                                 "custom_viewport_width  = \"1280\" ");
-        processor->replaceRaConf(RA_CONFIG, "custom_viewport_height",
-                                 "custom_viewport_height  = \"720\" ");
-        processor->replaceRaConf(RA_CONFIG, "custom_viewport_x",
-                                 "custom_viewport_x  = \"0\" ");
-        processor->replaceRaConf(RA_CONFIG, "custom_viewport_y",
-                                 "custom_viewport_y  = \"0\" ");
-        processor->replaceRaConf(RA_CONFIG, "aspect_ratio_index",
-                                 "aspect_ratio_index  = \"23\" ");
+        processor->replaceRaConf(RA_CONFIG, "custom_viewport_width", "custom_viewport_width  = \"1280\" ");
+        processor->replaceRaConf(RA_CONFIG, "custom_viewport_height", "custom_viewport_height  = \"720\" ");
+        processor->replaceRaConf(RA_CONFIG, "custom_viewport_x", "custom_viewport_x  = \"0\" ");
+        processor->replaceRaConf(RA_CONFIG, "custom_viewport_y", "custom_viewport_y  = \"0\" ");
+        processor->replaceRaConf(RA_CONFIG, "aspect_ratio_index", "aspect_ratio_index  = \"23\" ");
 
     } else {
         // 4:3
-        processor->replaceRaConf(RA_CONFIG, "custom_viewport_width",
-                                 "custom_viewport_width  = \"960\" ");
-        processor->replaceRaConf(RA_CONFIG, "custom_viewport_height",
-                                 "custom_viewport_height  = \"720\" ");
-        processor->replaceRaConf(RA_CONFIG, "custom_viewport_x",
-                                 "custom_viewport_x  = \"160\" ");
-        processor->replaceRaConf(RA_CONFIG, "custom_viewport_y",
-                                 "custom_viewport_y  = \"0\" ");
-        processor->replaceRaConf(RA_CONFIG, "aspect_ratio_index",
-                                 "aspect_ratio_index  = \"0\" ");
-
+        processor->replaceRaConf(RA_CONFIG, "custom_viewport_width", "custom_viewport_width  = \"960\" ");
+        processor->replaceRaConf(RA_CONFIG, "custom_viewport_height", "custom_viewport_height  = \"720\" ");
+        processor->replaceRaConf(RA_CONFIG, "custom_viewport_x", "custom_viewport_x  = \"160\" ");
+        processor->replaceRaConf(RA_CONFIG, "custom_viewport_y", "custom_viewport_y  = \"0\" ");
+        processor->replaceRaConf(RA_CONFIG, "aspect_ratio_index", "aspect_ratio_index  = \"0\" ");
     }
 
-
     if (filter != "true") {
-        processor->replaceRaConf(RA_CONFIG, "video_smooth",
-                                 "video_smooth  = \"true\" ");
+        processor->replaceRaConf(RA_CONFIG, "video_smooth", "video_smooth  = \"true\" ");
     } else {
-        processor->replaceRaConf(RA_CONFIG, "video_smooth",
-                                 "video_smooth  = \"false\" ");
+        processor->replaceRaConf(RA_CONFIG, "video_smooth", "video_smooth  = \"false\" ");
     }
     delete processor;
 }

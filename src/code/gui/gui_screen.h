@@ -11,34 +11,33 @@
 // GuiScreen
 //********************
 class GuiScreen {
-public:
+  public:
     explicit GuiScreen(SDL_Shared<SDL_Renderer> _renderer) : renderer(_renderer), gui(Gui::getInstance()) {}
     virtual ~GuiScreen() = default;
 
     SDL_Shared<SDL_Renderer> renderer;
     std::shared_ptr<Gui> gui;
-    bool menuVisible = true;    // set this to false to exit the loop() here or your inherited loop()
+    bool menuVisible = true; // set this to false to exit the loop() here or your inherited loop()
 
     virtual void init() {};
-    virtual void render()=0;
+    virtual void render() = 0;
     virtual void loop();
 
-// usage example:
-// void doSomeJoyEvent() {
-//      do {
-//          whatever you want to do on the event
-//          render();
-//      } while (fastForwardUntilJoyCenter(300);  // repeat every 300 milliseconds
+    // usage example:
+    // void doSomeJoyEvent() {
+    //      do {
+    //          whatever you want to do on the event
+    //          render();
+    //      } while (fastForwardUntilJoyCenter(300);  // repeat every 300 milliseconds
     bool fastForwardUntilAnotherEvent(Uint32 ticksPerFastForwardRepeat = 200);
 
-// other versions:
-//    bool fastForwardUntilJoyCenter(Uint32 startTicks);
-//    bool fastForwardUntilButtonReleased(int button, Uint32 ticksPerFastForwardRepeat);
+    // other versions:
+    //    bool fastForwardUntilJoyCenter(Uint32 startTicks);
+    //    bool fastForwardUntilButtonReleased(int button, Uint32 ticksPerFastForwardRepeat);
 
     // by the time the render() finishes the user may have already pushed the joy button one or more times
 
-    void show()
-    {
+    void show() {
         init();
         render();
         loop();
@@ -92,5 +91,5 @@ public:
     virtual void doTab() {}
     virtual void doEscape() {}
 
-    bool handlePowerShutdownAndQuit(SDL_Event &e);  // returns true if applicable event type and it was handled
+    bool handlePowerShutdownAndQuit(SDL_Event &e); // returns true if applicable event type and it was handled
 };

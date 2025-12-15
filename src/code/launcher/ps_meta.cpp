@@ -18,10 +18,10 @@ using namespace std;
 //*******************************
 // PsMeta::updateTexts
 //*******************************
-void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt, const string & yearTxt,
-                         const string & serial, const string & region, const string & playersTxt, bool internal,
-                         bool hd, bool locked, int discs, bool favorite, bool play_using_ra, bool foreign, bool app,
-                         const string& last_played, const std::string& _gamePathForLightgunGamesFile,
+void PsMeta::updateTexts(const string &gameNameTxt, const string &publisherTxt, const string &yearTxt,
+                         const string &serial, const string &region, const string &playersTxt, bool internal, bool hd,
+                         bool locked, int discs, bool favorite, bool play_using_ra, bool foreign, bool app,
+                         const string &last_played, const std::string &_gamePathForLightgunGamesFile,
                          SDL_Color _textColor) {
     this->discs = discs;
     this->internal = internal;
@@ -41,11 +41,12 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
     this->gamePathForLightgunGamesFile = _gamePathForLightgunGamesFile;
 
     textColor = _textColor;
-    textColor.a = SDL_ALPHA_OPAQUE; // if you're rendering with a different color you need this or it will be transparent
+    textColor.a =
+        SDL_ALPHA_OPAQUE; // if you're rendering with a different color you need this or it will be transparent
 
     if (foreign) {
         trim(publisher);
-        if (publisher=="DETECT")
+        if (publisher == "DETECT")
             publisher = _("Unknown Core (AutoDetect)");
     }
 }
@@ -53,7 +54,7 @@ void PsMeta::updateTexts(const string & gameNameTxt, const string & publisherTxt
 //*******************************
 // PsMeta::updateTexts
 //*******************************
-void PsMeta::updateTexts(PsGamePtr & psGame, SDL_Color _textColor) {
+void PsMeta::updateTexts(PsGamePtr &psGame, SDL_Color _textColor) {
     if (psGame == nullptr)
         return;
 
@@ -66,31 +67,28 @@ void PsMeta::updateTexts(PsGamePtr & psGame, SDL_Color _textColor) {
             psGame->region = iniFile.values["region"];
         }
         updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
-                    to_string(psGame->players) + " " + appendText,
-                    psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->play_using_ra,
-                    psGame->foreign, psGame->app, UtilTime::timeToDisplayTimeString(psGame->last_played), 
+                    to_string(psGame->players) + " " + appendText, psGame->internal, psGame->hd, psGame->locked,
+                    psGame->cds, psGame->favorite, psGame->play_using_ra, psGame->foreign, psGame->app,
+                    UtilTime::timeToDisplayTimeString(psGame->last_played),
                     psGame->folder, // ps1 game path in /Games
                     _textColor);
-    } else
-    {
-        if (psGame->app)
-        {
+    } else {
+        if (psGame->app) {
             psGame->serial = "";
             psGame->region = "";
 
             updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
-                        to_string(psGame->players) + " " + appendText,
-                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->play_using_ra,
-                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played), "", 
-                        _textColor);
+                        to_string(psGame->players) + " " + appendText, psGame->internal, psGame->hd, psGame->locked,
+                        psGame->cds, psGame->favorite, psGame->play_using_ra, psGame->foreign, psGame->app,
+                        UtilTime::timeToDisplayTimeString(psGame->last_played), "", _textColor);
         } else {
             psGame->serial = "";
             psGame->region = "";
 
             updateTexts(psGame->title, psGame->core_name, to_string(psGame->year), psGame->serial, psGame->region,
-                        to_string(psGame->players) + " " + appendText,
-                        psGame->internal, psGame->hd, psGame->locked, psGame->cds, psGame->favorite, psGame->play_using_ra,
-                        psGame->foreign, psGame->app,  UtilTime::timeToDisplayTimeString(psGame->last_played), 
+                        to_string(psGame->players) + " " + appendText, psGame->internal, psGame->hd, psGame->locked,
+                        psGame->cds, psGame->favorite, psGame->play_using_ra, psGame->foreign, psGame->app,
+                        UtilTime::timeToDisplayTimeString(psGame->last_played),
                         psGame->image_path, // Retroarch roms image path
                         _textColor);
         }
@@ -100,31 +98,29 @@ void PsMeta::updateTexts(PsGamePtr & psGame, SDL_Color _textColor) {
 //*******************************
 // PsMeta::destroy
 //*******************************
-void PsMeta::destroy() {
-}
+void PsMeta::destroy() {}
 
 //*******************************
 // PsMeta::render
 //*******************************
 void PsMeta::render() {
-    if (gameName=="")
-    {
+    if (gameName == "") {
         return;
     }
 
     if (internalOffTex == nullptr) {
         string curPath = Env::getWorkingPath() + sep;
-        internalOnTex =  IMG_LoadTexture(renderer, (curPath + "evoimg/ps1.png").c_str());
+        internalOnTex = IMG_LoadTexture(renderer, (curPath + "evoimg/ps1.png").c_str());
         internalOffTex = IMG_LoadTexture(renderer, (curPath + "evoimg/usb.png").c_str());
-        hdOnTex =        IMG_LoadTexture(renderer, (curPath + "evoimg/hd.png").c_str());
-        hdOffTex =       IMG_LoadTexture(renderer, (curPath + "evoimg/sd.png").c_str());
-        lockOnTex =      IMG_LoadTexture(renderer, (curPath + "evoimg/lock.png").c_str());
-        lockOffTex =     IMG_LoadTexture(renderer, (curPath + "evoimg/unlock.png").c_str());
-        cdTex =          IMG_LoadTexture(renderer, (curPath + "evoimg/cd.png").c_str());
-        favoriteTex =    IMG_LoadTexture(renderer, (curPath + "evoimg/favorite.png").c_str());
-        raTex =          IMG_LoadTexture(renderer, (curPath + "evoimg/ra.png").c_str());
-        lightgunTex =    IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun.png").c_str());
-        lightgun2Tex =   IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun2.png").c_str());
+        hdOnTex = IMG_LoadTexture(renderer, (curPath + "evoimg/hd.png").c_str());
+        hdOffTex = IMG_LoadTexture(renderer, (curPath + "evoimg/sd.png").c_str());
+        lockOnTex = IMG_LoadTexture(renderer, (curPath + "evoimg/lock.png").c_str());
+        lockOffTex = IMG_LoadTexture(renderer, (curPath + "evoimg/unlock.png").c_str());
+        cdTex = IMG_LoadTexture(renderer, (curPath + "evoimg/cd.png").c_str());
+        favoriteTex = IMG_LoadTexture(renderer, (curPath + "evoimg/favorite.png").c_str());
+        raTex = IMG_LoadTexture(renderer, (curPath + "evoimg/ra.png").c_str());
+        lightgunTex = IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun.png").c_str());
+        lightgun2Tex = IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun2.png").c_str());
     }
 
     if (visible) {
@@ -175,13 +171,14 @@ void PsMeta::render() {
             // serial number line
             //
             yOffset += 21;
-            gui->renderText(otherFont, _("Serial:") + " " + serial + ", " + _("Region:") + " " + region, x, y + yOffset);
+            gui->renderText(otherFont, _("Serial:") + " " + serial + ", " + _("Region:") + " " + region, x,
+                            y + yOffset);
 
             //
             // last played line
             //
             yOffset += 21;
-#if defined(__x86_64__) || defined(_M_X64) || defined (PI_DEBUG)
+#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
             // the devel system has time
             gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
 #else
@@ -310,7 +307,7 @@ void PsMeta::render() {
                 fullRect.w = w;
                 fullRect.h = h;
                 SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
- 
+
                 //
                 // favorite icon
                 //

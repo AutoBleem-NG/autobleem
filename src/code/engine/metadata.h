@@ -8,7 +8,7 @@
 // Metadata
 //******************
 class Metadata {
-public:
+  public:
     std::string title;
     std::string publisher;
     int year = 0;
@@ -19,16 +19,14 @@ public:
     int dataSize = 0;
     bool valid = false;
 
-    std::string lastRegion="U";
+    std::string lastRegion = "U";
 
-    bool lookupBySerial(const std::string & serial);
-    bool lookupByTitle(const std::string & title);
-    void clean()
-    {
-        if (bytes != NULL)
-        {
-            delete [] bytes;
-            bytes=NULL;
+    bool lookupBySerial(const std::string &serial);
+    bool lookupByTitle(const std::string &title);
+    void clean() {
+        if (bytes != NULL) {
+            delete[] bytes;
+            bytes = NULL;
         }
     }
 };

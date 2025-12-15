@@ -9,9 +9,9 @@
 
 using namespace std;
 
-                                  //*******************************
-                                  // DATABASE SQL
-                                  //*******************************
+//*******************************
+// DATABASE SQL
+//*******************************
 
 //*******************************
 // covers?.db
@@ -101,7 +101,8 @@ static const char CREATE_SUBDIR_ROW_SQL[] = " CREATE TABLE IF NOT EXISTS SUBDIR_
        PRIMARY KEY ( SUBDIR_ROW_INDEX ) )";
 
 // used by: createInitialDatabase
-static const char CREATE_SUBDIR_GAMES_TO_DISPLAY_ON_ROW_SQL[] = " CREATE TABLE IF NOT EXISTS SUBDIR_GAMES_TO_DISPLAY_ON_ROW  \
+static const char CREATE_SUBDIR_GAMES_TO_DISPLAY_ON_ROW_SQL[] =
+    " CREATE TABLE IF NOT EXISTS SUBDIR_GAMES_TO_DISPLAY_ON_ROW  \
      ( SUBDIR_ROW_INDEX integer, GAME_ID integer )";
 
 // used by: subDirRowsTableIsEmpty
@@ -131,21 +132,24 @@ static const char GET_SUBDIR_GAME_ON_ROW[] = "SELECT GAME_ID FROM \
 // used by: deleteGameIdInAllTables
 static const char DELETE_GAME_ID_FROM_DISC[] = "DELETE FROM DISC WHERE GAME_ID =?";
 static const char DELETE_GAME_ID_FROM_GAME[] = "DELETE FROM GAME WHERE GAME_ID =?";
-static const char DELETE_GAME_ID_FROM_SUBDIR_GAMES_TO_DISPLAY_ON_ROW[] = "DELETE FROM SUBDIR_GAMES_TO_DISPLAY_ON_ROW WHERE GAME_ID =?";
+static const char DELETE_GAME_ID_FROM_SUBDIR_GAMES_TO_DISPLAY_ON_ROW[] =
+    "DELETE FROM SUBDIR_GAMES_TO_DISPLAY_ON_ROW WHERE GAME_ID =?";
 
 //*******************************
 // internal.db
 //*******************************
 
 // used by: refreshGameInternal
-static const char GAMES_DATA_SINGLE_INTERNAL[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, d.BASENAME,  COUNT(d.GAME_ID) as NUMD, \
+static const char GAMES_DATA_SINGLE_INTERNAL[] =
+    "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, d.BASENAME,  COUNT(d.GAME_ID) as NUMD, \
                                      FAVORITE, PLAY_USING_RA, HISTORY, LAST_PLAYED FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
                                      WHERE g.GAME_ID=?  \
                                      GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
                                      ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
 
 // used by: getInternalGames
-static const char GAMES_DATA_INTERNAL[] = "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, d.BASENAME,  COUNT(d.GAME_ID) as NUMD, \
+static const char GAMES_DATA_INTERNAL[] =
+    "SELECT g.GAME_ID, GAME_TITLE_STRING, PUBLISHER_NAME, RELEASE_YEAR, PLAYERS, d.BASENAME,  COUNT(d.GAME_ID) as NUMD, \
                                      FAVORITE, PLAY_USING_RA, HISTORY, LAST_PLAYED FROM GAME G JOIN DISC d ON g.GAME_ID=d.GAME_ID \
                                      GROUP BY g.GAME_ID HAVING MIN(d.DISC_NUMBER) \
                                      ORDER BY g.GAME_TITLE_STRING asc,d.DISC_NUMBER ASC";
@@ -168,10 +172,12 @@ static const char ADD_LAST_PLAYED_COLUMN[] = "ALTER TABLE GAME ADD COLUMN LAST_P
 // used by: updateDatePlayed for the internal.db and regional.db
 static const char UPDATE_LAST_PLAYED[] = "UPDATE GAME SET LAST_PLAYED=? WHERE GAME_ID=?";
 
-// used by: addPlayUsingRAColumn for the internal.db (USB games don't need it as they use the game.ini to flag favorites)
+// used by: addPlayUsingRAColumn for the internal.db (USB games don't need it as they use the game.ini to flag
+// favorites)
 static const char ADD_PLAY_USING_RA_COLUMN[] = "ALTER TABLE GAME ADD COLUMN PLAY_USING_RA INT DEFAULT 0";
 
-// used by: addPlayUsingRAColumn for the internal.db (USB games don't need it as they use the game.ini to flag favorites)
+// used by: addPlayUsingRAColumn for the internal.db (USB games don't need it as they use the game.ini to flag
+// favorites)
 static const char UPDATE_PLAY_USING_RA[] = "UPDATE GAME SET PLAY_USING_RA=? WHERE GAME_ID=?";
 
 //*******************************
@@ -245,7 +251,8 @@ bool Database::updateYear(int id, int year) {
     if (rc != SQLITE_OK) {
         cerr << "Failed: db:: updateYear, " << id << ", " << year << endl;
         cerr << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     sqlite3_bind_int(res, 1, year);
@@ -265,7 +272,8 @@ bool Database::updateMemcard(int id, string memcard) {
     if (rc != SQLITE_OK) {
         cerr << "Failed: db::updateMemcard, " << id << ", " << memcard << endl;
         cerr << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     sqlite3_bind_text(res, 1, memcard.c_str(), -1, nullptr);
@@ -285,7 +293,8 @@ bool Database::updateTitle(int id, string title) {
     if (rc != SQLITE_OK) {
         cerr << "Failed: db:: updateTitle, " << id << ", " << title << endl;
         cerr << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     sqlite3_bind_text(res, 1, title.c_str(), -1, nullptr);
@@ -305,7 +314,8 @@ bool Database::updateFavorite(int id, int favorite) {
     if (rc != SQLITE_OK) {
         cerr << "Failed: db:: updateFavorite, " << id << ", " << favorite << endl;
         cerr << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     sqlite3_bind_int(res, 1, favorite);
@@ -325,7 +335,8 @@ bool Database::updatePlayUsingRA(int id, int play_using_ra) {
     if (rc != SQLITE_OK) {
         cerr << "Failed: db:: updatePlayUsingRA, " << id << ", " << play_using_ra << endl;
         cerr << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     sqlite3_bind_int(res, 1, play_using_ra);
@@ -346,7 +357,8 @@ bool Database::updateHistory(int id, int rank) {
     if (rc != SQLITE_OK) {
         cerr << "Failed: db:: updateHistory, " << id << ", " << rank << endl;
         cerr << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     sqlite3_bind_int(res, 1, rank);
@@ -367,7 +379,8 @@ bool Database::updateDatePlayed(int id, int date_in_seconds) {
     if (rc != SQLITE_OK) {
         cerr << "Failed: db:: updateDatePlayed, " << id << ", " << date_in_seconds << endl;
         cerr << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     sqlite3_bind_int(res, 1, date_in_seconds);
@@ -407,7 +420,6 @@ bool Database::queryTitle(string title, Metadata *md) {
             md->players = players;
             md->valid = true;
             return true;
-
         }
     } else {
         cerr << "Failed to execute statement: " << sqlite3_errmsg(db) << endl;
@@ -459,7 +471,7 @@ bool Database::getInternalGames(PsGames *result) {
             psGame->history = history;
             psGame->last_played = last_played;
             result->push_back(psGame);
-            //cout << "getInternalGames: " << game->serial << ", " << game->title << endl;
+            // cout << "getInternalGames: " << game->serial << ", " << game->title << endl;
         }
     } else {
         sqlite3_finalize(res);
@@ -514,8 +526,8 @@ bool Database::refreshGameInternal(PsGamePtr &psGame) {
             if (DirEntry::exists(gameIniPath)) {
                 Inifile ini;
                 ini.load(gameIniPath);
-                psGame->locked =  !(ini.values["automation"]=="1");
-                psGame->hd =       (ini.values["highres"]=="1");
+                psGame->locked = !(ini.values["automation"] == "1");
+                psGame->hd = (ini.values["highres"] == "1");
                 psGame->favorite = (ini.values["favorite"] == "1");
                 psGame->play_using_ra = (ini.values["play_using_ra"] == "true");
             }
@@ -570,8 +582,8 @@ bool Database::refreshGame(PsGamePtr &game) {
             if (DirEntry::exists(gameIniPath)) {
                 Inifile ini;
                 ini.load(gameIniPath);
-                game->locked =  !(ini.values["automation"]=="1");
-                game->hd =       (ini.values["highres"]=="1");
+                game->locked = !(ini.values["automation"] == "1");
+                game->hd = (ini.values["highres"] == "1");
                 game->favorite = (ini.values["favorite"] == "1");
                 game->play_using_ra = (ini.values["play_using_ra"] == "true");
             }
@@ -620,14 +632,14 @@ bool Database::getGames(PsGames *result) {
             game->last_played = last_played;
             game->memcard = string(reinterpret_cast<const char *>(memcard));
             game->cds = discs;
-            //cout << "getGames: " << game->serial << ", " << game->title << endl;
+            // cout << "getGames: " << game->serial << ", " << game->title << endl;
 
             string gameIniPath = game->folder + sep + GAME_INI;
             if (DirEntry::exists(gameIniPath)) {
                 Inifile ini;
                 ini.load(gameIniPath);
-                game->locked =  !(ini.values["automation"]=="1");
-                game->hd =       (ini.values["highres"]=="1");
+                game->locked = !(ini.values["automation"] == "1");
+                game->hd = (ini.values["highres"] == "1");
                 game->favorite = (ini.values["favorite"] == "1");
                 game->play_using_ra = (ini.values["play_using_ra"] == "true");
             }
@@ -652,14 +664,13 @@ bool Database::getGameRowInfos(GameRowInfos *gameRowInfos) {
             SubDirRowInfo subDirRowInfo;
             subDirRowInfo.subDirRowIndex = sqlite3_column_int(res, 0);
             const unsigned char *name = sqlite3_column_text(res, 1);
-            subDirRowInfo.rowName = reinterpret_cast<const char*>(name);
+            subDirRowInfo.rowName = reinterpret_cast<const char *>(name);
             subDirRowInfo.indentLevel = sqlite3_column_int(res, 2);
             subDirRowInfo.numGames = sqlite3_column_int(res, 3);
 
             cout << "SubDirRowInfo: " << string(subDirRowInfo.indentLevel * 2, ' ') << subDirRowInfo.rowName
-                    << ", index: " << subDirRowInfo.subDirRowIndex
-                    << ", indent: " << subDirRowInfo.indentLevel
-                    << ", numGames: " << subDirRowInfo.numGames << endl;
+                 << ", index: " << subDirRowInfo.subDirRowIndex << ", indent: " << subDirRowInfo.indentLevel
+                 << ", numGames: " << subDirRowInfo.numGames << endl;
 
             gameRowInfos->emplace_back(subDirRowInfo);
         }
@@ -705,7 +716,7 @@ bool Database::getGameIdsInRow(vector<int> *gameIdsInRow, int row) {
         sqlite3_bind_int(res, 1, row);
         while (sqlite3_step(res) == SQLITE_ROW) {
             int gameId = sqlite3_column_int(res, 0);
-            //cout << "GameId in Row: " << row << ", " << gameId << endl;
+            // cout << "GameId in Row: " << row << ", " << gameId << endl;
             gameIdsInRow->emplace_back(gameId);
         }
     } else {
@@ -750,10 +761,9 @@ bool Database::querySerial(string serial, Metadata *md) {
             md->region = SerialScanner::serialToRegion(md->serial);
             md->players = players;
             md->valid = true;
-            //cout << "querySerial: " << "serial " << serial << ", " << md->title << endl;
+            // cout << "querySerial: " << "serial " << serial << ", " << md->title << endl;
 
             return true;
-
         }
     } else {
         cerr << "Failed to execute statement: " << sqlite3_errmsg(db) << endl;
@@ -823,7 +833,7 @@ bool Database::subDirRowsTableIsEmpty() {
         if (result == SQLITE_ROW) {
             const int number = sqlite3_column_int(res, 0);
             sqlite3_finalize(res);
-            return (number == 0);   // true if no rows in table
+            return (number == 0); // true if no rows in table
         }
     } else {
         cerr << "Failed to execute statement: " << sqlite3_errmsg(db) << endl;
@@ -886,7 +896,8 @@ bool Database::executeCreateStatement(const char *sql, string name) {
     if (rc != SQLITE_OK) {
         cerr << "Failed: db:: executeCreateStatement, " << sql << ", " << name << endl;
         cerr << "Failed to create " << name << "  table/column  " << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     return true;
@@ -900,9 +911,10 @@ bool Database::executeStatement(const char *sql, string outMsg, string errorMsg)
     cout << outMsg << endl;
     int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errorReport);
     if (rc != SQLITE_OK) {
-        cerr << "Failed: db:: executeStatement, " << sql << ", " << outMsg<< ", " << errorMsg << endl;
+        cerr << "Failed: db:: executeStatement, " << sql << ", " << outMsg << ", " << errorMsg << endl;
         cerr << errorMsg << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     return true;
@@ -969,13 +981,18 @@ bool Database::truncate() {
 // Database::createInitialDatabase
 //*******************************
 bool Database::createInitialDatabase() {
-    if (!executeCreateStatement(CREATE_GAME_SQL, "GAME")) return false;
-    executeCreateStatement(ADD_HISTORY_COLUMN, "History column" ); // add column to existing table
-    executeCreateStatement(ADD_LAST_PLAYED_COLUMN, "Last_Played column" ); // add column to existing table
-    if (!executeCreateStatement(CREATE_DISC_SQL, "DISC")) return false;
-    if (!executeCreateStatement(CREATE_LANGUAGE_SPECIFIC_SQL, "LANGUAGE_SPECIFIC")) return false;
-    if (!executeCreateStatement(CREATE_SUBDIR_ROW_SQL, "SUBDIR_ROWS")) return false;
-    if (!executeCreateStatement(CREATE_SUBDIR_GAMES_TO_DISPLAY_ON_ROW_SQL, "SUBDIR_GAMES_TO_DISPLAY_ON_ROW")) return false;
+    if (!executeCreateStatement(CREATE_GAME_SQL, "GAME"))
+        return false;
+    executeCreateStatement(ADD_HISTORY_COLUMN, "History column");         // add column to existing table
+    executeCreateStatement(ADD_LAST_PLAYED_COLUMN, "Last_Played column"); // add column to existing table
+    if (!executeCreateStatement(CREATE_DISC_SQL, "DISC"))
+        return false;
+    if (!executeCreateStatement(CREATE_LANGUAGE_SPECIFIC_SQL, "LANGUAGE_SPECIFIC"))
+        return false;
+    if (!executeCreateStatement(CREATE_SUBDIR_ROW_SQL, "SUBDIR_ROWS"))
+        return false;
+    if (!executeCreateStatement(CREATE_SUBDIR_GAMES_TO_DISPLAY_ON_ROW_SQL, "SUBDIR_GAMES_TO_DISPLAY_ON_ROW"))
+        return false;
 
     return true;
 }
@@ -983,42 +1000,35 @@ bool Database::createInitialDatabase() {
 //*******************************
 // Database::addFavoriteColumn
 //*******************************
-void Database::addFavoriteColumn() {
-    executeCreateStatement(ADD_FAVORITE_COLUMN, "Favorite column" );
-}
+void Database::addFavoriteColumn() { executeCreateStatement(ADD_FAVORITE_COLUMN, "Favorite column"); }
 
 //*******************************
 // Database::addPlayUsingRAColumn
 //*******************************
-void Database::addPlayUsingRAColumn() {
-    executeCreateStatement(ADD_PLAY_USING_RA_COLUMN, "Play Using RA column" );
-}
+void Database::addPlayUsingRAColumn() { executeCreateStatement(ADD_PLAY_USING_RA_COLUMN, "Play Using RA column"); }
 
 //*******************************
 // Database::addHistoryColumn
 //*******************************
-void Database::addHistoryColumn() {
-    executeCreateStatement(ADD_HISTORY_COLUMN, "History column" );
-}
+void Database::addHistoryColumn() { executeCreateStatement(ADD_HISTORY_COLUMN, "History column"); }
 
 //*******************************
 // Database::addLastPlayedColumn
 //*******************************
-void Database::addLastPlayedColumn() {
-    executeCreateStatement(ADD_LAST_PLAYED_COLUMN, "Last_Played column" );
-}
+void Database::addLastPlayedColumn() { executeCreateStatement(ADD_LAST_PLAYED_COLUMN, "Last_Played column"); }
 
 //*******************************
 // Database::deleteGameIdFromOneTable
 //*******************************
-bool Database::deleteGameIdFromOneTable(int id, const string& cmd_str) {
+bool Database::deleteGameIdFromOneTable(int id, const string &cmd_str) {
     char *errorReport = nullptr;
     sqlite3_stmt *res = nullptr;
     int rc = sqlite3_prepare_v2(db, cmd_str.c_str(), -1, &res, nullptr);
     if (rc != SQLITE_OK) {
         cerr << "Failed: db:: delete game_id from table, " << id << ", " << cmd_str << endl;
         cerr << sqlite3_errmsg(db) << endl;
-        if (!errorReport) sqlite3_free(errorReport);
+        if (!errorReport)
+            sqlite3_free(errorReport);
         return false;
     }
     sqlite3_bind_int(res, 1, id);
@@ -1026,7 +1036,6 @@ bool Database::deleteGameIdFromOneTable(int id, const string& cmd_str) {
     sqlite3_finalize(res);
     return true;
 }
-
 
 //*******************************
 // Database::deleteGameIdFromAllTables

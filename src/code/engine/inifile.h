@@ -24,16 +24,16 @@
 // Year=1996
 //
 class Inifile {
-public:
-    std::string section="";                     // example: "Game" (from [Game] above)
-    std::string path="";                        // example: "/media/Games/Racing/007 Racing (USA)/Game.ini"
-    std::string entry="";                       // example: "007 Racing (USA)"
-    std::map<std::string, std::string> values;  // see example data above
+  public:
+    std::string section = "";                  // example: "Game" (from [Game] above)
+    std::string path = "";                     // example: "/media/Games/Racing/007 Racing (USA)/Game.ini"
+    std::string entry = "";                    // example: "007 Racing (USA)"
+    std::map<std::string, std::string> values; // see example data above
 
-    void load(const std::string & path);
-    void reload(const std::string & path);
-    void OverwriteAndAppend(const std::string & path); // overwrite existing values, append new values
+    void load(const std::string &path);
+    void reload(const std::string &path);
+    void OverwriteAndAppend(const std::string &path); // overwrite existing values, append new values
 
-    void save(const std::string & path);
+    void save(const std::string &path);
     void print();
 };

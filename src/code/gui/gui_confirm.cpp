@@ -17,25 +17,22 @@ using namespace std;
 //*******************************
 // GuiConfirm::render
 //*******************************
-void GuiConfirm::render()
-{
+void GuiConfirm::render() {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->renderBackground();
     gui->renderTextBar();
     int yoffset = gui->renderLogo(true);
-    gui->renderTextLine("-=" + _("Please confirm") + "=-",0,yoffset, XALIGN_CENTER);
-    gui->renderTextLine(label,2,yoffset, XALIGN_CENTER);
+    gui->renderTextLine("-=" + _("Please confirm") + "=-", 0, yoffset, XALIGN_CENTER);
+    gui->renderTextLine(label, 2, yoffset, XALIGN_CENTER);
 
-
-    gui->renderStatus("|@X| "+_("Confirm")+"  |@O| "+_("Cancel")+" |");
+    gui->renderStatus("|@X| " + _("Confirm") + "  |@O| " + _("Cancel") + " |");
     SDL_RenderPresent(renderer);
 }
 
 //*******************************
 // GuiConfirm::loop
 //*******************************
-void GuiConfirm::loop()
-{
+void GuiConfirm::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     menuVisible = true;
     while (menuVisible) {
@@ -56,32 +53,32 @@ void GuiConfirm::loop()
             }
 
             switch (e.type) {
-                case SDL_CONTROLLERBUTTONDOWN:
-                    if (e.cbutton.button == SDL_BTN_CROSS) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        result = true;
-                        menuVisible = false;
-                    };
+            case SDL_CONTROLLERBUTTONDOWN:
+                if (e.cbutton.button == SDL_BTN_CROSS) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    result = true;
+                    menuVisible = false;
+                };
 
-                    if (e.cbutton.button == SDL_BTN_CIRCLE) {
-                        Mix_PlayChannel(-1, gui->cancel, 0);
-                        result = false;
-                        menuVisible = false;
-                    };
-                    break;
+                if (e.cbutton.button == SDL_BTN_CIRCLE) {
+                    Mix_PlayChannel(-1, gui->cancel, 0);
+                    result = false;
+                    menuVisible = false;
+                };
+                break;
 
-                case SDL_KEYDOWN:
-                    if (e.key.keysym.sym == SDLK_RETURN) {
-                        Mix_PlayChannel(-1, gui->cursor, 0);
-                        result = true;
-                        menuVisible = false;
-                    }
-                    if (e.key.keysym.sym == SDLK_ESCAPE) {
-                        Mix_PlayChannel(-1, gui->cancel, 0);
-                        result = false;
-                        menuVisible = false;
-                    }
-                    break;
+            case SDL_KEYDOWN:
+                if (e.key.keysym.sym == SDLK_RETURN) {
+                    Mix_PlayChannel(-1, gui->cursor, 0);
+                    result = true;
+                    menuVisible = false;
+                }
+                if (e.key.keysym.sym == SDLK_ESCAPE) {
+                    Mix_PlayChannel(-1, gui->cancel, 0);
+                    result = false;
+                    menuVisible = false;
+                }
+                break;
             }
         }
     }

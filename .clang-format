@@ -1,0 +1,8 @@
+# AutoBleem C++ Code Style
+# Based on LLVM style with minor adjustments
+# Run: make format
+
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 120
+SortIncludes: false

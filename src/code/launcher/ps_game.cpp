@@ -45,35 +45,35 @@ void PsGame::setMemCard(string name) {
 // PsGame::removeResumePoint
 //*******************************
 void PsGame::removeResumePoint(int slot) {
-     if (!foreign) {
-         string filenamefile = ssFolder + sep + "filename.txt.res";
-         string filenamepoint = ssFolder + sep + "filename." + to_string(slot) + ".txt.res";
-         if (DirEntry::exists(filenamepoint)) {
-             filenamefile = filenamepoint;
-         }
-         if (DirEntry::exists(filenamefile)) {
-             ifstream is(filenamefile.c_str());
-             if (is.is_open()) {
+    if (!foreign) {
+        string filenamefile = ssFolder + sep + "filename.txt.res";
+        string filenamepoint = ssFolder + sep + "filename." + to_string(slot) + ".txt.res";
+        if (DirEntry::exists(filenamepoint)) {
+            filenamefile = filenamepoint;
+        }
+        if (DirEntry::exists(filenamefile)) {
+            ifstream is(filenamefile.c_str());
+            if (is.is_open()) {
 
-                 std::string line;
-                 std::getline(is, line);
-                 std::getline(is, line);
+                std::string line;
+                std::getline(is, line);
+                std::getline(is, line);
 
-                 string ssfile = ssFolder + sep + "sstates/" + line + ".00" + to_string(slot) + ".res";
-                 DirEntry::removeFile(ssfile);
-                 // last line is our filename
-                 if (slot == 0) {
-                     string slot0img = ssFolder + sep + "screenshots/" + line + ".png.res";
-                     DirEntry::removeFile(slot0img);
+                string ssfile = ssFolder + sep + "sstates/" + line + ".00" + to_string(slot) + ".res";
+                DirEntry::removeFile(ssfile);
+                // last line is our filename
+                if (slot == 0) {
+                    string slot0img = ssFolder + sep + "screenshots/" + line + ".png.res";
+                    DirEntry::removeFile(slot0img);
 
-                 } else {
-                     string slotnimg = ssFolder + sep + "screenshots/" + line + "." + to_string(slot) + ".png.res";
-                     DirEntry::removeFile(slotnimg);
-                 }
-                 is.close();
-             }
-         }
-     }
+                } else {
+                    string slotnimg = ssFolder + sep + "screenshots/" + line + "." + to_string(slot) + ".png.res";
+                    DirEntry::removeFile(slotnimg);
+                }
+                is.close();
+            }
+        }
+    }
 }
 
 //*******************************
@@ -190,7 +190,6 @@ string PsGame::findResumePicture(int slot) {
     return "";
 }
 
-
 //*******************************
 // PsGame::findResumePicture
 //*******************************
@@ -228,6 +227,4 @@ string PsGame::findResumePicture() {
 //*******************************
 // PsGames += PsGames
 //*******************************
-void operator += (PsGames &dest, const PsGames &src) {
-    copy(begin(src), end(src), back_inserter(dest));
-}
+void operator+=(PsGames &dest, const PsGames &src) { copy(begin(src), end(src), back_inserter(dest)); }

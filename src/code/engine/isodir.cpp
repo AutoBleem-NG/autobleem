@@ -8,20 +8,14 @@
 
 using namespace std;
 
-
-
-
 //*******************************
 // Isodir::removeVersion
 //*******************************
-string Isodir::removeVersion(string input)
-{
+string Isodir::removeVersion(string input) {
     int len = input.length();
-    if (len > 2)
-    {
+    if (len > 2) {
         int semiColon = input.find(';', 0);
-        if (semiColon != -1)
-        {
+        if (semiColon != -1) {
             input = input.substr(0, input.find(';', 0));
         }
     }
@@ -31,41 +25,33 @@ string Isodir::removeVersion(string input)
 //*******************************
 // Isodir::getEmptyDir
 //*******************************
-IsoDirectory Isodir::getEmptyDir()
-{
+IsoDirectory Isodir::getEmptyDir() {
     IsoDirectory dir;
     dir.systemName = "UNKNOWN";
     dir.volumeName = "UNKNOWN";
     return dir;
 }
 
-void Isodir::readDir(vector<string> *data, CDReader *reader, unsigned int sector, int maxlevel, int level)
-{
+void Isodir::readDir(vector<string> *data, CDReader *reader, unsigned int sector, int maxlevel, int level) {
     int originalSector = sector;
-    if (level >= maxlevel)
-    {
+    if (level >= maxlevel) {
         return;
     }
     reader->selectSector(sector);
-    for (int i = 0; i < 200; i++)
-    {
+    for (int i = 0; i < 200; i++) {
         sector = reader->getSelSector();
-        if (reader->endStream())
-        {
+        if (reader->endStream()) {
             break;
         }
         int startpos = reader->getSectorPos();
         int startsector = reader->getSelSector();
         long len = reader->readChar();
 
-        
-        if (len == 0)
-        {
+        if (len == 0) {
             int lastReadPos = reader->getSectorPos();
             reader->selectSector(sector + 1);
             sector = reader->getSelSector();
-            if (lastReadPos < 2048 - 62)
-            {
+            if (lastReadPos < 2048 - 62) {
                 break;
             }
             continue;
@@ -79,8 +65,7 @@ void Isodir::readDir(vector<string> *data, CDReader *reader, unsigned int sector
         reader->ffd(6);
 
         int fileNameLen = reader->readChar();
-        if (fileNameLen < 2)
-        {
+        if (fileNameLen < 2) {
             reader->selectSector(startsector);
             reader->ffd(startpos + len);
             if (fileNameLen == 0)
@@ -89,8 +74,7 @@ void Isodir::readDir(vector<string> *data, CDReader *reader, unsigned int sector
         }
         string fileName = reader->readString(fileNameLen);
         data->push_back(removeVersion(fileName));
-        if ((attr >> 1) & 1)
-        {
+        if ((attr >> 1) & 1) {
             readDir(data, reader, loc, maxlevel, level + 1);
         }
         reader->selectSector(sector);
@@ -102,21 +86,16 @@ void Isodir::readDir(vector<string> *data, CDReader *reader, unsigned int sector
 //*******************************
 // Isodir::getDir
 //*******************************
-IsoDirectory Isodir::getDir(string binPath, int maxlevel, bool useCHD)
-{
+IsoDirectory Isodir::getDir(string binPath, int maxlevel, bool useCHD) {
     CDReader *reader;
 
-    if (!useCHD)
-    {
+    if (!useCHD) {
         reader = new CDReader();
-    }
-    else
-    {
+    } else {
         reader = new CHDReader();
     }
     reader->openImage(binPath);
-    if (!reader->isOpen())
-    {
+    if (!reader->isOpen()) {
         delete reader;
         return getEmptyDir();
     }
@@ -133,8 +112,7 @@ IsoDirectory Isodir::getDir(string binPath, int maxlevel, bool useCHD)
     readDir(&result.rootDir, reader, sector, maxlevel, 0);
     reader->closeImage();
     delete reader;
-    if (result.rootDir.empty())
-    {
+    if (result.rootDir.empty()) {
         return getEmptyDir();
     }
     return result;

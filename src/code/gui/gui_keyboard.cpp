@@ -23,8 +23,8 @@ vector<string> row3 = {"z", "x", "c", "v", "b", "n", "m", "_", "-", " "};
 
 #define numColumns 10
 #define numRows 4
-#define xlast (numColumns-1)
-#define ylast (numRows-1)
+#define xlast (numColumns - 1)
+#define ylast (numRows - 1)
 #define indentOffset 5
 
 vector<vector<string>> rows = {row0, row1, row2, row3};
@@ -50,7 +50,7 @@ void GuiKeyboard::render() {
     //*******************************
     // drawRectangle lambda
     //*******************************
-    auto drawRectangle = [&] (SDL_Rect& rect) {
+    auto drawRectangle = [&](SDL_Rect &rect) {
         string fg = gui->themeData.values["text_fg"];
         SDL_SetRenderDrawColor(renderer, gui->getR(fg), gui->getG(fg), gui->getB(fg), 255);
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -78,7 +78,7 @@ void GuiKeyboard::render() {
     if (L2_cursor_shift || usingUsbKeyboard) {
         FC_Rect rectEditbox = gui->FC_getFontTextRect(gui->themeFont, displayResult);
         rectEditbox.x = gui->align_xPosition(XALIGN_CENTER, 0, rectEditbox.w);
-        rectEditbox.y = (1 * rectEditbox.h) + yoffset;  // line 1 (0 == top)
+        rectEditbox.y = (1 * rectEditbox.h) + yoffset; // line 1 (0 == top)
 
         // compute the bounding box around the cursor (#)
         FC_Size textBeforeCursorSize;
@@ -89,8 +89,8 @@ void GuiKeyboard::render() {
         // get the cursor size
         FC_Size cursorSize = gui->FC_getFontTextSize(gui->themeFont, "#");
         // bounding box rectangle around the # cursor
-        SDL_Rect cursorRect { rectEditbox.x + textBeforeCursorSize.w, rectEditbox.y,    // x, y position
-                              cursorSize.w, cursorSize.h };                             // w, h
+        SDL_Rect cursorRect{rectEditbox.x + textBeforeCursorSize.w, rectEditbox.y, // x, y position
+                            cursorSize.w, cursorSize.h};                           // w, h
 
         drawRectangle(cursorRect);
     }
@@ -136,14 +136,12 @@ void GuiKeyboard::render() {
     }
 
     if (usingUsbKeyboard) {
-        gui->renderStatus(
-                "|@Tab| " + _("Use Controller") + "  |@Enter| " + _("Confirm") +
-                "  |@Esc| " + _("Cancel") + " |");
+        gui->renderStatus("|@Tab| " + _("Use Controller") + "  |@Enter| " + _("Confirm") + "  |@Esc| " + _("Cancel") +
+                          " |");
     } else {
-        gui->renderStatus(
-                "|@X| " + _("Select") + "  |@T|  " + _("Backspace") + "  |@L1| " + _("Caps") + "  |@L2| " +
-                _("Move Cursor") + "(#)" + " |@S| " + _("Space") +
-                "      |@Start| " + _("Confirm") + "  |@O| " + _("Cancel") + " |");
+        gui->renderStatus("|@X| " + _("Select") + "  |@T|  " + _("Backspace") + "  |@L1| " + _("Caps") + "  |@L2| " +
+                          _("Move Cursor") + "(#)" + " |@S| " + _("Space") + "      |@Start| " + _("Confirm") +
+                          "  |@O| " + _("Cancel") + " |");
     }
     SDL_RenderPresent(renderer);
 }
@@ -157,7 +155,7 @@ bool GuiKeyboard::handlePowerShutdownAndQuit(SDL_Event &e) {
         if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
             Util::powerOff();
-            return true;    // but it will never get here
+            return true; // but it will never get here
         }
     } else if (e.type == SDL_QUIT) { // this is for pc Only
         menuVisible = false;
@@ -262,7 +260,7 @@ void GuiKeyboard::doKbdReturn() {
 //*******************************
 // GuiKeyboard::doKbdTextInput
 //*******************************
-void GuiKeyboard::doKbdTextInput(SDL_Event& e) {
+void GuiKeyboard::doKbdTextInput(SDL_Event &e) {
     Mix_PlayChannel(-1, gui->cursor, 0);
     result.insert(cursorIndex, e.text.text);
     cursorIndex += strlen(e.text.text);
@@ -441,87 +439,87 @@ void GuiKeyboard::loop() {
                 continue;
 
             switch (e.type) {
-                case SDL_KEYDOWN:
-                    if (e.key.keysym.sym == SDLK_RIGHT) {
-                        doKbdRight();
+            case SDL_KEYDOWN:
+                if (e.key.keysym.sym == SDLK_RIGHT) {
+                    doKbdRight();
 
-                    } else if (e.key.keysym.sym == SDLK_LEFT) {
-                        doKbdLeft();
+                } else if (e.key.keysym.sym == SDLK_LEFT) {
+                    doKbdLeft();
 
-                    } else if (e.key.keysym.sym == SDLK_HOME) {
-                        doKbdHome();
+                } else if (e.key.keysym.sym == SDLK_HOME) {
+                    doKbdHome();
 
-                    } else if (e.key.keysym.sym == SDLK_END) {
-                        doKbdEnd();
+                } else if (e.key.keysym.sym == SDLK_END) {
+                    doKbdEnd();
 
-                    } else if (e.key.keysym.sym == SDLK_BACKSPACE) {
-                        doKbdBackspace();
+                } else if (e.key.keysym.sym == SDLK_BACKSPACE) {
+                    doKbdBackspace();
 
-                    } else if (e.key.keysym.sym == SDLK_DELETE) {
-                        doKbdDelete();
+                } else if (e.key.keysym.sym == SDLK_DELETE) {
+                    doKbdDelete();
 
-                    } else if (e.key.keysym.sym == SDLK_TAB) {
-                        doKbdTab();
+                } else if (e.key.keysym.sym == SDLK_TAB) {
+                    doKbdTab();
 
-                    } else if (e.key.keysym.sym == SDLK_ESCAPE) {
-                        doKbdEscape();
+                } else if (e.key.keysym.sym == SDLK_ESCAPE) {
+                    doKbdEscape();
 
-                    } else if (e.key.keysym.sym == SDLK_RETURN) {
-                        doKbdReturn();
+                } else if (e.key.keysym.sym == SDLK_RETURN) {
+                    doKbdReturn();
+                }
+                break;
+
+            case SDL_TEXTINPUT:
+                doKbdTextInput(e);
+                break;
+
+            case SDL_CONTROLLERBUTTONUP:
+                if (e.cbutton.button == SDL_BTN_L1) {
+                    doL1_up();
+                } else if (e.cbutton.button == SDL_BTN_L2) {
+                    doL2_up();
+                }
+                break;
+
+            case SDL_CONTROLLERBUTTONDOWN:
+                if (e.cbutton.button == SDL_BTN_L1) { // caps shift
+                    doL1_down();
+                } else if (e.cbutton.button == SDL_BTN_L2) { // move cursor shift
+                    doL2_down();
+                }
+
+                if (!L2_cursor_shift) {
+                    if (e.cbutton.button == SDL_BTN_TRIANGLE) { // delete char on the left
+                        doTriangle();
+                    } else if (e.cbutton.button == SDL_BTN_SQUARE) { // insert space
+                        doSquare();
+                    } else if (e.cbutton.button == SDL_BTN_CROSS) {
+                        doCross();
+                    } else if (e.cbutton.button == SDL_BTN_START) { // Confirm
+                        doStart();
+                    } else if (e.cbutton.button == SDL_BTN_CIRCLE) { // Cancel
+                        doCircle();
                     }
-                    break;
+                }
+                break;
 
-                case SDL_TEXTINPUT:
-                    doKbdTextInput(e);
-                    break;
+            case SDL_CONTROLLERHATMOTIONDOWN:
+            case SDL_CONTROLLERHATMOTIONUP:
+                if (gui->mapper.isRight(&e)) {
+                    doJoyRight();
+                } else if (gui->mapper.isLeft(&e)) {
+                    doJoyLeft();
+                }
 
-                case SDL_CONTROLLERBUTTONUP:
-                    if (e.cbutton.button == SDL_BTN_L1) {
-                        doL1_up();
-                    } else if (e.cbutton.button == SDL_BTN_L2) {
-                        doL2_up();
+                if (!L2_cursor_shift) {
+                    if (gui->mapper.isDown(&e)) {
+                        doJoyDown();
+                    } else if (gui->mapper.isUp(&e)) {
+                        doJoyUp();
                     }
-                    break;
+                }
 
-                case SDL_CONTROLLERBUTTONDOWN:
-                    if (e.cbutton.button == SDL_BTN_L1) {     // caps shift
-                        doL1_down();
-                    } else if (e.cbutton.button == SDL_BTN_L2) {     // move cursor shift
-                        doL2_down();
-                    }
-
-                    if (!L2_cursor_shift) {
-                        if (e.cbutton.button == SDL_BTN_TRIANGLE) {   // delete char on the left
-                            doTriangle();
-                        } else if (e.cbutton.button == SDL_BTN_SQUARE) {     //insert space
-                            doSquare();
-                        } else if (e.cbutton.button == SDL_BTN_CROSS) {
-                            doCross();
-                        } else if (e.cbutton.button == SDL_BTN_START) {  // Confirm
-                            doStart();
-                        } else if (e.cbutton.button == SDL_BTN_CIRCLE) { // Cancel
-                            doCircle();
-                        }
-                    }
-                    break;
-
-                case SDL_CONTROLLERHATMOTIONDOWN:
-                case SDL_CONTROLLERHATMOTIONUP:
-                    if (gui->mapper.isRight(&e)) {
-                        doJoyRight();
-                    } else if (gui->mapper.isLeft(&e)) {
-                        doJoyLeft();
-                    }
-
-                    if (!L2_cursor_shift) {
-                        if (gui->mapper.isDown(&e)) {
-                            doJoyDown();
-                        } else if (gui->mapper.isUp(&e)) {
-                            doJoyUp();
-                        }
-                    }
-
-                    break;
+                break;
             }
         }
     }

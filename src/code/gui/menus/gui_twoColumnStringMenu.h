@@ -2,7 +2,6 @@
 
 #include "gui_menuBase.h"
 
-
 //*******************************
 // struct TwoColumnsOfText
 //*******************************
@@ -16,7 +15,7 @@ struct TwoColumnsOfText {
 // class GuiTwoColumnStringMenu
 //*******************************
 class GuiTwoColumnStringMenu : public GuiMenuBase<TwoColumnsOfText> {
-public:
+  public:
     explicit GuiTwoColumnStringMenu(SDL_Shared<SDL_Renderer> _renderer) : GuiMenuBase(_renderer) {}
 
     int xoffset_L = 0;
@@ -26,6 +25,7 @@ public:
     std::string getStatusLine() override { return GuiMenuBase::getStatusLine(); }
 
     void renderLineIndexOnRow(int index, int row) override {
-        gui->renderTextLineToColumns(lines[index].line_L, lines[index].line_R, xoffset_L, xoffset_R, row, yoffset, font);
+        gui->renderTextLineToColumns(lines[index].line_L, lines[index].line_R, xoffset_L, xoffset_R, row, yoffset,
+                                     font);
     }
 };
