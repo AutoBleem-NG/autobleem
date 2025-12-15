@@ -87,7 +87,7 @@ class Database {
     bool deleteGameIdFromAllTables(int id);
 
   private:
-    sqlite3 *db;
+    sqlite3 *db = nullptr;
     bool executeCreateStatement(const char *sql, std::string name);
     bool executeStatement(const char *sql, std::string outMsg, std::string errorMsg);
 };

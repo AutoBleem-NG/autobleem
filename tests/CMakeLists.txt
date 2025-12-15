@@ -41,3 +41,27 @@ target_link_libraries(
 # Register test with CTest
 include(GoogleTest)
 gtest_discover_tests(chd_reader_test)
+
+# Database tests
+add_executable(
+    database_test
+    database_test.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/engine/database.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/engine/serialscanner.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/engine/inifile.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/engine/isodir.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/DirEntry.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/util.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/environment.cpp
+)
+
+target_link_libraries(
+    database_test
+    GTest::gtest_main
+    Threads::Threads
+    sqlite3
+    chdr-static
+    ${CMAKE_DL_LIBS}
+)
+
+gtest_discover_tests(database_test)
