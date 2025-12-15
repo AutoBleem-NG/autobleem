@@ -11,7 +11,7 @@
 #   make clean        - Remove all build artifacts
 #   make help         - Show this help
 
-.PHONY: all sys arm mac english clean help
+.PHONY: all sys arm mac english lint clean help
 
 # Number of parallel jobs for make
 JOBS := 4
@@ -58,6 +58,27 @@ english:
 		echo "Skipping on macOS (grep behavior differs)"; \
 	fi
 
+# Run clang-tidy static analysis on all source files
+lint:
+	@echo "Running clang-tidy static analysis..."
+	@if ! command -v clang-tidy >/dev/null 2>&1; then \
+		echo "ERROR: clang-tidy not found!"; \
+		echo "Install with: sudo apt-get install clang-tidy"; \
+		exit 1; \
+	fi
+	@echo "Checking for build directory..."
+	@if [ ! -d "build_sys" ]; then \
+		echo "Build directory not found, creating..."; \
+		mkdir -p build_sys; \
+		cd build_sys && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..; \
+	fi
+	@echo "Running clang-tidy checks..."
+	@find src/code -name "*.cpp" -o -name "*.h" | while read file; do \
+		echo "Analyzing $$file..."; \
+		clang-tidy "$$file" -p build_sys -- -std=c++11 || true; \
+	done
+	@echo "Linting complete! Check output above for warnings."
+
 # Clean all build artifacts
 clean:
 	@echo "Cleaning build directories..."
@@ -75,5 +96,6 @@ help:
 	@echo ""
 	@echo "Utility Targets:"
 	@echo "  make english      Generate English.txt from source strings"
+	@echo "  make lint         Run clang-tidy static analysis"
 	@echo "  make clean        Remove all build artifacts"
 	@echo "  make help         Show this help"
