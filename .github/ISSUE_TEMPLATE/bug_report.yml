@@ -1,0 +1,232 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in AutoBleem
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the information below to help us diagnose and fix the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: What happened? What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the issue
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+      placeholder: Describe the expected behavior
+    validations:
+      required: true
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: AutoBleem Version
+      description: Which version are you using?
+      options:
+        - Latest (main branch)
+        - 1.2.x
+        - 1.1.x
+        - 1.0.x
+        - Other (specify in additional context)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: hardware
+    attributes:
+      label: Hardware
+      description: What hardware are you running AutoBleem on?
+      options:
+        - PlayStation Classic (stock)
+        - PlayStation Classic (modded - specify mods below)
+        - Other (specify in additional context)
+    validations:
+      required: true
+
+  - type: input
+    id: kernel-version
+    attributes:
+      label: Kernel/Firmware Version
+      description: If known, what kernel or firmware version?
+      placeholder: "e.g., BleemSync 1.1, Stock kernel"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: usb-drive
+    attributes:
+      label: USB Drive Type
+      description: What type of USB drive are you using?
+      options:
+        - USB 2.0 Flash Drive
+        - USB 3.0 Flash Drive
+        - USB HDD/SSD
+        - USB Hub
+        - Other (specify in additional context)
+    validations:
+      required: true
+
+  - type: input
+    id: usb-format
+    attributes:
+      label: USB Drive Filesystem
+      description: What filesystem is your USB drive formatted with?
+      placeholder: "e.g., FAT32, exFAT, NTFS, ext4"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: ui-mode
+    attributes:
+      label: UI Mode
+      description: Which UI mode are you using?
+      options:
+        - EvolutionUI (carousel)
+        - Stock UI
+        - Other
+    validations:
+      required: false
+
+  - type: dropdown
+    id: controller-type
+    attributes:
+      label: Controller Type (if applicable)
+      description: What controller are you using?
+      options:
+        - Stock PlayStation Classic controller
+        - Original PlayStation controller
+        - DualShock (PS1)
+        - DualShock 2 (PS2)
+        - DualShock 3 (PS3)
+        - DualShock 4 (PS4)
+        - DualSense (PS5)
+        - Third-party controller (specify below)
+        - USB adapter with other controller
+        - Not applicable
+    validations:
+      required: false
+
+  - type: dropdown
+    id: boot-stage
+    attributes:
+      label: Boot Stage (if boot/display issue)
+      description: At what point does the issue occur?
+      options:
+        - Before PlayStation logo
+        - During PlayStation logo
+        - After PlayStation logo
+        - After AutoBleem splash
+        - After game selection
+        - During gameplay
+        - Not a boot issue
+    validations:
+      required: false
+
+  - type: textarea
+    id: games
+    attributes:
+      label: Game Format (if applicable)
+      description: If the issue is related to a specific game, what format is it?
+      placeholder: "e.g., BIN/CUE, PBP, CHD"
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or Error Messages
+      description: If available, paste any relevant log output or error messages
+      placeholder: Paste logs here
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Any relevant configuration from autobleem.ini or theme settings
+      placeholder: Paste relevant config here
+      render: ini
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain the problem
+      placeholder: Drag and drop images here
+    validations:
+      required: false
+
+  - type: textarea
+    id: troubleshooting
+    attributes:
+      label: Troubleshooting Already Attempted
+      description: What have you already tried to fix this issue?
+      placeholder: |
+        e.g.,
+        - Tried different USB drive
+        - Reformatted USB to FAT32
+        - Tested with fresh AutoBleem installation
+        - Tried different games
+        - Rebooted console multiple times
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information that might be relevant
+      placeholder: |
+        e.g.,
+        - Controller brand/model
+        - Power supply details
+        - HDMI/display setup
+        - WiFi adapter used
+        - Any hardware modifications
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following before submitting
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have checked the documentation for solutions
+          required: true
+        - label: I am using a supported USB drive format (FAT32 recommended for compatibility)
+          required: false
+        - label: I have tried with a fresh AutoBleem installation
+          required: false
+        - label: I have tried basic troubleshooting (reboot, different USB port, etc.)
+          required: false
+        - label: I can consistently reproduce this issue
+          required: false

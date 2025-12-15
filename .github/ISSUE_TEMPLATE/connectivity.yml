@@ -1,0 +1,181 @@
+name: WiFi/Network Issue
+description: Report WiFi adapter or network connectivity problems
+title: "[WiFi]: "
+labels: ["connectivity", "hardware", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Report issues with WiFi adapters, network connectivity, or online features.
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What kind of connectivity issue?
+      options:
+        - WiFi adapter not detected
+        - WiFi connects but no internet
+        - Intermittent connection drops
+        - Slow transfer speeds
+        - Cannot access network features
+        - Other (describe below)
+    validations:
+      required: true
+
+  - type: input
+    id: wifi-adapter
+    attributes:
+      label: WiFi Adapter Model
+      description: What WiFi adapter are you using?
+      placeholder: "e.g., TP-Link TL-WN725N, Edimax EW-7811Un"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: usb-port
+    attributes:
+      label: USB Port Used
+      description: Which USB port is the WiFi adapter connected to?
+      options:
+        - Front USB port 1
+        - Front USB port 2
+        - USB hub (specify model below)
+    validations:
+      required: true
+
+  - type: input
+    id: adapter-chipset
+    attributes:
+      label: Chipset (if known)
+      description: WiFi adapter chipset
+      placeholder: "e.g., RTL8188EU, MT7601U, RT5370"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: detection
+    attributes:
+      label: Adapter Detection
+      description: Is the adapter detected by the system?
+      options:
+        - Adapter detected, but won't connect
+        - Adapter detected, connects briefly then disconnects
+        - Adapter not detected at all
+        - Unknown/unsure
+    validations:
+      required: true
+
+  - type: input
+    id: router-model
+    attributes:
+      label: Router Model/Brand
+      description: What router are you connecting to?
+      placeholder: "e.g., Netgear R6700, TP-Link Archer C7"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: security-type
+    attributes:
+      label: WiFi Security Type
+      description: What security protocol is your network using?
+      options:
+        - WPA2 Personal
+        - WPA3 Personal
+        - WPA/WPA2 Mixed
+        - WEP
+        - Open (no security)
+        - Unknown
+    validations:
+      required: false
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: WiFi Frequency Band
+      description: Which WiFi band are you connecting to?
+      options:
+        - 2.4 GHz
+        - 5 GHz
+        - Both/Auto
+        - Unknown
+    validations:
+      required: false
+
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: Error Messages
+      description: Any error messages shown when trying to connect?
+      placeholder: Paste error messages here
+    validations:
+      required: false
+
+  - type: textarea
+    id: troubleshooting
+    attributes:
+      label: Troubleshooting Attempted
+      description: What have you tried?
+      placeholder: |
+        e.g.,
+        - Tried different USB port
+        - Moved closer to router
+        - Restarted router
+        - Reinstalled WiFi drivers
+        - Tested adapter on PC (worked/didn't work)
+        - Changed WiFi channel
+    validations:
+      required: false
+
+  - type: textarea
+    id: system-logs
+    attributes:
+      label: System Logs
+      description: If available, provide dmesg or system logs showing WiFi activity
+      placeholder: Paste relevant log entries
+      render: shell
+    validations:
+      required: false
+
+  - type: dropdown
+    id: other-usb
+    attributes:
+      label: Other USB Devices
+      description: Are other USB devices connected?
+      options:
+        - Only WiFi adapter
+        - WiFi + storage drive
+        - WiFi + controller
+        - Multiple devices via hub
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+      placeholder: |
+        e.g.,
+        - Power supply details
+        - Distance from router
+        - Obstacles between console and router
+        - Adapter works on other devices
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following
+      options:
+        - label: I have searched existing connectivity issues
+          required: true
+        - label: I have verified the adapter is on the compatibility list (if one exists)
+          required: false
+        - label: I have tested the adapter on another device
+          required: false
+        - label: I am using a quality power supply (not underpowered)
+          required: false

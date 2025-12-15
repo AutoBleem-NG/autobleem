@@ -1,0 +1,204 @@
+name: Game Compatibility Issue
+description: Report a game that doesn't work properly with AutoBleem
+title: "[Game]: "
+labels: ["game-compatibility", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to report games that don't load, crash, or have specific compatibility issues.
+        For general bugs not related to a specific game, use the Bug Report template instead.
+
+  - type: input
+    id: game-title
+    attributes:
+      label: Game Title
+      description: Full name of the game
+      placeholder: "e.g., Final Fantasy VII"
+    validations:
+      required: true
+
+  - type: input
+    id: game-region
+    attributes:
+      label: Game Region
+      description: What region is your game from?
+      placeholder: "e.g., NTSC-U, PAL, NTSC-J"
+    validations:
+      required: true
+
+  - type: input
+    id: game-serial
+    attributes:
+      label: Game Serial/ID
+      description: If known, provide the game's serial number
+      placeholder: "e.g., SCUS-94163"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: game-format
+    attributes:
+      label: Game Format
+      description: What format is the game file?
+      options:
+        - BIN/CUE
+        - PBP (PSX eboot)
+        - CHD (Compressed)
+        - ISO
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What kind of problem are you experiencing?
+      options:
+        - Game won't load/start
+        - Game crashes during gameplay
+        - Graphics issues (glitches, artifacts)
+        - Audio issues (crackling, missing)
+        - Performance issues (slowdown, lag)
+        - Save/Memory card issues
+        - Controls not working properly
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Detailed description of the compatibility issue
+      placeholder: What happens? When does it happen? How often?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: multi-disc
+    attributes:
+      label: Multi-Disc Game
+      description: Is this a multi-disc game?
+      options:
+        - "No"
+        - "Yes"
+        - Unknown
+    validations:
+      required: false
+
+  - type: input
+    id: disc-number
+    attributes:
+      label: Disc Number (if applicable)
+      description: Which disc has the issue?
+      placeholder: "e.g., Disc 2 of 4"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: emulator
+    attributes:
+      label: Emulator Used
+      description: Which emulator are you using to run the game?
+      options:
+        - PCSX ReARMed (default)
+        - RetroArch (specify core below)
+        - Stock PlayStation Classic emulator
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: input
+    id: retroarch-core
+    attributes:
+      label: RetroArch Core (if applicable)
+      description: Which RetroArch core are you using?
+      placeholder: "e.g., pcsx_rearmed, beetle-psx"
+    validations:
+      required: false
+
+  - type: textarea
+    id: game-settings
+    attributes:
+      label: Game-Specific Settings
+      description: Any custom settings configured for this game?
+      placeholder: |
+        e.g.,
+        - High resolution mode: Enabled
+        - Speed hack: Disabled
+        - GPU plugin: Custom
+      render: markdown
+    validations:
+      required: false
+
+  - type: textarea
+    id: workarounds
+    attributes:
+      label: Workarounds Attempted
+      description: What have you tried to fix the issue?
+      placeholder: |
+        e.g.,
+        - Tried different game format (BIN/CUE vs PBP)
+        - Changed emulator settings
+        - Used different memory card
+        - Tested with RetroArch
+    validations:
+      required: false
+
+  - type: dropdown
+    id: stock-behavior
+    attributes:
+      label: Behavior on Stock PlayStation Classic
+      description: If you've tested, how does this game work on stock PlayStation Classic?
+      options:
+        - Works perfectly
+        - Has similar issues
+        - Not tested
+        - Game not included in stock
+        - Don't have stock firmware to test
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Video
+      description: Visual evidence of the issue (if applicable)
+      placeholder: Drag and drop images/videos here
+    validations:
+      required: false
+
+  - type: input
+    id: file-size
+    attributes:
+      label: Game File Size
+      description: Approximate size of the game file(s)
+      placeholder: "e.g., 650 MB"
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+      placeholder: Add any other context about the compatibility issue here
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following before submitting
+      options:
+        - label: I have searched existing game compatibility issues
+          required: true
+        - label: I have verified the game file is not corrupted
+          required: true
+        - label: I have tested with default AutoBleem settings
+          required: false
+        - label: I can provide the game for testing (if it's homebrew/freeware)
+          required: false
