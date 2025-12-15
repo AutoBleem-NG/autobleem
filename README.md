@@ -6,7 +6,7 @@ AutoBleem-NG (Next Generation) is a custom firmware for the PlayStation Classic,
 
 - EvolutionUI for browsing and managing games
 - Automatic game scanning from USB drives
-- BIN/CUE and PBP disc image support
+- BIN/CUE, CHD, and PBP disc image support
 - Offline cover art and metadata lookup
 - Shared memory cards across games
 - RetroArch integration for multi-system emulation
@@ -17,19 +17,21 @@ AutoBleem-NG (Next Generation) is a custom firmware for the PlayStation Classic,
 ```
 ├── cmake/              # CMake toolchain files
 ├── docs/               # Documentation
-├── libs/               # Bundled libraries (sqlite, nlohmann/json)
+├── libs/               # Bundled libraries (sqlite, nlohmann/json, libchdr)
 ├── payload/            # PSC payload scripts and structure
-└── src/
-    ├── code/           # Main source code
-    │   ├── engine/     # Game scanning, database, metadata
-    │   ├── gui/        # GUI framework and screens
-    │   └── launcher/   # Game launcher and emulator integration
-    └── resources/      # Assets (images, fonts, configs)
+├── src/
+│   ├── code/           # Main source code
+│   │   ├── engine/     # Game scanning, database, metadata
+│   │   ├── gui/        # GUI framework and screens
+│   │   └── launcher/   # Game launcher and emulator integration
+│   └── resources/      # Assets (images, fonts, configs)
+└── tests/              # Unit tests
 ```
 
 ## Documentation
 
 - [Building](docs/building.md) - Build instructions and prerequisites
+- [Testing](docs/testing.md) - Running unit tests
 
 ## License
 

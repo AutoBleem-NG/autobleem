@@ -83,6 +83,16 @@ if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
     add_subdirectory(libs/libchdr EXCLUDE_FROM_ALL)
 endif()
 
+# Unit tests (local builds only)
+# Tests are built for development/CI environments, not cross-compiled for ARM
+if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+    option(BUILD_TESTS "Build unit tests" ON)
+    if (BUILD_TESTS)
+        enable_testing()
+        add_subdirectory(tests)
+    endif()
+endif()
+
 add_executable(
         autobleem-gui
         src/code/DebugTimer.cpp
