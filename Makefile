@@ -14,7 +14,7 @@
 #   make clean        - Remove all build artifacts
 #   make help         - Show this help
 
-.PHONY: all sys arm mac docker-build docker-extract docker-shell docker-clean lang-update lang-validate lang-compare format format-check lint test clean clean-build help
+.PHONY: all sys arm mac build extract shell clean-build docker-build docker-extract docker-shell docker-clean lang-update lang-validate lang-compare format format-check lint test clean help
 
 # Docker image name
 DOCKER_IMAGE := autobleem-builder

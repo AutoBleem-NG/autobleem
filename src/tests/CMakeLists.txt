@@ -16,10 +16,10 @@ FetchContent_MakeAvailable(googletest)
 # Include directories from main project
 include_directories(
     ${CMAKE_SOURCE_DIR}/src/code
-    ${CMAKE_SOURCE_DIR}/libs/sqlite
-    ${CMAKE_SOURCE_DIR}/libs/nlohmann
-    ${CMAKE_SOURCE_DIR}/libs/libchdr/include
-    ${CMAKE_SOURCE_DIR}/libs
+    ${CMAKE_SOURCE_DIR}/src/libs/sqlite
+    ${CMAKE_SOURCE_DIR}/src/libs/nlohmann
+    ${CMAKE_SOURCE_DIR}/src/libs/libchdr/include
+    ${CMAKE_SOURCE_DIR}/src/libs
 )
 
 # CHDReader tests
