@@ -48,8 +48,8 @@ void GuiBtnGuide::render() {
     renderTextLineToColumns("|@Select| + |@Start|", _("Emulator config MENU"));
     renderTextLineToColumns(_("RESET"), _("Quit emulation - back to AutoBleem"));
     line++;
-    renderTextLineToColumns("", "-=" + _("In Retroarch Game") + "=-");
-    renderTextLineToColumns("|@Select| + |@Start|", _("Open Retroarch Menu"));
+    renderTextLineToColumns("", "-=" + _("In RetroArch Game") + "=-");
+    renderTextLineToColumns("|@Select| + |@Start|", _("Open RetroArch Menu"));
     renderTextLineToColumns(_("POWER"), _("Exit to EvoUI"));
     line++;
     renderTextLineToColumns("|@L2| + |@R2|", _("In Boot Menu: Safe Power Off The Console"));

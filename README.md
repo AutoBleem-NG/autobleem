@@ -12,27 +12,35 @@ AutoBleem-NG (Next Generation) is a custom firmware for the PlayStation Classic,
 - RetroArch integration for multi-system emulation
 - Multi-disc game support
 - Docker-based ARM build (no toolchain installation required)
+- 17 languages supported with automated translation tooling
+- Structured logging for easier debugging
 
 ## Project Structure
 
 ```
 ├── cmake/              # CMake toolchain files
 ├── docs/               # Documentation
-├── libs/               # Bundled libraries (sqlite, nlohmann/json, libchdr)
+├── libs/               # Bundled libraries (sqlite, nlohmann/json, libchdr, plog)
 ├── payload/            # PSC payload scripts and structure
 ├── src/
 │   ├── code/           # Main source code
 │   │   ├── engine/     # Game scanning, database, metadata
 │   │   ├── gui/        # GUI framework and screens
 │   │   └── launcher/   # Game launcher and emulator integration
-│   └── resources/      # Assets (images, fonts, configs)
+│   ├── resources/      # Assets (images, fonts, language files)
+│   └── scripts/        # Development tools (lang_tools.py)
 └── tests/              # Unit tests
 ```
+
+## Logging
+
+Logs are written to `/tmp/autobleem.log` on the PlayStation Classic.
 
 ## Documentation
 
 - [Building](docs/building.md) - Build instructions and prerequisites
 - [Testing](docs/testing.md) - Running unit tests
+- [Translation](docs/translation.md) - Localization guide
 
 ## License
 

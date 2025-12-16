@@ -30,7 +30,7 @@ void Scanner::unecm(const string &path) {
             continue;
         if (DirEntry::matchExtension(entry.name, EXT_ECM)) {
             Ecmhelper ecm;
-            Gui::splash(_("Decompressing ecm:"));
+            Gui::splash(_("Decompressing ecm") + ":");
             if (ecm.unecm(path + sep + entry.name, path + sep + entry.name.substr(0, entry.name.length() - 4))) {
                 DirEntry::removeFile(path + sep + entry.name);
             }
@@ -351,7 +351,7 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
         game->folder_id = 0; // this will not be in use;
         game->saveStatePath = Env::getPathToSaveStatesDir() + sep + game->gameDirName + sep;
 
-        Gui::splash(_("Game:") + " " + game->gameDirName);
+        Gui::splash(_("Game") + ": " + game->gameDirName);
 
         string gamePathWithOutSeparator = DirEntry::removeSeparatorFromEndOfPath(game->fullPath);
 
@@ -472,7 +472,7 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                 PLOG_WARNING << "Game failed to verify: " << game->fullPath;
                 for (const auto &reason : failureReasons)
                     PLOG_WARNING << "  Reason: " << reason;
-                Gui::splash(_("Game failed to verify:") + " " + game->fullPath);
+                Gui::splash(_("Game failed to verify") + ": " + game->fullPath);
                 sleep(3);
                 badGameFile << "Game failed to verify: " << game->fullPath << endl;
                 for (const auto &reason : failureReasons)

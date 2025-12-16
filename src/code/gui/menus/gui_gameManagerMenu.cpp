@@ -111,7 +111,7 @@ void GuiManager::doSquare_Pressed() {
 
     if (delGame) {
         PLOG_INFO << "Trying to delete " << gameName;
-        gui->renderStatus(_("Please wait ... deleting") + " " + gameName);
+        gui->renderStatus(_("Please wait... deleting") + " " + gameName);
         bool success = gui->db->deleteGameIdFromAllTables(gameId);
         if (success) {
             success = DirEntry::removeDirAndContents(game->folder);
@@ -158,7 +158,7 @@ void GuiManager::doTriangle_Pressed() {
 
     if (delCovers) {
         PLOG_INFO << "Trying to delete covers";
-        gui->renderStatus(_("Please wait ... deleting covers..."));
+        gui->renderStatus(_("Please wait... deleting covers..."));
 
         int errors = 0;
         int flags = FTW_DEPTH | FTW_PHYS | FTW_CHDIR;

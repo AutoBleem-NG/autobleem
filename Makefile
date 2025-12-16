@@ -14,7 +14,7 @@
 #   make clean        - Remove all build artifacts
 #   make help         - Show this help
 
-.PHONY: all sys arm mac docker-build docker-extract docker-shell docker-clean english format format-check lint test clean clean-build help
+.PHONY: all sys arm mac docker-build docker-extract docker-shell docker-clean lang-update lang-validate lang-compare format format-check lint test clean clean-build help
 
 # Docker image name
 DOCKER_IMAGE := autobleem-builder
@@ -109,17 +109,26 @@ mac:
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
-# Generate English.txt language file from source code strings
-english:
-	@echo "Generating English.txt..."
-	@if [ "$$(uname)" != "Darwin" ]; then \
-		grep -r --include=*.cpp --include=*.h --exclude-dir=libs -h -o '_("[^"]*")' . | \
-		sed 's/_("//g' | sed 's/")//g' | sed '/^|@lang|$$/d' | sed '/^$$/d' | \
-		sort -u | sed G > src/resources/lang/English.txt; \
-		echo "Generated src/resources/lang/English.txt"; \
-	else \
-		echo "Skipping on macOS (grep behavior differs)"; \
-	fi
+# Update all language files: extract strings, add missing keys, remove obsolete
+lang-update:
+	@python3 src/scripts/lang_tools.py extract
+	@python3 src/scripts/lang_tools.py update --remove-obsolete
+
+# Validate all language files
+lang-validate:
+	@for f in src/resources/lang/*.txt; do \
+		python3 src/scripts/lang_tools.py validate "$$f" -v; \
+	done
+
+# Compare all language files against English.txt (show missing translations)
+lang-compare:
+	@for f in src/resources/lang/*.txt; do \
+		if [ "$$(basename $$f)" != "English.txt" ]; then \
+			echo "=== $$(basename $$f .txt) ==="; \
+			python3 src/scripts/lang_tools.py compare "$$f"; \
+			echo; \
+		fi; \
+	done
 
 # Format source code with clang-format
 format:
@@ -209,8 +218,12 @@ help:
 	@echo "  make format-check Check formatting without modifying files"
 	@echo "  make lint         Run clang-tidy static analysis"
 	@echo ""
+	@echo "Language/Localization:"
+	@echo "  make lang-update    Extract strings and sync all language files"
+	@echo "  make lang-validate  Validate all language files"
+	@echo "  make lang-compare   Compare translations against English.txt"
+	@echo ""
 	@echo "Utility Targets:"
-	@echo "  make english      Generate English.txt from source strings"
 	@echo "  make test         Run unit tests (requires 'make sys' first)"
 	@echo "  make clean        Remove all build artifacts and Docker image"
 	@echo "  make help         Show this help"

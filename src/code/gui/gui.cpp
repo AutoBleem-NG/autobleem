@@ -437,7 +437,7 @@ void Gui::menuSelection() {
     shared_ptr<Scanner> scanner(Scanner::getInstance());
 
     if (!coverdb->isValid()) {
-        criticalException(_("WARNING: NO COVER DB FOUND. PRESS ANY BUTTON."));
+        criticalException(_("WARNING: NO COVER DB FOUND. PRESS ANY BUTTON"));
     }
     otherMenuShift = false;
     powerOffShift = false;
@@ -464,7 +464,7 @@ void Gui::menuSelection() {
     string gamepadNotice = "";
     if (SDL_NumJoysticks() > mapper.getActivePadNum()) {
         gamepadNotice =
-            _("NOTICE: At least one connected gamepad is not recognized. Use Hardware Information page to setup.");
+            _("NOTICE: At least one connected gamepad is not recognized. Use Hardware Information page to setup");
     }
 
     if (!forceScan) {

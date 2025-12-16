@@ -171,7 +171,7 @@ void PsMeta::render() {
             // serial number line
             //
             yOffset += 21;
-            gui->renderText(otherFont, _("Serial:") + " " + serial + ", " + _("Region:") + " " + region, x,
+            gui->renderText(otherFont, _("Serial") + ": " + serial + ", " + _("Region") + ": " + region, x,
                             y + yOffset);
 
             //
@@ -180,10 +180,10 @@ void PsMeta::render() {
             yOffset += 21;
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
             // the devel system has time
-            gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
+            gui->renderText(otherFont, _("Last Played") + ": " + last_played, x, y + yOffset);
 #else
             if (Env::autobleemKernel)
-                gui->renderText(otherFont, _("Last Played:") + " " + last_played, x, y + yOffset);
+                gui->renderText(otherFont, _("Last Played") + ": " + last_played, x, y + yOffset);
 #endif
             yOffset += 22;
         }

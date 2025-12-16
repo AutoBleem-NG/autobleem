@@ -61,7 +61,7 @@ bool copyGameFilesInGamesDirToSubDirs(const string &path) {
 
     // On first run, we won't process bin/img files, as cue file may handle a part of them
     for (const auto &entry : fileList) {
-        Gui::splash(_("Moving :") + " " + entry.name);
+        Gui::splash(_("Moving") + ": " + entry.name);
         fileExt = DirEntry::getFileExtension(entry.name);
         filenameWE = DirEntry::getFileNameWithoutExtension(entry.name);
         // Checking if file exists
@@ -75,7 +75,7 @@ bool copyGameFilesInGamesDirToSubDirs(const string &path) {
                     DirEntry::renameFile(path + "/" + entry.name, path + sep + filenameWE + "/" + entry.name);
                     // Move bin files
                     for (const auto &bin : binList) {
-                        Gui::splash(_("Moving :") + " " + bin);
+                        Gui::splash(_("Moving") + ": " + bin);
                         DirEntry::renameFile(path + sep + bin, path + sep + filenameWE + sep + bin);
                     }
                     ret = true;
@@ -95,7 +95,7 @@ bool copyGameFilesInGamesDirToSubDirs(const string &path) {
     extensions.push_back("bin");
     fileList = DirEntry::getFilesWithExtension(path, globalFileList, extensions);
     for (const auto &entry : fileList) {
-        Gui::splash(_("Moving :") + " " + entry.name);
+        Gui::splash(_("Moving") + ": " + entry.name);
         fileExt = DirEntry::getFileExtension(entry.name);
         filenameWE = DirEntry::getFileNameWithoutExtension(entry.name);
         // Checking if file exists
@@ -152,7 +152,7 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
         }
     }
 
-    gui->drawText(_("Total:") + " " + to_string(scanner->gamesToAddToDB.size()) + " " + _("games scanned") + ".");
+    gui->drawText(_("Total") + ": " + to_string(scanner->gamesToAddToDB.size()) + " " + _("games scanned") + ".");
     sleep(1);
     scanner->gamesToAddToDB.clear();
     return (EXIT_SUCCESS);
@@ -403,7 +403,7 @@ int main(int argc, char *argv[]) {
     internalDB = nullptr;
 
     PLOG_INFO << "AutoBleem shutting down";
-    Gui::splash(_("Loading ... Please Wait ..."));
+    Gui::splash(_("Loading... Please Wait..."));
     gui->finish();
     SDL_Quit();
     delete coverdb;
