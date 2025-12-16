@@ -17,13 +17,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y clang-format
 
       - name: Check C++ formatting
-        run: |
-          find src/code -type f \( -name '*.cpp' -o -name '*.h' \) | while read file; do
-            if ! clang-format --dry-run --Werror "$file" 2>/dev/null; then
-              echo "::error file=$file::Format check failed. Run: clang-format -i $file"
-              exit 1
-            fi
-          done
+        run: make format-check
 
   language-check:
     name: Translation Validation

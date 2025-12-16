@@ -138,7 +138,7 @@ format:
 		echo "Install with: sudo apt-get install clang-format"; \
 		exit 1; \
 	fi
-	@find src/code -name "*.cpp" -o -name "*.h" | xargs clang-format -i
+	@find src/code -type f \( -name "*.cpp" -o -name "*.h" \) -exec clang-format -i {} +
 	@echo "Formatting complete!"
 
 # Check formatting without modifying files
@@ -148,7 +148,7 @@ format-check:
 		echo "ERROR: clang-format not found!"; \
 		exit 1; \
 	fi
-	@find src/code -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror
+	@find src/code -type f \( -name "*.cpp" -o -name "*.h" \) -exec clang-format --dry-run --Werror {} +
 	@echo "Formatting check passed!"
 
 # Run clang-tidy static analysis on all source files
@@ -166,7 +166,7 @@ lint:
 		cd build_sys && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..; \
 	fi
 	@echo "Running clang-tidy checks..."
-	@find src/code -name "*.cpp" -o -name "*.h" | while read file; do \
+	@find src/code -type f \( -name "*.cpp" -o -name "*.h" \) | while read file; do \
 		echo "Analyzing $$file..."; \
 		clang-tidy "$$file" -p build_sys -- -std=c++11 || true; \
 	done
