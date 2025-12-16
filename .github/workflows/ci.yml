@@ -10,16 +10,10 @@ jobs:
   format-check:
     name: Code Formatting
     runs-on: ubuntu-24.04
+    container:
+      image: xianpengshen/clang-tools:20
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install clang-format
-        run: |
-          wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/llvm-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/llvm-archive-keyring.gpg] http://apt.llvm.org/noble/ llvm-toolchain-noble main" | sudo tee /etc/apt/sources.list.d/llvm.list
-          sudo apt-get update
-          sudo apt-get install -y clang-format-20
-          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-20 100
 
       - name: Verify clang-format setup
         run: |
@@ -27,11 +21,12 @@ jobs:
           clang-format --version
           echo "=== Clang-format config ==="
           cat .clang-format
-          echo "=== Working directory ==="
-          pwd
 
       - name: Check C++ formatting
-        run: make format-check
+        run: |
+          echo "=== Running format check ==="
+          find src/code -type f \( -name '*.cpp' -o -name '*.h' \) -exec clang-format --dry-run --Werror {} +
+          echo "=== Format check passed ==="
 
   language-check:
     name: Translation Validation
