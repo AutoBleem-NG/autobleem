@@ -15,13 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify clang-format setup
-        run: |
-          echo "=== Clang-format version ==="
-          clang-format --version
-          echo "=== Clang-format config ==="
-          cat .clang-format
-
       - name: Check C++ formatting
         run: |
           echo "=== Running format check ==="
