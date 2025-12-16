@@ -96,7 +96,7 @@ arm:
 	@echo "Building for ARM using local toolchain..."
 	rm -rf build_arm
 	mkdir -p build_arm
-	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/PSCtoolchainV8.cmake ..
+	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/PSCtoolchainV8.cmake ..
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
@@ -105,27 +105,27 @@ mac:
 	@echo "Building for ARM using Mac toolchain..."
 	rm -rf build_arm
 	mkdir -p build_arm
-	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../cmake/MacToolchain.cmake ..
+	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/MacToolchain.cmake ..
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
 # Update all language files: extract strings, add missing keys, remove obsolete
 lang-update:
-	@python3 src/scripts/lang_tools.py extract
-	@python3 src/scripts/lang_tools.py update --remove-obsolete
+	@python3 autobleem/scripts/lang_tools.py extract
+	@python3 autobleem/scripts/lang_tools.py update --remove-obsolete
 
 # Validate all language files
 lang-validate:
-	@for f in src/resources/lang/*.txt; do \
-		python3 src/scripts/lang_tools.py validate "$$f" -v; \
+	@for f in autobleem/resources/lang/*.txt; do \
+		python3 autobleem/scripts/lang_tools.py validate "$$f" -v; \
 	done
 
 # Compare all language files against English.txt (show missing translations)
 lang-compare:
-	@for f in src/resources/lang/*.txt; do \
+	@for f in autobleem/resources/lang/*.txt; do \
 		if [ "$$(basename $$f)" != "English.txt" ]; then \
 			echo "=== $$(basename $$f .txt) ==="; \
-			python3 src/scripts/lang_tools.py compare "$$f"; \
+			python3 autobleem/scripts/lang_tools.py compare "$$f"; \
 			echo; \
 		fi; \
 	done
@@ -138,7 +138,7 @@ format:
 		echo "Install with: sudo apt-get install clang-format"; \
 		exit 1; \
 	fi
-	@find src/code -type f \( -name "*.cpp" -o -name "*.h" \) -exec clang-format -i {} +
+	@find autobleem/code -type f \( -name "*.cpp" -o -name "*.h" \) -exec clang-format -i {} +
 	@echo "Formatting complete!"
 
 # Check formatting without modifying files
@@ -148,7 +148,7 @@ format-check:
 		echo "ERROR: clang-format not found!"; \
 		exit 1; \
 	fi
-	@find src/code -type f \( -name "*.cpp" -o -name "*.h" \) -exec clang-format --dry-run --Werror {} +
+	@find autobleem/code -type f \( -name "*.cpp" -o -name "*.h" \) -exec clang-format --dry-run --Werror {} +
 	@echo "Formatting check passed!"
 
 # Run clang-tidy static analysis on all source files
@@ -166,7 +166,7 @@ lint:
 		cd build_sys && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..; \
 	fi
 	@echo "Running clang-tidy checks..."
-	@find src/code -type f \( -name "*.cpp" -o -name "*.h" \) | while read file; do \
+	@find autobleem/code -type f \( -name "*.cpp" -o -name "*.h" \) | while read file; do \
 		echo "Analyzing $$file..."; \
 		clang-tidy "$$file" -p build_sys -- -std=c++11 || true; \
 	done

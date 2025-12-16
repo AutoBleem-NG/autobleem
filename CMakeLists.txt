@@ -31,7 +31,7 @@ if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" )
 		SET(CMAKE_CXX_FLAGS "-mfloat-abi=hard -march=armv7ve -s -Os")
 	endif()
 
-	include_directories(src/include
+	include_directories(autobleem/include
 		"/opt/toolchain/armv8-sony-linux-gnueabihf/sysroot/usr/include"
 		"/usr/local/cross-tools/arm-linux-gnueabihf/include")
 	link_directories(/opt/toolchain/armv8-sony-linux-gnueabihf/sysroot/usr/lib
@@ -79,15 +79,15 @@ find_package(Threads REQUIRED
              SDL2 REQUIRED)
 
 # Global include directories for bundled libraries
-include_directories(${CMAKE_SOURCE_DIR}/src/libs)
+include_directories(${CMAKE_SOURCE_DIR}/autobleem/libs)
 
 # Bundled sqlite3 library
-add_library(sqlite3 STATIC src/libs/sqlite/sqlite3ab.c)
+add_library(sqlite3 STATIC autobleem/libs/sqlite/sqlite3ab.c)
 
 # Bundled libchdr for CHD file support (local builds only)
 if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
     set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-    add_subdirectory(src/libs/libchdr EXCLUDE_FROM_ALL)
+    add_subdirectory(autobleem/libs/libchdr EXCLUDE_FROM_ALL)
 endif()
 
 # Unit tests (local builds only)
@@ -96,172 +96,172 @@ if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
     option(BUILD_TESTS "Build unit tests" ON)
     if (BUILD_TESTS)
         enable_testing()
-        add_subdirectory(src/tests)
+        add_subdirectory(autobleem/tests)
     endif()
 endif()
 
 add_executable(
         autobleem-gui
-        src/code/DebugTimer.cpp
-        src/code/DebugTimer.h
-        src/code/DirEntry.cpp
-        src/code/DirEntry.h
-        src/code/engine/cardedit.cpp
-        src/code/engine/cardedit.h
-        src/code/engine/cfgprocessor.cpp
-        src/code/engine/cfgprocessor.h
-        src/code/engine/config.cpp
-        src/code/engine/config.h
-        src/code/engine/coverdb.cpp
-        src/code/engine/coverdb.h
-        src/code/engine/database.cpp
-        src/code/engine/database.h
-        src/code/engine/ecmhelper.cpp
-        src/code/engine/ecmhelper.h
-        src/code/engine/game.cpp
-        src/code/engine/game.h
-        src/code/engine/GetGameDirHierarchy.cpp
-        src/code/engine/GetGameDirHierarchy.h
-        src/code/engine/inifile.cpp
-        src/code/engine/inifile.h
-        src/code/engine/isodir.cpp
-        src/code/engine/isodir.h
-        src/code/engine/memcard.cpp
-        src/code/engine/memcard.h
-        src/code/engine/metadata.cpp
-        src/code/engine/metadata.h
-        src/code/engine/padmapper.cpp
-        src/code/engine/padmapper.h
-        src/code/engine/scanner.cpp
-        src/code/engine/scanner.h
-        src/code/engine/serialscanner.cpp
-        src/code/engine/serialscanner.h
-        src/code/environment.cpp
-        src/code/environment.h
-        src/code/gui/gui.cpp
-        src/code/gui/gui.h
-        src/code/gui/gui_about.cpp
-        src/code/gui/gui_about.h
-        src/code/gui/gui_confirm.cpp
-        src/code/gui/gui_confirm.h
-        src/code/gui/gui_font.cpp
-        src/code/gui/gui_font.h
-        src/code/gui/gui_font_wrapper.h
-        src/code/gui/gui_keyboard.cpp
-        src/code/gui/gui_keyboard.h
-        src/code/gui/gui_padTest.cpp
-        src/code/gui/gui_padTest.h
-        src/code/gui/gui_screen.cpp
-        src/code/gui/gui_screen.h
-        src/code/gui/gui_scrollWin.cpp
-        src/code/gui/gui_scrollWin.h
-        src/code/gui/gui_sdl_wrapper.cpp
-        src/code/gui/gui_sdl_wrapper.h
-        src/code/gui/gui_selectmemcard.cpp
-        src/code/gui/gui_selectmemcard.h
-        src/code/gui/gui_splash.cpp
-        src/code/gui/gui_splash.h
-		src/code/gui/SDL_FontCache.h
-		src/code/gui/SDL_FontCache.c
-        src/code/gui/menus/gui_gameDirMenu.h
-        src/code/gui/menus/gui_gameEditorMenu.cpp
-        src/code/gui/menus/gui_gameEditorMenu.h
-        src/code/gui/menus/gui_gameManagerMenu.cpp
-        src/code/gui/menus/gui_gameManagerMenu.h
-        src/code/gui/menus/gui_memCardsMenu.cpp
-        src/code/gui/menus/gui_memCardsMenu.h
-        src/code/gui/menus/gui_menuBase.h
-        src/code/gui/menus/gui_optionsMenu.cpp
-        src/code/gui/menus/gui_optionsMenu.h
-        src/code/gui/menus/gui_optionsMenuBase.cpp
-        src/code/gui/menus/gui_optionsMenuBase.h
-        src/code/gui/menus/gui_playlistsMenu.h
-        src/code/gui/menus/gui_stringMenu.h
-        src/code/gui/menus/gui_twoColumnStringMenu.h
-        src/code/gui/starfx.cpp
-        src/code/gui/starfx.h
-        src/code/lang.cpp
-        src/code/lang.h
-        src/code/launcher/emu_interceptor.cpp
-        src/code/launcher/emu_interceptor.h
-        src/code/launcher/gui_app_start.cpp
-        src/code/launcher/gui_app_start.h
-        src/code/launcher/gui_btn_guide.cpp
-        src/code/launcher/gui_btn_guide.h
-        src/code/launcher/gui_launcher.cpp
-        src/code/launcher/gui_launcher.h
-        src/code/launcher/gui_launcher_loop.cpp
-        src/code/launcher/gui_mc_manager.cpp
-        src/code/launcher/gui_mc_manager.h
-        src/code/launcher/gui_NotificationLine.cpp
-        src/code/launcher/gui_NotificationLine.h
-        src/code/launcher/launch_interceptor.cpp
-        src/code/launcher/launch_interceptor.h
-        src/code/launcher/pcsx_interceptor.cpp
-        src/code/launcher/pcsx_interceptor.h
-        src/code/launcher/ps_carousel.cpp
-        src/code/launcher/ps_carousel.h
-        src/code/launcher/ps_centerlabel.cpp
-        src/code/launcher/ps_centerlabel.h
-        src/code/launcher/ps_game.cpp
-        src/code/launcher/ps_game.h
-        src/code/launcher/ps_menu.cpp
-        src/code/launcher/ps_menu.h
-        src/code/launcher/ps_meta.cpp
-        src/code/launcher/ps_meta.h
-        src/code/launcher/ps_move_bnt.cpp
-        src/code/launcher/ps_move_bnt.h
-        src/code/launcher/ps_obj.cpp
-        src/code/launcher/ps_obj.h
-        src/code/launcher/ps_settings_back.cpp
-        src/code/launcher/ps_settings_back.h
-        src/code/launcher/ps_stateselector.cpp
-        src/code/launcher/ps_stateselector.h
-        src/code/launcher/ps_static.cpp
-        src/code/launcher/ps_static.h
-        src/code/launcher/ps_zoom_btn.cpp
-        src/code/launcher/ps_zoom_btn.h
-        src/code/launcher/ra_integrator.cpp
-        src/code/launcher/ra_integrator.h
-        src/code/launcher/retboot_interceptor.cpp
-        src/code/launcher/retboot_interceptor.h
-        src/code/main.cpp
-        src/code/main.h
-        src/code/unecm.c
-        src/code/util.cpp
-        src/code/util.h
-        src/code/ver_migration.cpp
-        src/code/ver_migration.h
-        src/code/util_time.h
-		src/code/util_time.cpp
-		src/code/gui/abl.c
-		src/code/gui/abl.h
-		src/code/LightgunGames.h
-		src/code/LightgunGames.cpp
-		src/code/gui/menus/gui_gameEditorMenu_RA.h
-		src/code/gui/menus/gui_gameEditorMenu_RA.cpp)
+        autobleem/code/DebugTimer.cpp
+        autobleem/code/DebugTimer.h
+        autobleem/code/DirEntry.cpp
+        autobleem/code/DirEntry.h
+        autobleem/code/engine/cardedit.cpp
+        autobleem/code/engine/cardedit.h
+        autobleem/code/engine/cfgprocessor.cpp
+        autobleem/code/engine/cfgprocessor.h
+        autobleem/code/engine/config.cpp
+        autobleem/code/engine/config.h
+        autobleem/code/engine/coverdb.cpp
+        autobleem/code/engine/coverdb.h
+        autobleem/code/engine/database.cpp
+        autobleem/code/engine/database.h
+        autobleem/code/engine/ecmhelper.cpp
+        autobleem/code/engine/ecmhelper.h
+        autobleem/code/engine/game.cpp
+        autobleem/code/engine/game.h
+        autobleem/code/engine/GetGameDirHierarchy.cpp
+        autobleem/code/engine/GetGameDirHierarchy.h
+        autobleem/code/engine/inifile.cpp
+        autobleem/code/engine/inifile.h
+        autobleem/code/engine/isodir.cpp
+        autobleem/code/engine/isodir.h
+        autobleem/code/engine/memcard.cpp
+        autobleem/code/engine/memcard.h
+        autobleem/code/engine/metadata.cpp
+        autobleem/code/engine/metadata.h
+        autobleem/code/engine/padmapper.cpp
+        autobleem/code/engine/padmapper.h
+        autobleem/code/engine/scanner.cpp
+        autobleem/code/engine/scanner.h
+        autobleem/code/engine/serialscanner.cpp
+        autobleem/code/engine/serialscanner.h
+        autobleem/code/environment.cpp
+        autobleem/code/environment.h
+        autobleem/code/gui/gui.cpp
+        autobleem/code/gui/gui.h
+        autobleem/code/gui/gui_about.cpp
+        autobleem/code/gui/gui_about.h
+        autobleem/code/gui/gui_confirm.cpp
+        autobleem/code/gui/gui_confirm.h
+        autobleem/code/gui/gui_font.cpp
+        autobleem/code/gui/gui_font.h
+        autobleem/code/gui/gui_font_wrapper.h
+        autobleem/code/gui/gui_keyboard.cpp
+        autobleem/code/gui/gui_keyboard.h
+        autobleem/code/gui/gui_padTest.cpp
+        autobleem/code/gui/gui_padTest.h
+        autobleem/code/gui/gui_screen.cpp
+        autobleem/code/gui/gui_screen.h
+        autobleem/code/gui/gui_scrollWin.cpp
+        autobleem/code/gui/gui_scrollWin.h
+        autobleem/code/gui/gui_sdl_wrapper.cpp
+        autobleem/code/gui/gui_sdl_wrapper.h
+        autobleem/code/gui/gui_selectmemcard.cpp
+        autobleem/code/gui/gui_selectmemcard.h
+        autobleem/code/gui/gui_splash.cpp
+        autobleem/code/gui/gui_splash.h
+		autobleem/code/gui/SDL_FontCache.h
+		autobleem/code/gui/SDL_FontCache.c
+        autobleem/code/gui/menus/gui_gameDirMenu.h
+        autobleem/code/gui/menus/gui_gameEditorMenu.cpp
+        autobleem/code/gui/menus/gui_gameEditorMenu.h
+        autobleem/code/gui/menus/gui_gameManagerMenu.cpp
+        autobleem/code/gui/menus/gui_gameManagerMenu.h
+        autobleem/code/gui/menus/gui_memCardsMenu.cpp
+        autobleem/code/gui/menus/gui_memCardsMenu.h
+        autobleem/code/gui/menus/gui_menuBase.h
+        autobleem/code/gui/menus/gui_optionsMenu.cpp
+        autobleem/code/gui/menus/gui_optionsMenu.h
+        autobleem/code/gui/menus/gui_optionsMenuBase.cpp
+        autobleem/code/gui/menus/gui_optionsMenuBase.h
+        autobleem/code/gui/menus/gui_playlistsMenu.h
+        autobleem/code/gui/menus/gui_stringMenu.h
+        autobleem/code/gui/menus/gui_twoColumnStringMenu.h
+        autobleem/code/gui/starfx.cpp
+        autobleem/code/gui/starfx.h
+        autobleem/code/lang.cpp
+        autobleem/code/lang.h
+        autobleem/code/launcher/emu_interceptor.cpp
+        autobleem/code/launcher/emu_interceptor.h
+        autobleem/code/launcher/gui_app_start.cpp
+        autobleem/code/launcher/gui_app_start.h
+        autobleem/code/launcher/gui_btn_guide.cpp
+        autobleem/code/launcher/gui_btn_guide.h
+        autobleem/code/launcher/gui_launcher.cpp
+        autobleem/code/launcher/gui_launcher.h
+        autobleem/code/launcher/gui_launcher_loop.cpp
+        autobleem/code/launcher/gui_mc_manager.cpp
+        autobleem/code/launcher/gui_mc_manager.h
+        autobleem/code/launcher/gui_NotificationLine.cpp
+        autobleem/code/launcher/gui_NotificationLine.h
+        autobleem/code/launcher/launch_interceptor.cpp
+        autobleem/code/launcher/launch_interceptor.h
+        autobleem/code/launcher/pcsx_interceptor.cpp
+        autobleem/code/launcher/pcsx_interceptor.h
+        autobleem/code/launcher/ps_carousel.cpp
+        autobleem/code/launcher/ps_carousel.h
+        autobleem/code/launcher/ps_centerlabel.cpp
+        autobleem/code/launcher/ps_centerlabel.h
+        autobleem/code/launcher/ps_game.cpp
+        autobleem/code/launcher/ps_game.h
+        autobleem/code/launcher/ps_menu.cpp
+        autobleem/code/launcher/ps_menu.h
+        autobleem/code/launcher/ps_meta.cpp
+        autobleem/code/launcher/ps_meta.h
+        autobleem/code/launcher/ps_move_bnt.cpp
+        autobleem/code/launcher/ps_move_bnt.h
+        autobleem/code/launcher/ps_obj.cpp
+        autobleem/code/launcher/ps_obj.h
+        autobleem/code/launcher/ps_settings_back.cpp
+        autobleem/code/launcher/ps_settings_back.h
+        autobleem/code/launcher/ps_stateselector.cpp
+        autobleem/code/launcher/ps_stateselector.h
+        autobleem/code/launcher/ps_static.cpp
+        autobleem/code/launcher/ps_static.h
+        autobleem/code/launcher/ps_zoom_btn.cpp
+        autobleem/code/launcher/ps_zoom_btn.h
+        autobleem/code/launcher/ra_integrator.cpp
+        autobleem/code/launcher/ra_integrator.h
+        autobleem/code/launcher/retboot_interceptor.cpp
+        autobleem/code/launcher/retboot_interceptor.h
+        autobleem/code/main.cpp
+        autobleem/code/main.h
+        autobleem/code/unecm.c
+        autobleem/code/util.cpp
+        autobleem/code/util.h
+        autobleem/code/ver_migration.cpp
+        autobleem/code/ver_migration.h
+        autobleem/code/util_time.h
+		autobleem/code/util_time.cpp
+		autobleem/code/gui/abl.c
+		autobleem/code/gui/abl.h
+		autobleem/code/LightgunGames.h
+		autobleem/code/LightgunGames.cpp
+		autobleem/code/gui/menus/gui_gameEditorMenu_RA.h
+		autobleem/code/gui/menus/gui_gameEditorMenu_RA.cpp)
 
 target_include_directories(autobleem-gui PUBLIC
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/libs/sqlite>
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/libs/nlohmann>
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/libs/libchdr/include>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/autobleem/libs/sqlite>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/autobleem/libs/nlohmann>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/autobleem/libs/libchdr/include>
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs>
 		)
 
 add_executable(starter
-		src/code/starter.cpp
-		src/code/util.h
-		src/code/util.cpp
-		src/code/DirEntry.h
-		src/code/DirEntry.cpp
-        src/code/engine/inifile.cpp
-        src/code/engine/memcard.cpp src/code/engine/memcard.h
-		src/code/environment.h
-		src/code/environment.cpp
+		autobleem/code/starter.cpp
+		autobleem/code/util.h
+		autobleem/code/util.cpp
+		autobleem/code/DirEntry.h
+		autobleem/code/DirEntry.cpp
+        autobleem/code/engine/inifile.cpp
+        autobleem/code/engine/memcard.cpp autobleem/code/engine/memcard.h
+		autobleem/code/environment.h
+		autobleem/code/environment.cpp
 		)
 
 target_include_directories(starter PUBLIC
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/libs>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/autobleem/libs>
 		)
 
 # Link libraries for autobleem-gui
@@ -285,7 +285,7 @@ if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
              ${CMAKE_DL_LIBS}
     )
 else()
-    # Link against bundled libchdr (chdr-static target from src/libs/libchdr)
+    # Link against bundled libchdr (chdr-static target from autobleem/libs/libchdr)
     # The chdr-static target already links its internal deps (lzma, zlib, zstd)
     target_link_libraries(autobleem-gui
              Threads::Threads
@@ -308,10 +308,10 @@ endif()
 
 add_custom_command(TARGET autobleem-gui PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/src/resources $<TARGET_FILE_DIR:autobleem-gui>)
+        ${CMAKE_SOURCE_DIR}/autobleem/resources $<TARGET_FILE_DIR:autobleem-gui>)
 
 
-configure_file(src/resources/default.lic default.lic COPYONLY)
-configure_file(src/resources/default.png default.png COPYONLY)
-configure_file(src/resources/pcsx.cfg pcsx.cfg COPYONLY)
+configure_file(autobleem/resources/default.lic default.lic COPYONLY)
+configure_file(autobleem/resources/default.png default.png COPYONLY)
+configure_file(autobleem/resources/pcsx.cfg pcsx.cfg COPYONLY)
 
