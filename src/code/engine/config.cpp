@@ -3,10 +3,11 @@
 //
 
 #include "config.h"
-#include "../util.h"
-#include "../launcher/gui_NotificationLine.h"
 #include "../DirEntry.h"
 #include "../environment.h"
+#include "../lang.h"
+#include "../launcher/gui_NotificationLine.h"
+#include "../util.h"
 
 //*******************************
 // Config::Config()
@@ -27,7 +28,7 @@ Config::Config() {
 
     bool aDefaultWasSet{false};
     if (inifile.values["language"] == "") {
-        inifile.values["language"] = "English";
+        inifile.values["language"] = DEFAULT_LANG;
         aDefaultWasSet = true;
     }
     if (inifile.values["aspect"] == "") {

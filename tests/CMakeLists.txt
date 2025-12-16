@@ -83,3 +83,21 @@ target_link_libraries(
 )
 
 gtest_discover_tests(log_test)
+
+# Lang (translation) tests
+add_executable(
+    lang_test
+    lang_test.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/lang.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/DirEntry.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/util.cpp
+    ${CMAKE_SOURCE_DIR}/src/code/environment.cpp
+)
+
+target_link_libraries(
+    lang_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(lang_test)

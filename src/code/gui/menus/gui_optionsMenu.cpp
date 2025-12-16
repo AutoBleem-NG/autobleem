@@ -79,23 +79,23 @@ void GuiOptions::fill() {
     // save the current lang and switch to English.  we need the "Prefix:" to be scanned in English for English.txt
     // getLineText() will do the translation
     string saveCurrentLang = lang->currentLang;
-    lang->load("English");
+    lang->load(DEFAULT_LANG);
 
-    lines.emplace_back(CFG_THEME, _("AutoBleem Theme:"), "theme", false, getThemes());
-    lines.emplace_back(CFG_SHOW_ORIGAMES, _("Show Internal Games:"), "origames", true,
+    lines.emplace_back(CFG_THEME, _("AutoBleem Theme"), "theme", false, getThemes());
+    lines.emplace_back(CFG_SHOW_ORIGAMES, _("Show Internal Games"), "origames", true,
                        vector<string>({"false", "true"}));
-    lines.emplace_back(CFG_JEWEL, _("Cover Style:"), "jewel", false, getJewels());
-    lines.emplace_back(CFG_MUSIC, _("Music:"), "music", false, getMusic());
-    lines.emplace_back(CFG_ENABLE_BACKGROUND_MUSIC, _("Background Music:"), "nomusic", true,
+    lines.emplace_back(CFG_JEWEL, _("Cover Style"), "jewel", false, getJewels());
+    lines.emplace_back(CFG_MUSIC, _("Music"), "music", false, getMusic());
+    lines.emplace_back(CFG_ENABLE_BACKGROUND_MUSIC, _("Background Music"), "nomusic", true,
                        vector<string>({"true", "false"}));
-    lines.emplace_back(CFG_WIDESCREEN, _("Widescreen:"), "aspect", true, vector<string>({"false", "true"}));
-    lines.emplace_back(CFG_GFX_FILTER, _("GFX Filter:"), "mip", true, vector<string>({"true", "false"}));
-    lines.emplace_back(CFG_RACONFIG, _("Update RA Config:"), "raconfig", true, vector<string>({"false", "true"}));
-    lines.emplace_back(CFG_PLAY_ALL_PSX_WITH_RA, _("Play all PSX games with RA:"), "play_all_psx_with_ra", true,
+    lines.emplace_back(CFG_WIDESCREEN, _("Widescreen"), "aspect", true, vector<string>({"false", "true"}));
+    lines.emplace_back(CFG_GFX_FILTER, _("GFX Filter"), "mip", true, vector<string>({"true", "false"}));
+    lines.emplace_back(CFG_RACONFIG, _("Update RA Config"), "raconfig", true, vector<string>({"false", "true"}));
+    lines.emplace_back(CFG_PLAY_ALL_PSX_WITH_RA, _("Play all PSX games with RA"), "play_all_psx_with_ra", true,
                        vector<string>({"false", "true"}));
-    lines.emplace_back(CFG_SHOWINGTIMEOUT, _("Showing Timeout (0 = no timeout):"), "showingtimeout", false,
+    lines.emplace_back(CFG_SHOWINGTIMEOUT, _("Showing Timeout (0 for no timeout)"), "showingtimeout", false,
                        getTimeoutValues());
-    lines.emplace_back(CFG_LANG, _("Language:"), "language", false, lang->getListOfLanguages());
+    lines.emplace_back(CFG_LANG, _("Language"), "language", false, lang->getListOfLanguages());
 
     lang->load(saveCurrentLang);
 }
@@ -113,7 +113,7 @@ void GuiOptions::init() {
 // void GuiOptions::getLineText
 //*******************************
 std::string GuiOptions::getLineText(const OptionsInfo &info) {
-    std::string temp = lang->translate(info.descriptionToTranslate) + " ";
+    std::string temp = lang->translate(info.descriptionToTranslate) + ": ";
     auto value = gui->cfg.inifile.values[info.iniKey];
     if (info.keyIsBoolean) {
         temp += getBooleanSymbolText(info, value);

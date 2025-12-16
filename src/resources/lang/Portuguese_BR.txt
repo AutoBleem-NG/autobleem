@@ -1,268 +1,184 @@
-﻿About
-Sobre o AutoBleem
-Advanced
-Avançado
-Advanced:
-Avançado:
-Are you sure you want to flush all covers?
-Você tem certeza que deseja atualizar todas as capas?
-Are you sure?
-Você tem certeza?
-AutoBleem
-AutoBleem
-AutoBleem Theme:
-Tema do AutoBleem:
-Automatic PlayStation Classic USB launcher
-Inicializador USB Automático para PlayStation Clássico
-Background Music:
-Música de Fundo:
-Button Guide
-Guia de Botões
-Cancel
-Cancelar
-Caps
-Caps
-Card
-Cartão
-Change MC
-Mudar MC
-Clock:
-Relógio:
-Close
-Fechar
-Code: AutoBleem Team
-Código: Time AutoBleem
-Configuration
-Configuração
-Configuration saved - Press |@X| to continue
-Configuração salva - Pressione |@X| para continuar
-Confirm
-Confirmar
-Cover Style:
-Estilo da Capa:
-Custom
-Person.
-Custom Memory Cards
-Cartões de Memória Personalizados
-Customize AutoBleem settings
-Personalizar Configurações do AutoBleem
-Decompressing ecm:
-Descomprimindo ecm:
-Delete
-Deletar
-Delete card
-Deletar cartão
-Download latest:
-Baixar a última versão:
-DPAD - Same as classic menu
-DPAD - Igual ao menu clássico
-Edit game parameters
-Editar parâmetros do jogo
-Edit Memory Card information
-Editar informações do Cartão de Memória
-Emulator config MENU
-MENU de Configurações do Emulador
-Enter
-Confirmar
-Enter new card name
-Inserir nome do novo cartão
-Enter new game name
-Inserir nome do novo jogo
-Enter new name for card
-Inserir novo nome do cartão
-Enter new name for memory card
-Inserir novo nome do cartão de memória
-Favorite:
-Favorito:
-Flush covers
-Atualizar capas
-Folder:
-Pasta:
-Frameskip:
-Pular frame:
-Free space
-Espaço livre
-Game
-Jogo
-GAME
-JOGO
-Game Manager
-Gerenciador de Jogos
-Game manager - Select game
-Gerenciador de Jogos - Selecionar jogo
-Game:
-Jogo:
-games
-jogos
-Games changed. Press
-Jogos alterados. Pressione
-games scanned
-jogos escaneados
-GFX Filter:
-Filtro GFX:
-Go back
-Voltar
-Graphics by:
-Gráficos por:
-High res:
-Alta resol.:
-Hold
-Aguarde
-IN BOOT MENU TO POWER OFF THE CONSOLE (SAFE POWER OFF !!!)
-DESLIGUE O CONSOLE PELO MENU PRINCIPAL (DESLIGAMENTO SEGURO !!!)
-In Game
-Em Jogo
-Internal
-Interno
-Internal Games:
-Jogos Internos:
-Is your dpad analogue?
-O seu direcional é analógico?
-Language:
-Linguagem:
-Loading ... Please Wait ...
-Carregando ... Aguarde ...
-Lock data:
-Trancar dados:
-MemCard Manager will be available soon
-Gerenciador de cartões de memória em breve
-MEMORY CARD
-CARTÃO DE MEMÓRIA
-Memory Card:
-Cartão de Memória:
-Memory Cards
-Cartões de Memória
-Menu
-Menu
-Menu Theme:
-Tema do Menu:
-Music:
-Música:
-New Card
-Novo Cartão
-New GamePad found
-Novo Controle Encontrado
-Next Game Platform
-Próximo Console
-OOPS! Game crashed. Resume point not available.
-OPA! O jogo travou. Não é possível retomar.
-Options
-Opções
-Original
-Original
-Page
-Página
-Player
-Jogador
-Players
-Jogadores
-Please confirm
-Favor Confirmar
-PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
-POR FAVOR CONECTE O CONTROLE NO PLAYSTATION CLÁSSICO
-Please wait ... deleting covers...
-Aguarde ... apagando capas...
-Plugin:
-Plugin:
-Power Off
-Desligar
-POWERING OFF... PLEASE WAIT
-DESLIGANDO... POR FAVOR AGUARDE
-Press a key for
-Pressione um botão para
-Published by:
-Publicado por:
-Quick boot
-Boot rápido
-Quick scroll to next letter
-Rolagem rápida para próxima letra
-QuickBoot Init:
-Inicialicação de Boot Rápido:
-QuickBoot:
-Boot Rápido:
-Quit emulation - back to AutoBleem
-Emulação rápida - voltar ao AutoBleem
-Re/Scan
-Re/Escanear
-Region:
-Região:
-Rename
-Renomear
-RESUME
-CONTINUAR
-Resume game from saved state point
-Continuar jogo salvo
-Resume point saved to slot
-Jogo salvo no slot
-RetroArch
-RetroArch
-RetroArch is not installed
-RetroArch não está instalado
-Scanline Level:
-Nível Scanline:
-Scanlines:
-Scanlines:
-Scanning...
-Escaneando...
-Select
-Selecionar
-Select memory card
-Selecionar cartão de memória
-Select or cancel highlighted option
-Selecionar ou cancelar opção realçada
-SELECT RESUME SLOT TO LOAD
-SELECIONE O JOGO SALVO A CARREGAR
-SELECT SLOT TO SAVE STATE
-SELECIONE BLOCO ONDE SALVAR JOGO
-Serial:
-Serial:
-SETTINGS
-CONFIGURAÇÕES
-Share MC
-Compartilhar MC
-Show RetroArch:
-Mostrar RetroArch:
-Showing Timeout (0 = no timeout):
-Tempo Visível Limite para Status (0 = for tempo indefinido):
-Showing: All games
-Mostrando: Todos os Jogos
-Showing: Favorite games
-Mostrando: Jogos Favoritos
-Showing: Internal games
-Mostrando: Jogos Internos
-Showing: USB games
-Mostrando: Jogos no USB
-Slot
-Bloco
-Sorting :
-Organizando :
-Sorting...
-Organizando...
-Space
-Espaço
-SpeedHack:
-SpeedHack:
-Spu Interpolation:
-Interpolação Spu:
-Starting EvolutionUI
-Iniciando EvolutionUI
-Support via Discord:
-Suporte via Discord:
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
-Esse software é grátis e open source. Funciona COMO ESTÁ e não assumimos responsabilidade por nenhum tipo de dano.
-to scan
-para escanear
-Total:
-Total:
-UI:
-Interface:
-Updating regional.db...
-Atualizando regional.db...
-WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
-AVISO: DB DE CAPAS NÃO ENCONTRADA. PRESSIONE QUALQUER BOTÃO.
-WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
-AVISO: NENHUM JOGO ENCONTRADO. PRESSIONE QUALQUER BOTÃO.
-Widescreen:
-Tela Larga:
-Year:
-Ano:
+# AutoBleem Portuguese_BR Translation
+# Format: English Text=Translated Text
+# Untranslated: 0 / Total: 180
+
+.lic file not found=Arquivo .lic não encontrado
+About=Sobre o AutoBleem
+Advanced=Avançado
+All Games=Todos os jogos
+Apps=Apps
+Are you sure you want to delete=Tem certeza que deseja excluir
+Are you sure you want to flush all covers?=Você tem certeza que deseja atualizar todas as capas?
+Are you sure?=Você tem certeza?
+AutoBleem=AutoBleem
+AutoBleem Theme=Tema AutoBleem
+AutoBleem resume points not available in RetroArch=Pontos de retomada AutoBleem não disponíveis no RetroArch
+Background Music=Música de fundo
+Backspace=Backspace
+Bin file failed to verify=Falha na verificação do arquivo Bin
+Button Guide=Guia de Botões
+CONFIGURED=CONFIGURADO
+Cancel=Cancelar
+Caps=Maiúsculas
+Card=Cartão
+Change MC=Mudar MC
+Change RetroBoot System=Alterar Sistema RetroBoot
+Change USB Games Sub-Directory=Alterar Subdiretório de Jogos USB
+Clock=Relógio
+Close=Fechar
+Code C++ and shell scripts=Código C++ e scripts shell
+Configuration=Configuração
+Confirm=Confirmar
+Copy=Copiar
+Cover Style=Estilo da capa
+Cover image file not found=Arquivo de imagem da capa não encontrado
+Cue file not found=Arquivo Cue não encontrado
+Custom=Person.
+Custom Memory Cards=Cartões de Memória Personalizados
+Customize AutoBleem settings=Personalizar Configurações do AutoBleem
+Database maintenance=Manutenção do banco de dados
+Decompressing ecm=Descomprimindo ecm
+Defragment Card=Desfragmentar cartão
+Delete=Deletar
+Delete !SaveState folder for game=Excluir pasta !SaveState do jogo
+Delete Game=Excluir jogo
+Delete card=Deletar cartão
+Do you want to save memcards data?=Você quer salvar dados dos cartões de memória?
+Edit Memory Card information=Editar informações do Cartão de Memória
+Edit game parameters=Editar parâmetros do jogo
+EmulationStation=EmulationStation
+Emulator config MENU=MENU de Configurações do Emulador
+Enter=Confirmar
+Enter new card name=Inserir nome do novo cartão
+Enter new game name=Inserir nome do novo jogo
+Enter new name for card=Inserir novo nome do cartão
+Enter new name for memory card=Inserir novo nome do cartão de memória
+Entry=Entrada
+Exit to EvoUI=Sair para EvoUI
+Failed to delete=Falha ao excluir
+Favorite=Favorito
+Favorite Games=Jogos favoritos
+Flush covers=Atualizar capas
+Folder=Pasta
+Frameskip=Frameskip
+Free=Livre
+Free space=Espaço livre
+GAME=JOGO
+GFX Filter=GFX Filter
+Game=Jogo
+Game Core=Núcleo do jogo
+Game File=Arquivo do jogo
+Game History=Histórico de jogos
+Game Manager=Gerenciador de Jogos
+Game failed to verify=Falha ao verificar jogo
+Game file not found=Arquivo do jogo não encontrado
+Game manager - Select game=Gerenciador de Jogos - Selecionar jogo
+Game.ini file not found=Arquivo Game.ini não encontrado
+Game.ini file not valid=Arquivo Game.ini inválido
+Games changed. Press=Jogos alterados. Pressione
+Go back=Voltar
+Graphics=Gráficos
+Hardware Information=Informações de Hardware
+High res=Alta resolução
+INTERNAL=INTERNO
+In Boot Menu: Safe Power Off The Console=No menu de boot: Desligar o console com segurança
+In Game=Em Jogo
+In RetroArch Game=Em jogo RetroArch
+Internal=Interno
+Internal Games=Jogos internos
+Language=Idioma
+Last Played=Jogado por último
+Lightgun Game=Jogo Lightgun
+Lightgun Games=Jogos Lightgun
+Link Block=Bloco vinculado
+Link end Block=Fim do bloco vinculado
+Loading... Please Wait...=Carregando... Aguarde...
+Localization support=Suporte à localização
+Lock data=Bloquear dados
+MEMORY CARD=CARTÃO DE MEMÓRIA
+Memory Card=Cartão de memória
+Memory Card Manager=Gerenciador de cartões de memória
+Memory Cards=Cartões de Memória
+Move Cursor=Mover cursor
+Moving=Movendo
+Music=Música
+NOTICE: At least one connected gamepad is not recognized. Use Hardware Information page to setup=AVISO: Pelo menos um controle conectado não é reconhecido. Use a página de Informações de Hardware para configurar
+New Card=Novo Cartão
+New GamePad found=Novo Controle Encontrado
+Next Game Platform=Próximo Console
+No disc name=Sem nome de disco
+No discs=Sem discos
+OK=OK
+OOPS! Game crashed. Resume point not available=OOPS! Jogo travou. Ponto de retomada não disponível
+Open RetroArch Menu=Abrir menu RetroArch
+Options=Opções
+POWER=ENERGIA
+POWERING OFF... PLEASE WAIT=DESLIGANDO... POR FAVOR AGUARDE
+Page=Página
+Play all PSX games with RA=Jogar todos os jogos PSX com RA
+Play using RA=Jogar usando RA
+Player=Jogador
+Players=Jogadores
+Please confirm=Favor Confirmar
+Please wait... deleting=Aguarde... excluindo
+Please wait... deleting covers...=Aguarde... excluindo capas...
+Plugin=Plugin
+Power Off=Desligar
+Published by=Publicado por
+Quick scroll to next letter=Rolagem rápida para próxima letra
+Quit emulation - back to AutoBleem=Emulação rápida - voltar ao AutoBleem
+RESET=REINICIAR
+RESUME=CONTINUAR
+Random Game=Jogo aleatório
+Re/Scan=Re/Escanear
+ReadMe file not found=Arquivo ReadMe não encontrado
+Region=Região
+Reload Cards=Recarregar cartões
+Rename=Renomear
+Resume game from saved state point=Continuar jogo salvo
+Resume point saved to slot=Jogo salvo no slot
+RetroArch=RetroArch
+RetroArch is not installed=RetroArch não está instalado
+Retroboot and emulation cores=Retroboot e núcleos de emulação
+Run using RetroBoot=Executar com RetroBoot
+SELECT RESUME SLOT TO LOAD=SELECIONE O JOGO SALVO A CARREGAR
+SELECT SLOT TO SAVE STATE=SELECIONE BLOCO ONDE SALVAR JOGO
+SETTINGS=CONFIGURAÇÕES
+Scanline Level=Nível de scanline
+Scanlines=Scanlines
+Scanning...=Escaneando...
+Select=Selecionar
+Select PS1 Game Category=Selecionar categoria de jogo PS1
+Select RetroBoot Platform=Selecionar plataforma RetroBoot
+Select Right Card=Selecionar cartão direito
+Select memory card=Selecionar cartão de memória
+Select or cancel highlighted option=Selecionar ou cancelar opção realçada
+Serial=Serial
+Share MC=Compartilhar MC
+Show Internal Games=Mostrar jogos internos
+Showing=Mostrando
+Showing Timeout (0 for no timeout)=Tempo de exibição (0 para sem tempo)
+Slot=Bloco
+Space=Espaço
+SpeedHack=SpeedHack
+Spu Interpolation=Interpolação Spu
+Starting EvolutionUI=Iniciando EvolutionUI
+Support via Discord=Suporte via Discord
+Testing=Testes
+This is free software. It works AS IS and We take no responsibility for any issues or damage=Este é um software gratuito. Funciona COMO ESTÁ e não nos responsabilizamos por quaisquer problemas ou danos
+Title=Título
+Total=Total
+USB Games=Jogos USB
+USB Games Directory=Diretório de jogos USB
+Unknown Core (AutoDetect)=Núcleo desconhecido (Autodetectar)
+Update RA Config=Atualizar configuração RA
+Updating regional.db...=Atualizando regional.db...
+Use Controller=Usar controle
+WARNING: NO COVER DB FOUND. PRESS ANY BUTTON=AVISO: BANCO DE DADOS DE CAPAS NÃO ENCONTRADO. PRESSIONE QUALQUER BOTÃO
+Widescreen=Widescreen
+Year=Ano
+games=jogos
+games scanned=jogos escaneados
+pcsx.cfg file not found=Arquivo pcsx.cfg não encontrado
+to scan=para escanear
+|@lang|=pt_BR

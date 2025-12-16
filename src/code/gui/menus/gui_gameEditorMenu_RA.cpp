@@ -112,13 +112,14 @@ void GuiEditor_RA::render() {
     int yoffset = gui->renderLogo(true);
 
     // Game.ini
-    gui->renderTextLine(_("Title:") + " " + gameData->title, line++, yoffset, XALIGN_CENTER);
-    gui->renderTextLine(_("Game File:") + " " + gameData->image_path, line++, yoffset, XALIGN_CENTER);
-    gui->renderTextLine(_("Game Core:") + " " + gameData->core_name, line++, yoffset, XALIGN_CENTER);
+    gui->renderTextLine(_("Title") + ": " + gameData->title, line++, yoffset, XALIGN_CENTER);
+    gui->renderTextLine(_("Game File") + ": " + gameData->image_path, line++, yoffset, XALIGN_CENTER);
+    gui->renderTextLine(_("Game Core") + ": " + gameData->core_name, line++, yoffset, XALIGN_CENTER);
 
-    gui->renderTextLineOptions(_("Lightgun Game:") + (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gameData)
-                                                          ? string("|@Check|")
-                                                          : string("|@Uncheck|")),
+    gui->renderTextLineOptions(_("Lightgun Game") + ":" +
+                                   (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gameData)
+                                        ? string("|@Check|")
+                                        : string("|@Uncheck|")),
                                OPT_LIGHTGUN, yoffset, XALIGN_LEFT, 300);
 
     gui->renderSelectionBox(selOption, yoffset, 300);

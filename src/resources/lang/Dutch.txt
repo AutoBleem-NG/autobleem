@@ -1,158 +1,184 @@
-'Tenchu' theme by Kevzombie
-'Tenchu' thema door Kevzombie
-About
-Over
-About
-Over
-Advanced
-Geavanceerd
-Advanced:
-Geavanceerd:
-AutoBleem
-AutoBleem
-AutoBleem Theme:
-AutoBleem Thema:
-Automatic PlayStation Classic USB launcher
-Automatische Playstation Classic USB Launcher
-Background Music:
-Achtergrond Muziek
-Cancel
-Annuleer
-Caps
-Caps
-Card
-Kaart
-Change MC
-Verander MC
-Close
-Sluiten
-Code: AutoBleem Team
-Code: AutoBleem Team
-Configuration
-Configuratie
-Confirm
-Bevestig
-Custom
-Aangepast
-Custom Memory Cards
-Custom Memory Kaart
-Delete
-Verwijder
-Delete card
-Verwijder kaart
-Download latest:
-Download laatste versie:
-Enter new card name
-Nieuwe kaart naam
-Enter new game name
-Nieuwe game naam
-Enter new name for card
-Nieuwe naam voor kaart
-Enter new name for memory card
-Nieuwe naam voor memory card
-Folder:
-Map:
-Free space
-Vrije ruimte
-Game
-Game
-Game Manager
-Game Manager
-Game manager - Select game
-Game manager - Selecteer game
-Game:
-Game:
-games
-games
-Games changed. Press
-Games geüpdate. Druk
-games scanned
-games gescand
-GFX Filter:
-GFX Filter:
-Go back
-Ga terug
-Hi/Lo Res
-Hi/Lo Res
-High res:
-High res:
-Hold
-Pauze
-Internal
-Intern
-Internal
-Intern
-Loading ... Please Wait ...
-Laden... Even geduld ...
-Lock
-Gesloten
-Lock data:
-Lock data:
-Memory Card:
-Memory Kaart:
-Memory Cards
-Memory Kaarten
-Menu
-Menu
-Menu Theme:
-Menu Thema:
-New Card
-Nieuwe Kaart
-Options
-Options
-Original
-Origineel
-Page
-Pagina
-PCSX Version:
-PCSX Versie:
-Players
-Spelers
-Please confirm
-Bevestig
-PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
-SLUIT EEB PLAYSTATION CLASSIC CONTROLLER AAN
-Published by:
-Gepubliceerd door:
-Quick boot
-Snel starten
-QuickBoot:
-Snel Starten:
-Re/Scan
-Re/Scan
-Rename
-Hernoem
-RetroArch
-RetroArch
-RetroArch is not installed
-RetroArch is niet geïnstalleerd
-Scanning...
-Scannen...
-Select
-Selecteer
-Select memory card
-Selecteer memory card
-Share MC
-Deel MC
-Show RetroArch:
-Toon RetroArch:
-Space
-Spatie
-Support via Discord:
-Support ons via Discord:
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
-Dit is gratis en open source software. Het werkt ZOALS AANGELEVERD en wij nemen geen verantwoordelijkheid voor eventuele problemen of schade. 
-to scan
-te scannen
-Total:
-Totaal:
-Updating regional.db...
-regional.db updaten...
-Upgrading AutoBleem - Please wait...
-AutoBleem upgraden - Moment...
-WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
-WAARSCHUWING: GEEN COVER DATABASE GEVONDEN. DRUK OP KNOP
-WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
-WAARSCHUWING: GEEN GAMES GEVONDEN. DRUK OP EEN KNOP.
-Year:
-Jaar:
+# AutoBleem Dutch Translation
+# Format: English Text=Translated Text
+# Untranslated: 0 / Total: 180
+
+.lic file not found=.lic-bestand niet gevonden
+About=Over
+Advanced=Geavanceerd
+All Games=Alle spellen
+Apps=Apps
+Are you sure you want to delete=Weet je zeker dat je wilt verwijderen
+Are you sure you want to flush all covers?=Weet je zeker dat je alle covers wilt wissen?
+Are you sure?=Weet je het zeker?
+AutoBleem=AutoBleem
+AutoBleem Theme=AutoBleem Thema
+AutoBleem resume points not available in RetroArch=AutoBleem hervattingspunten niet beschikbaar in RetroArch
+Background Music=Achtergrondmuziek
+Backspace=Backspace
+Bin file failed to verify=Bin-bestand kon niet worden geverifieerd
+Button Guide=Knoppengids
+CONFIGURED=GECONFIGUREERD
+Cancel=Annuleer
+Caps=Hoofdletters
+Card=Kaart
+Change MC=Verander MC
+Change RetroBoot System=Wijzig RetroBoot-systeem
+Change USB Games Sub-Directory=Wijzig USB-spellensubmap
+Clock=Klok
+Close=Sluiten
+Code C++ and shell scripts=C++ code en shellscripts
+Configuration=Configuratie
+Confirm=Bevestig
+Copy=Kopiëren
+Cover Style=Cover-stijl
+Cover image file not found=Coverafbeeldingsbestand niet gevonden
+Cue file not found=Cue-bestand niet gevonden
+Custom=Aangepast
+Custom Memory Cards=Custom Memory Kaart
+Customize AutoBleem settings=AutoBleem-instellingen aanpassen
+Database maintenance=Databaseonderhoud
+Decompressing ecm=ECM decomprimeren
+Defragment Card=Kaart defragmenteren
+Delete=Verwijder
+Delete !SaveState folder for game=Verwijder !SaveState-map voor spel
+Delete Game=Spel verwijderen
+Delete card=Verwijder kaart
+Do you want to save memcards data?=Wilt u geheugenkaartgegevens opslaan?
+Edit Memory Card information=Geheugenkaartinformatie bewerken
+Edit game parameters=Spelparameters bewerken
+EmulationStation=EmulationStation
+Emulator config MENU=Emulator-configuratiemenu
+Enter=Enter
+Enter new card name=Nieuwe kaart naam
+Enter new game name=Nieuwe game naam
+Enter new name for card=Nieuwe naam voor kaart
+Enter new name for memory card=Nieuwe naam voor memory card
+Entry=Invoer
+Exit to EvoUI=Afsluiten naar EvoUI
+Failed to delete=Verwijderen mislukt
+Favorite=Favoriet
+Favorite Games=Favoriete spellen
+Flush covers=Covers wissen
+Folder=Map
+Frameskip=Frameskip
+Free=Vrij
+Free space=Vrije ruimte
+GAME=SPEL
+GFX Filter=GFX Filter
+Game=Spel
+Game Core=Spel-core
+Game File=Spelbestand
+Game History=Spelgeschiedenis
+Game Manager=Spelbeheer
+Game failed to verify=Spel kon niet worden geverifieerd
+Game file not found=Spelbestand niet gevonden
+Game manager - Select game=Game manager - Selecteer game
+Game.ini file not found=Game.ini-bestand niet gevonden
+Game.ini file not valid=Game.ini-bestand niet geldig
+Games changed. Press=Games geüpdate. Druk
+Go back=Ga terug
+Graphics=Grafisch ontwerp
+Hardware Information=Hardware-informatie
+High res=Hoge resolutie
+INTERNAL=INTERN
+In Boot Menu: Safe Power Off The Console=In Boot-menu: Veilig uitschakelen van de console
+In Game=In spel
+In RetroArch Game=In RetroArch-spel
+Internal=Intern
+Internal Games=Interne spellen
+Language=Taal
+Last Played=Laatst gespeeld
+Lightgun Game=Lightgun-spel
+Lightgun Games=Lightgun-spellen
+Link Block=Gekoppeld blok
+Link end Block=Einde gekoppeld blok
+Loading... Please Wait...=Laden... Even geduld...
+Localization support=Lokalisatieondersteuning
+Lock data=Gegevens vergrendelen
+MEMORY CARD=GEHEUGENKAART
+Memory Card=Geheugenkaart
+Memory Card Manager=Geheugenkaartbeheer
+Memory Cards=Memory Kaarten
+Move Cursor=Cursor verplaatsen
+Moving=Verplaatsen
+Music=Muziek
+NOTICE: At least one connected gamepad is not recognized. Use Hardware Information page to setup=LET OP: Ten minste één aangesloten gamepad wordt niet herkend. Gebruik de Hardware Informatie pagina om in te stellen
+New Card=Nieuwe Kaart
+New GamePad found=Nieuwe controller gevonden
+Next Game Platform=Volgend spelplatform
+No disc name=Geen schijfnaam
+No discs=Geen schijven
+OK=OK
+OOPS! Game crashed. Resume point not available=OEPS! Spel is gecrasht. Hervattingspunt niet beschikbaar
+Open RetroArch Menu=Open RetroArch-menu
+Options=Opties
+POWER=AAN/UIT
+POWERING OFF... PLEASE WAIT=UITSCHAKELEN... EVEN GEDULD
+Page=Pagina
+Play all PSX games with RA=Speel alle PSX-spellen met RA
+Play using RA=Speel met RA
+Player=Speler
+Players=Spelers
+Please confirm=Bevestig
+Please wait... deleting=Even geduld... verwijderen
+Please wait... deleting covers...=Even geduld... covers verwijderen...
+Plugin=Plugin
+Power Off=Uitschakelen
+Published by=Uitgegeven door
+Quick scroll to next letter=Snel scrollen naar volgende letter
+Quit emulation - back to AutoBleem=Emulatie afsluiten - terug naar AutoBleem
+RESET=RESET
+RESUME=HERVATTEN
+Random Game=Willekeurig spel
+Re/Scan=Her/Scannen
+ReadMe file not found=ReadMe-bestand niet gevonden
+Region=Regio
+Reload Cards=Kaarten herladen
+Rename=Hernoem
+Resume game from saved state point=Spel hervatten vanaf opgeslagen punt
+Resume point saved to slot=Hervattingspunt opgeslagen naar slot
+RetroArch=RetroArch
+RetroArch is not installed=RetroArch is niet geïnstalleerd
+Retroboot and emulation cores=Retroboot en emulatorkernen
+Run using RetroBoot=Uitvoeren met RetroBoot
+SELECT RESUME SLOT TO LOAD=SELECTEER HERVATTINGSSLOT OM TE LADEN
+SELECT SLOT TO SAVE STATE=SELECTEER SLOT OM STAAT OP TE SLAAN
+SETTINGS=INSTELLINGEN
+Scanline Level=Scanline-niveau
+Scanlines=Scanlines
+Scanning...=Scannen...
+Select=Selecteer
+Select PS1 Game Category=Selecteer PS1-spelcategorie
+Select RetroBoot Platform=Selecteer RetroBoot-platform
+Select Right Card=Selecteer rechterkaart
+Select memory card=Selecteer memory card
+Select or cancel highlighted option=Selecteer of annuleer gemarkeerde optie
+Serial=Serienummer
+Share MC=Deel MC
+Show Internal Games=Toon interne spellen
+Showing=Weergeven
+Showing Timeout (0 for no timeout)=Weergave timeout (0 voor geen timeout)
+Slot=Slot
+Space=Spatie
+SpeedHack=SpeedHack
+Spu Interpolation=Spu-interpolatie
+Starting EvolutionUI=EvolutionUI starten
+Support via Discord=Ondersteuning via Discord
+Testing=Testen
+This is free software. It works AS IS and We take no responsibility for any issues or damage=Dit is gratis software. Het werkt ZOALS HET IS en wij nemen geen verantwoordelijkheid voor eventuele problemen of schade
+Title=Titel
+Total=Totaal
+USB Games=USB-spellen
+USB Games Directory=USB-spellenmap
+Unknown Core (AutoDetect)=Onbekende kern (Autodetectie)
+Update RA Config=RA-configuratie bijwerken
+Updating regional.db...=regional.db updaten...
+Use Controller=Gebruik controller
+WARNING: NO COVER DB FOUND. PRESS ANY BUTTON=WAARSCHUWING: GEEN COVER-DATABASE GEVONDEN. DRUK OP EEN KNOP
+Widescreen=Widescreen
+Year=Jaar
+games=spellen
+games scanned=games gescand
+pcsx.cfg file not found=pcsx.cfg-bestand niet gevonden
+to scan=te scannen
+|@lang|=nl

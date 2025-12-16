@@ -1,268 +1,184 @@
-About
-Despre
-Advanced
-Avansat
-Advanced:
-Avansat:
-Are you sure you want to flush all covers?
-Esti sigur ca vrei sa stergi toate cover-urile?
-Are you sure?
-Esti sigur?
-AutoBleem
-AutoBleem
-AutoBleem Theme:
-Schema de culori pentru AutoBleem:
-Automatic PlayStation Classic USB launcher
-Automatic PlayStation Classic USB launcher
-Background Music:
-Muzica de fundal:
-Button Guide
-Ghid butoane
-Cancel
-Anuleaza
-Caps
-Litere mari
-Card
-Card
-Change MC
-Schimba MC
-Clock:
-Ceas:
-Close
-Inchide
-Code: AutoBleem Team
-Code: AutoBleem Team
-Configuration
-Configurare
-Configuration saved - Press |@X| to continue
-Configuratia a fost salvata - Apasa |@X| pentru a continua
-Confirm
-Confirma
-Cover Style:
-Stil pentru Cover:
-Custom
-Personalizat
-Custom Memory Cards
-Carduri de memorie Personalizate
-Customize AutoBleem settings
-Personalizeaza setari AutoBleem
-Decompressing ecm:
-Decomprimare ecm:
-Delete
-Sterge
-Delete card
-Sterge card
-Download latest:
-Descarca ultima varianta:
-DPAD - Same as classic menu
-DPAD - Acelasi ca Meniul Clasic
-Edit game parameters
-Editeaza parametri jocului
-Edit Memory Card information
-Editeaza informatia despre Cardul de Memorie
-Emulator config MENU
-Meniu de configurare al emulatorului
-Enter
-Aplica
-Enter new card name
-Adauga un nume de card nou
-Enter new game name
-Adauga un nume de joc nou
-Enter new name for card
-Adauga un nume nou pentru card
-Enter new name for memory card
-Adauga un nume nou pentru cardul de memorie
-Favorite:
-Setari preferate:
-Flush covers
-Sterge cover-urile
-Folder:
-Dosar:
-Frameskip:
-Frameskip:
-Free space
-Spatiu liber
-Game
-Joc
-GAME
-Joc
-Game Manager
-Manager jocuri
-Game manager - Select game
-Manager jocuri - selecteaza joc
-Game:
-Joc:
-games
-Jocuri
-Games changed. Press
-Jocurile au fost schimbate. Apasa
-Games filter
-Filtru jocuri
-games scanned
-Jocurile au fost scanate
-GFX Filter:
-Filtru GFX:
-Go back
-Inapoi
-Graphics by:
-Grafica de:
-High res:
-High res (rezolutie inalta):
-Hold
-Pauza
-IN BOOT MENU TO POWER OFF THE CONSOLE (SAFE POWER OFF !!!)
-IN BOOT MENU TO POWER OFF THE CONSOLE (SAFE POWER OFF !!!)
-In Game
-In joc
-Internal
-Intern
-Internal Games:
-Jocuri Interne:
-Is your dpad analogue?
-Ai "dpad" analog?
-Language:
-Limba:
-Loading ... Please Wait ...
-Incarca...Te rog asteapta...
-Lock data:
-Restrictioneaza acessul la date:
-MemCard Manager will be available soon
-Managerul pentru Carduri de memorie va fi disponibil curand
-MEMORY CARD
-Card Memorie
-Memory Card:
-Card Memorie:
-Memory Cards
-Carduri Memorie
-Menu
-Meniu
-Menu Theme:
-Schema de culori Meniu:
-Music:
-Muzica:
-New Card
-Card Nou
-New GamePad found
-Un nou GamePad a fost gasit
-OOPS! Game crashed. Resume point not available.
-OOPS! Game crashed. Resume point not available.
-Options
-Optiuni
-Original
-Original
-Page
-Pagina
-Player
-Jucator
-Players
-Jucatori
-Please confirm
-Te rog confirma
-PLEASE CONNECT GAMEPAD TO PLAYSTATION CLASSIC
-Te rog conecteaza GamePad la Playstation classic
-Please wait ... deleting covers...
-Stergere Cover-uri...Te rog asteapta...
-Plugin:
-Plugin:
-Power Off
-Power Off
-POWERING OFF... PLEASE WAIT
-Powering Off...Te rog asteapta
-Press a key for
-Apasa o tasta pentru
-Published by:
-Publicat de:
-Quick boot
-Quick boot
-Quick scroll to next letter
-Navigare rapida la urmatoarea litera
-QuickBoot Init:
-QuickBoot Init:
-QuickBoot:
-QuickBoot:
-Quit emulation - back to AutoBleem
-Inchide simulare - inapoi la AutoBleem
-Re/Scan
-Re/Scan
-Region:
-Regiune:
-Rename
-Redenumeste
-RESUME
-Continua
-Resume game from saved state point
-Continua joc de la punctul salvat
-Resume point saved to slot
-Continua de la puntul salvat in slotul
-RetroArch
-RetroArch
-RetroArch is not installed
-RetroArch nu este instalat
-Scanline Level:
-Nivel ScanLine:
-Scanlines:
-Scanlines:
-Scanning...
-Scanez...
-Select
-Selecteaza
-Select memory card
-Selecteaza card de memorie
-Select or cancel highlighted option
-Confirma sau anuleaza optiunea subliniata
-SELECT RESUME SLOT TO LOAD
-Selecteaza SLOT pentru incarcare
-SELECT SLOT TO SAVE STATE
-Selecteaza SLOT pentru a salva starea curenta
-Serial:
-Serie:
-SETTINGS
-Setari
-Share MC
-Share MC
-Show RetroArch:
-Afiseaza RetroArch:
-Showing Timeout (0 = no timeout):
-Showing Timeout (0 = no timeout):
-Showing: All games
-Afiseaza: Toate jocurile
-Showing: Favorite games
-Afiseaza: Jocul preferate
-Showing: Internal games
-Afiseaza: Jocurile interne
-Showing: USB games
-Afiseaza: Jocurile USB
-Slot
-Port
-Sorting :
-Sorteaza:
-Sorting...
-Sortez...
-Space
-Spatiu
-SpeedHack:
-SpeedHack:
-Spu Interpolation:
-Spu Interpolation:
-Starting EvolutionUI
-Starting EvolutionUI
-Support via Discord:
-Support via Discord:
-This is free and open source software. It works AS IS and We take no responsibility for any issues or damage.
-Acest program este gratuit si open source. Functioneaza in Starea Actuala si Noi NU ne asumam raspunderea pentru orice defecte sau stricaciuni.
-to scan
-Pentru scanare
-Total:
-Total:
-UI:
-Interfata:
-Updating regional.db...
-Actualizez regional.db...
-WARNING: NO COVER DB FOUND. PRESS ANY BUTTON.
-Atentie: Nu a fost gasit nici un COVER DB.Apasa orice buton.
-WARNING: NO GAMES FOUND. PRESS ANY BUTTON.
-Atentie: Nu a fost gasit nici un joc. Apasa orice button.
-Widescreen:
-WideScreen:
-Year:
-An:
+# AutoBleem Romanian Translation
+# Format: English Text=Translated Text
+# Untranslated: 0 / Total: 180
+
+.lic file not found=Fișierul .lic nu a fost găsit
+About=Despre
+Advanced=Avansat
+All Games=Toate jocurile
+Apps=Apps
+Are you sure you want to delete=Ești sigur că vrei să ștergi
+Are you sure you want to flush all covers?=Esti sigur ca vrei sa stergi toate cover-urile?
+Are you sure?=Esti sigur?
+AutoBleem=AutoBleem
+AutoBleem Theme=Temă AutoBleem
+AutoBleem resume points not available in RetroArch=Punctele de reluare AutoBleem nu sunt disponibile în RetroArch
+Background Music=Muzică de fundal
+Backspace=Backspace
+Bin file failed to verify=Verificarea fișierului Bin a eșuat
+Button Guide=Ghid butoane
+CONFIGURED=CONFIGURAT
+Cancel=Anuleaza
+Caps=Litere mari
+Card=Card
+Change MC=Schimba MC
+Change RetroBoot System=Schimbă sistemul RetroBoot
+Change USB Games Sub-Directory=Schimbă subdirectorul jocurilor USB
+Clock=Ceas
+Close=Inchide
+Code C++ and shell scripts=Cod C++ și scripturi shell
+Configuration=Configurare
+Confirm=Confirma
+Copy=Copiază
+Cover Style=Stil copertă
+Cover image file not found=Fișierul imagine copertă nu a fost găsit
+Cue file not found=Fișierul Cue nu a fost găsit
+Custom=Personalizat
+Custom Memory Cards=Carduri de memorie Personalizate
+Customize AutoBleem settings=Personalizeaza setari AutoBleem
+Database maintenance=Întreținerea bazei de date
+Decompressing ecm=Decomprimare ecm
+Defragment Card=Defragmentează cardul
+Delete=Sterge
+Delete !SaveState folder for game=Șterge folderul !SaveState pentru joc
+Delete Game=Șterge jocul
+Delete card=Sterge card
+Do you want to save memcards data?=Vrei să salvezi datele cardurilor de memorie?
+Edit Memory Card information=Editeaza informatia despre Cardul de Memorie
+Edit game parameters=Editeaza parametri jocului
+EmulationStation=EmulationStation
+Emulator config MENU=Meniu de configurare al emulatorului
+Enter=Aplica
+Enter new card name=Adauga un nume de card nou
+Enter new game name=Adauga un nume de joc nou
+Enter new name for card=Adauga un nume nou pentru card
+Enter new name for memory card=Adauga un nume nou pentru cardul de memorie
+Entry=Intrare
+Exit to EvoUI=Ieși la EvoUI
+Failed to delete=Ștergerea a eșuat
+Favorite=Favorit
+Favorite Games=Jocuri favorite
+Flush covers=Sterge cover-urile
+Folder=Dosar
+Frameskip=Frameskip
+Free=Liber
+Free space=Spatiu liber
+GAME=Joc
+GFX Filter=GFX Filter
+Game=Joc
+Game Core=Nucleu de joc
+Game File=Fișier de joc
+Game History=Istoric jocuri
+Game Manager=Manager jocuri
+Game failed to verify=Verificarea jocului a eșuat
+Game file not found=Fișierul jocului nu a fost găsit
+Game manager - Select game=Manager jocuri - selecteaza joc
+Game.ini file not found=Fișierul Game.ini nu a fost găsit
+Game.ini file not valid=Fișierul Game.ini nu este valid
+Games changed. Press=Jocurile au fost schimbate. Apasa
+Go back=Inapoi
+Graphics=Grafică
+Hardware Information=Informații Hardware
+High res=Rezoluție înaltă
+INTERNAL=INTERN
+In Boot Menu: Safe Power Off The Console=În meniul de boot: Oprire sigură a consolei
+In Game=In joc
+In RetroArch Game=În joc RetroArch
+Internal=Intern
+Internal Games=Jocuri interne
+Language=Limbă
+Last Played=Ultima dată jucat
+Lightgun Game=Joc Lightgun
+Lightgun Games=Jocuri Lightgun
+Link Block=Bloc legat
+Link end Block=Sfârșit bloc legat
+Loading... Please Wait...=Se încarcă... Te rog așteaptă...
+Localization support=Suport pentru localizare
+Lock data=Blochează datele
+MEMORY CARD=Card Memorie
+Memory Card=Card de memorie
+Memory Card Manager=Manager carduri de memorie
+Memory Cards=Carduri Memorie
+Move Cursor=Mută cursorul
+Moving=Se mută
+Music=Muzică
+NOTICE: At least one connected gamepad is not recognized. Use Hardware Information page to setup=NOTĂ: Cel puțin un controler conectat nu este recunoscut. Folosește pagina de Informații Hardware pentru configurare
+New Card=Card Nou
+New GamePad found=Un nou GamePad a fost gasit
+Next Game Platform=Următoarea platformă de joc
+No disc name=Fără nume disc
+No discs=Fără discuri
+OK=OK
+OOPS! Game crashed. Resume point not available=OOPS! Jocul s-a prăbușit. Punct de reluare indisponibil
+Open RetroArch Menu=Deschide meniul RetroArch
+Options=Optiuni
+POWER=ALIMENTARE
+POWERING OFF... PLEASE WAIT=Powering Off...Te rog asteapta
+Page=Pagina
+Play all PSX games with RA=Joacă toate jocurile PSX cu RA
+Play using RA=Joacă folosind RA
+Player=Jucator
+Players=Jucatori
+Please confirm=Te rog confirma
+Please wait... deleting=Te rog așteaptă... se șterge
+Please wait... deleting covers...=Te rog așteaptă... se șterg coperțile...
+Plugin=Plugin
+Power Off=Oprire
+Published by=Publicat de
+Quick scroll to next letter=Navigare rapida la urmatoarea litera
+Quit emulation - back to AutoBleem=Inchide simulare - inapoi la AutoBleem
+RESET=RESETARE
+RESUME=Continua
+Random Game=Joc aleatoriu
+Re/Scan=Re/Scanare
+ReadMe file not found=Fișierul ReadMe nu a fost găsit
+Region=Regiune
+Reload Cards=Reîncarcă cardurile
+Rename=Redenumeste
+Resume game from saved state point=Continua joc de la punctul salvat
+Resume point saved to slot=Continua de la puntul salvat in slotul
+RetroArch=RetroArch
+RetroArch is not installed=RetroArch nu este instalat
+Retroboot and emulation cores=Retroboot și nuclee de emulare
+Run using RetroBoot=Rulează cu RetroBoot
+SELECT RESUME SLOT TO LOAD=Selecteaza SLOT pentru incarcare
+SELECT SLOT TO SAVE STATE=Selecteaza SLOT pentru a salva starea curenta
+SETTINGS=Setari
+Scanline Level=Nivel scanline
+Scanlines=Scanlines
+Scanning...=Scanez...
+Select=Selecteaza
+Select PS1 Game Category=Selectează categoria de joc PS1
+Select RetroBoot Platform=Selectează platforma RetroBoot
+Select Right Card=Selectează cardul drept
+Select memory card=Selecteaza card de memorie
+Select or cancel highlighted option=Confirma sau anuleaza optiunea subliniata
+Serial=Serial
+Share MC=Partajează MC
+Show Internal Games=Arată jocurile interne
+Showing=Se afișează
+Showing Timeout (0 for no timeout)=Timeout afișare (0 pentru fără timeout)
+Slot=Port
+Space=Spatiu
+SpeedHack=SpeedHack
+Spu Interpolation=Interpolație Spu
+Starting EvolutionUI=Se pornește EvolutionUI
+Support via Discord=Suport prin Discord
+Testing=Testare
+This is free software. It works AS IS and We take no responsibility for any issues or damage=Acesta este un software gratuit. Funcționează CA ATARE și nu ne asumăm responsabilitatea pentru probleme sau daune
+Title=Titlu
+Total=Total
+USB Games=Jocuri USB
+USB Games Directory=Director jocuri USB
+Unknown Core (AutoDetect)=Nucleu necunoscut (Autodetectare)
+Update RA Config=Actualizează configurația RA
+Updating regional.db...=Actualizez regional.db...
+Use Controller=Folosește controllerul
+WARNING: NO COVER DB FOUND. PRESS ANY BUTTON=AVERTISMENT: BAZA DE DATE A COPERȚILOR NU A FOST GĂSITĂ. APASĂ ORICE BUTON
+Widescreen=Widescreen
+Year=An
+games=Jocuri
+games scanned=Jocurile au fost scanate
+pcsx.cfg file not found=Fișierul pcsx.cfg nu a fost găsit
+to scan=Pentru scanare
+|@lang|=ro

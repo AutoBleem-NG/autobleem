@@ -94,7 +94,7 @@ void GuiMcManager::renderPencil(int memcard, int col, int row) {
 void GuiMcManager::trySave() {
     if (changes) {
         auto confirm = new GuiConfirm(renderer);
-        confirm->label = _("Do you want to save memcards data ?");
+        confirm->label = _("Do you want to save memcards data?");
         confirm->show();
         if (confirm->result) {
             memcard1->save_file(card1path);

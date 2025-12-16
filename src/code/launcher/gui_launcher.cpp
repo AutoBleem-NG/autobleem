@@ -287,11 +287,12 @@ void GuiLauncher::switchSet(int newSet, bool noForce) { // Warning: newSet is no
 //*******************************
 void GuiLauncher::showSetName() {
     vector<string> setNames = {"Showing: PS1 games", // this is a dummy entry. setPS1SubStateNames is used.
-                               _("Showing: Retroarch") + " ", _("Showing: Lightgun Games") + " ",
-                               _("Showing: Apps") + " "};
-    vector<string> setPS1SubStateNames = {_("Showing: All Games") + " ", _("Showing: Internal Games") + " ",
-                                          _("Showing: Favorite Games") + " ", _("Showing: Game History") + " ",
-                                          _("Showing: USB Games Directory:") + " "};
+                               _("Showing") + ": " + _("RetroArch") + " ",
+                               _("Showing") + ": " + _("Lightgun Games") + " ", _("Showing") + ": " + _("Apps") + " "};
+    vector<string> setPS1SubStateNames = {
+        _("Showing") + ": " + _("All Games") + " ", _("Showing") + ": " + _("Internal Games") + " ",
+        _("Showing") + ": " + _("Favorite Games") + " ", _("Showing") + ": " + _("Game History") + " ",
+        _("Showing") + ": " + _("USB Games Directory") + ": "};
     assert(currentPS1_SelectState >= 0 && currentPS1_SelectState <= SET_PS1_Games_Subdir);
     assert(setPS1SubStateNames.size() - 1 == SET_PS1_Games_Subdir); // currentPS1_SelectState out of range
 
@@ -528,11 +529,11 @@ void GuiLauncher::loadAssets() {
                 sselector->visible = true;
                 state = STATE_RESUME;
             } else {
-                notificationLines[1].setText(_("OOPS! Game crashed. Resume point not available."),
+                notificationLines[1].setText(_("OOPS! Game crashed. Resume point not available"),
                                              DefaultShowingTimeout);
             }
         } else {
-            notificationLines[1].setText(_("AutoBleem resume points not available in RetroArch."),
+            notificationLines[1].setText(_("AutoBleem resume points not available in RetroArch"),
                                          DefaultShowingTimeout);
         }
     }

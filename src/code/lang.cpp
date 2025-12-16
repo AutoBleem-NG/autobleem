@@ -3,105 +3,116 @@
 //
 
 #include "lang.h"
-#include "util.h"
+
 #include <fstream>
-#include <iostream>
-#include "log.h"
+
 #include "DirEntry.h"
 #include "environment.h"
+#include "log.h"
+#include "util.h"
 
-using namespace std;
+using std::endl;
+using std::ifstream;
+using std::map;
+using std::ofstream;
+using std::string;
+using std::vector;
 
-//*******************************
-// string _(string input)
-//*******************************
-string _(const string &input) {
-    shared_ptr<Lang> lang(Lang::getInstance());
+// Global translation helper function
+string _(const string &input) { return Lang::getInstance()->translate(input); }
 
-    return lang->translate(input);
-}
-
-//*******************************
-// Lang::translate
-//*******************************
-string Lang::translate(string input) {
-    if (currentLang == "English")
-        return input;
-    Util::trim(input);
-    if (input.empty())
+string Lang::translate(const string &input) {
+    string trimmed = Util::trim(input);
+    if (trimmed.empty())
         return "";
-    string translated = langData[input];
-    if (translated == "") {
-        langData[input] = input;
-        translated = input;
-        newData.push_back(input);
+
+    if (currentLang == DEFAULT_LANG)
+        return trimmed;
+
+    string &translated = langData[trimmed];
+    if (translated.empty()) {
+        translated = trimmed;
+        newData.push_back(trimmed);
     }
     return translated;
 }
 
-//*******************************
-// Lang::load
-//*******************************
-void Lang::load(string languageName) {
-    string path = Env::getWorkingPath() + sep + "lang" + sep + languageName + ".txt";
+void Lang::load(const string &languageName) {
     langData.clear();
     newData.clear();
     currentLang = languageName;
-    if (languageName == "English")
+
+    if (languageName == DEFAULT_LANG)
         return;
 
+    string path = Env::getWorkingPath() + sep + "lang" + sep + languageName + ".txt";
     ifstream is(path);
+    if (!is.is_open()) {
+        PLOG_WARNING << "Failed to open language file: " << path;
+        return;
+    }
+
     string line;
-    std::vector<std::string> lines;
-    int lineNum = 0;
+    bool firstLine = true;
+
     while (std::getline(is, line)) {
-        // if this is the first line of the file and the beginning of the string contains the UTF-8 header
-        // strip the UTF-8 header off
-        if (lineNum == 0 && line.size() >= 3) {
-            const unsigned char *p = reinterpret_cast<const unsigned char *>(line.c_str());
-            if ((p[0] == 0xEF) && (p[1] == 0xBB) && (p[2] == 0xBF)) {
-                string skipUTF8Header = reinterpret_cast<const char *>(p + 3);
-                line = skipUTF8Header;
+        // Strip UTF-8 BOM from first line if present
+        if (firstLine && line.size() >= 3) {
+            const auto *p = reinterpret_cast<const unsigned char *>(line.c_str());
+            if (p[0] == 0xEF && p[1] == 0xBB && p[2] == 0xBF) {
+                line = line.substr(3);
+            }
+            firstLine = false;
+        }
+
+        line = Util::trim(line);
+
+        // Skip empty lines and comments
+        if (line.empty() || line[0] == '#')
+            continue;
+
+        // Parse key=value format (first '=' is delimiter)
+        size_t pos = line.find('=');
+        if (pos != string::npos) {
+            string key = Util::trim(line.substr(0, pos));
+            string value = Util::trim(line.substr(pos + 1));
+            if (!key.empty()) {
+                langData[key] = value;
             }
         }
-        trim(line);
-        lines.push_back(line);
-        ++lineNum;
     }
-    for (int i = 0; i < lines.size(); i += 2) {
-        if (i + 1 < lines.size()) {
-            langData[lines[i]] = lines[i + 1];
-        }
-    }
-    is.close();
 }
 
-//*******************************
-// Lang::dump
-//*******************************
-void Lang::dump(string fileName) {
-
+// Exports untranslated strings for translators to complete
+void Lang::dump(const string &fileName) {
     string fileSave = Env::getWorkingPath() + sep + fileName;
-    map<string, string>::iterator it;
-
     ofstream os(fileSave);
-    for (string data : newData) {
+    if (!os.is_open()) {
+        PLOG_ERROR << "Failed to open dump file: " << fileSave;
+        return;
+    }
+
+    os << "# Untranslated strings - add translations after the '='" << endl;
+    os << "# Format: English Text=Translated Text" << endl;
+    os << endl;
+
+    for (const string &data : newData) {
         PLOG_DEBUG << data;
-        os << data << endl << data << endl;
+        os << data << "=" << data << endl;
     }
     os.flush();
     os.close();
 }
 
-//*******************************
-// Lang::getListOfLanguages
-//*******************************
 vector<string> Lang::getListOfLanguages() {
     vector<string> languages;
-    languages.push_back("English");
-    for (DirEntry entry : DirEntry::diru(Env::getWorkingPath() + sep + "lang")) {
-        // if it's a*.txt file but not English.txt, add it to the list of languages
-        if (DirEntry::matchExtension(entry.name, ".txt") && !Util::compareCaseInsensitive(entry.name, "English.txt")) {
+    languages.push_back(DEFAULT_LANG);
+
+    string langDir = Env::getWorkingPath() + sep + "lang";
+    string defaultFile = DEFAULT_LANG + ".txt";
+    for (const DirEntry &entry : DirEntry::diru(langDir)) {
+        if (DirEntry::matchExtension(entry.name, ".txt") && !Util::compareCaseInsensitive(entry.name, defaultFile)) {
+            // Strip .txt extension
             languages.push_back(entry.name.substr(0, entry.name.size() - 4));
         }
     }
