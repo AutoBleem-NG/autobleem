@@ -15,14 +15,11 @@ jobs:
 
       - name: Install clang-format
         run: |
-          set -e
           wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/llvm-archive-keyring.gpg
           echo "deb [signed-by=/usr/share/keyrings/llvm-archive-keyring.gpg] http://apt.llvm.org/noble/ llvm-toolchain-noble main" | sudo tee /etc/apt/sources.list.d/llvm.list
           sudo apt-get update
           sudo apt-get install -y clang-format-20
-          clang-format-20 --version
           sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-20 100
-          clang-format --version | grep "20\."
 
       - name: Verify clang-format setup
         run: |
