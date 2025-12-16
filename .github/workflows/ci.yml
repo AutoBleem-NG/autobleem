@@ -18,7 +18,7 @@ jobs:
 
       - name: Check C++ formatting
         run: |
-          find src/code -name '*.cpp' -o -name '*.h' | while read file; do
+          find src/code -type f \( -name '*.cpp' -o -name '*.h' \) | while read file; do
             if ! clang-format --dry-run --Werror "$file" 2>/dev/null; then
               echo "::error file=$file::Format check failed. Run: clang-format -i $file"
               exit 1
@@ -84,8 +84,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build ARM binary via Docker
-        run: make arm
+      - name: Build Docker image with ARM toolchain
+        run: make build
+
+      - name: Extract ARM binaries from Docker image
+        run: make extract
 
       - name: Verify ARM binary
         run: |
