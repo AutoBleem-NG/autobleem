@@ -67,27 +67,27 @@ static inline bool SortByCaseInsensitive(const std::string &left, const std::str
 
 // Non-inline string utilities (implemented in string_utils.cpp)
 namespace StringUtils {
-    // String encoding/decoding
-    std::string escape(std::string input);
-    std::string decode(std::string input);
+// String encoding/decoding
+std::string escape(std::string input);
+std::string decode(std::string input);
 
-    // String replacement
-    void replaceAll(std::string &str, const std::string &from, const std::string &to);
+// String replacement
+void replaceAll(std::string &str, const std::string &from, const std::string &to);
 
-    // String validation
-    bool isInteger(const char *input);
-    bool compareCaseInsensitive(std::string first, std::string second);
+// String validation
+bool isInteger(const char *input);
+bool compareCaseInsensitive(std::string first, std::string second);
 
-    // String extraction and manipulation
-    std::string getStringWithinChar(std::string s, char del);
-    void removeCharsFromString(std::string &str, std::string charsToRemove);
-    void removeComment(std::string &str);
-    void cleanPublisherString(std::string &pub);
+// String extraction and manipulation
+std::string getStringWithinChar(std::string s, char del);
+void removeCharsFromString(std::string &str, std::string charsToRemove);
+void removeComment(std::string &str);
+void cleanPublisherString(std::string &pub);
 
-    // String tokenization
-    std::vector<std::string> getTokens(const std::string &str, char delim);
+// String tokenization
+std::vector<std::string> getTokens(const std::string &str, char delim);
 
-    // String parsing and formatting
-    std::string getToken(const std::string &input, char delimiter, int position);
-    std::string formatFloat(float value, int precision);
-}
+// String parsing and formatting
+std::string getToken(const std::string &input, char delimiter, int position);
+std::string formatFloat(float value, int precision);
+} // namespace StringUtils
