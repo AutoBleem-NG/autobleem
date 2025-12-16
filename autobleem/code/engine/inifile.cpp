@@ -8,6 +8,7 @@
 #include "../log.h"
 #include <fstream>
 #include "../util.h"
+#include "../utils/string_utils.h"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ void Inifile::load(const string &_path) {
     }
 
     while (Util::getlineRemoveCR(file, iniLine)) {
-        Util::removeComment(iniLine); // remove '#' to end of line
+        StringUtils::removeComment(iniLine); // remove '#' to end of line
         iniLine = trim(iniLine);
         if (iniLine.length() == 0)
             continue; // blank line
@@ -41,7 +42,7 @@ void Inifile::load(const string &_path) {
             string paramName = iniLine.substr(0, iniLine.find('='));
             string paramVal = iniLine.substr(iniLine.find('=') + 1, string::npos);
             if (paramName == "publisher")
-                Util::cleanPublisherString(paramVal);
+                StringUtils::cleanPublisherString(paramVal);
             values[paramName] = paramVal;
         }
 
@@ -77,7 +78,7 @@ void Inifile::save(const string &_path) {
         string v = value.second;
         k = lcase(k);
         if (k == "publisher")
-            Util::cleanPublisherString(v);
+            StringUtils::cleanPublisherString(v);
         k[0] = toupper(k[0]);
 
         os << k << "=" << v << endl;

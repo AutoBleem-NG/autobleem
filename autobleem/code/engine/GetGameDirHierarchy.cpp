@@ -1,6 +1,6 @@
 #include "GetGameDirHierarchy.h"
-#include "../util.h"
 #include "../DirEntry.h"
+#include "../utils/string_utils.h"
 #include <iostream>
 #include "../log.h"
 #include "scanner.h"
@@ -78,7 +78,7 @@ bool GameSubDir::sameGame(const USBGamePtr &game1, const USBGamePtr &game2) {
     if (game1->serial != "" && game2->serial != "")
         return (game1->serial == game2->serial);
     else
-        return Util::compareCaseInsensitive(game1->title, game2->title);
+        return StringUtils::compareCaseInsensitive(game1->title, game2->title);
 }
 
 //*******************************

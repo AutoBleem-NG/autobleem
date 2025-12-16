@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include "util.h"
 #include "main.h"
 #include <tuple>
 #include "environment.h"

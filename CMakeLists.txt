@@ -230,6 +230,7 @@ add_executable(
         autobleem/code/unecm.c
         autobleem/code/util.cpp
         autobleem/code/util.h
+        autobleem/code/utils/string_utils.cpp
         autobleem/code/ver_migration.cpp
         autobleem/code/ver_migration.h
         autobleem/code/util_time.h
@@ -258,6 +259,7 @@ add_executable(starter
         autobleem/code/engine/memcard.cpp autobleem/code/engine/memcard.h
 		autobleem/code/environment.h
 		autobleem/code/environment.cpp
+		autobleem/code/utils/string_utils.cpp
 		)
 
 target_include_directories(starter PUBLIC

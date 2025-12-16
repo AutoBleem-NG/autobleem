@@ -9,7 +9,7 @@
 #include "DirEntry.h"
 #include "environment.h"
 #include "log.h"
-#include "util.h"
+#include "utils/string_utils.h"
 
 using std::endl;
 using std::ifstream;
@@ -22,7 +22,8 @@ using std::vector;
 string _(const string &input) { return Lang::getInstance()->translate(input); }
 
 string Lang::translate(const string &input) {
-    string trimmed = Util::trim(input);
+    string trimmed = input;
+    trim(trimmed);
     if (trimmed.empty())
         return "";
 
@@ -65,7 +66,7 @@ void Lang::load(const string &languageName) {
             firstLine = false;
         }
 
-        line = Util::trim(line);
+        trim(line);
 
         // Skip empty lines and comments
         if (line.empty() || line[0] == '#')
@@ -74,8 +75,10 @@ void Lang::load(const string &languageName) {
         // Parse key=value format (first '=' is delimiter)
         size_t pos = line.find('=');
         if (pos != string::npos) {
-            string key = Util::trim(line.substr(0, pos));
-            string value = Util::trim(line.substr(pos + 1));
+            string key = line.substr(0, pos);
+            string value = line.substr(pos + 1);
+            trim(key);
+            trim(value);
             if (!key.empty()) {
                 langData[key] = value;
             }
@@ -111,7 +114,7 @@ vector<string> Lang::getListOfLanguages() {
     string langDir = Env::getWorkingPath() + sep + "lang";
     string defaultFile = DEFAULT_LANG + ".txt";
     for (const DirEntry &entry : DirEntry::diru(langDir)) {
-        if (DirEntry::matchExtension(entry.name, ".txt") && !Util::compareCaseInsensitive(entry.name, defaultFile)) {
+        if (DirEntry::matchExtension(entry.name, ".txt") && !StringUtils::compareCaseInsensitive(entry.name, defaultFile)) {
             // Strip .txt extension
             languages.push_back(entry.name.substr(0, entry.name.size() - 4));
         }

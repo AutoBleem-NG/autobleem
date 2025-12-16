@@ -4,7 +4,6 @@
 
 #include "retboot_interceptor.h"
 #include <sys/wait.h>
-#include "../util.h"
 #include "../gui/gui.h"
 #include "../lang.h"
 #include "../engine/memcard.h"
@@ -69,7 +68,7 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
         }
 
         gpu = processor->getValue(path, "gpu3");
-        gpu = Util::trim(gpu);
+        trim(gpu);
         if (gpu.empty()) {
             gpu = PCSX_NEON;
         }
