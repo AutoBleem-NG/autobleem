@@ -15,20 +15,20 @@ FetchContent_MakeAvailable(googletest)
 
 # Include directories from main project
 include_directories(
-    ${CMAKE_SOURCE_DIR}/src/code
-    ${CMAKE_SOURCE_DIR}/src/libs/sqlite
-    ${CMAKE_SOURCE_DIR}/src/libs/nlohmann
-    ${CMAKE_SOURCE_DIR}/src/libs/libchdr/include
-    ${CMAKE_SOURCE_DIR}/src/libs
+    ${CMAKE_SOURCE_DIR}/autobleem/code
+    ${CMAKE_SOURCE_DIR}/autobleem/libs/sqlite
+    ${CMAKE_SOURCE_DIR}/autobleem/libs/nlohmann
+    ${CMAKE_SOURCE_DIR}/autobleem/libs/libchdr/include
+    ${CMAKE_SOURCE_DIR}/autobleem/libs
 )
 
 # CHDReader tests
 add_executable(
     chd_reader_test
     chd_reader_test.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/DirEntry.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/util.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
 )
 
 target_link_libraries(
@@ -47,13 +47,13 @@ gtest_discover_tests(chd_reader_test)
 add_executable(
     database_test
     database_test.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/engine/database.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/engine/serialscanner.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/engine/inifile.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/engine/isodir.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/DirEntry.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/util.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/database.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/serialscanner.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/inifile.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/isodir.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
 )
 
 target_link_libraries(
@@ -71,9 +71,9 @@ gtest_discover_tests(database_test)
 add_executable(
     log_test
     log_test.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/DirEntry.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/util.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
 )
 
 target_link_libraries(
@@ -88,10 +88,10 @@ gtest_discover_tests(log_test)
 add_executable(
     lang_test
     lang_test.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/lang.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/DirEntry.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/util.cpp
-    ${CMAKE_SOURCE_DIR}/src/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/lang.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
 )
 
 target_link_libraries(

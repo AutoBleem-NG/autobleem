@@ -29,7 +29,7 @@ make lint
 
 ### Lint Single File
 ```bash
-clang-tidy -p build_sys src/code/engine/cdreader.h
+clang-tidy -p build_sys autobleem/code/engine/cdreader.h
 ```
 
 ### Lint During Build
@@ -41,7 +41,7 @@ make
 
 ### Auto-Fix Issues
 ```bash
-clang-tidy -p build_sys src/code/engine/cdreader.h --fix
+clang-tidy -p build_sys autobleem/code/engine/cdreader.h --fix
 ```
 ⚠️ Always review changes before committing!
 

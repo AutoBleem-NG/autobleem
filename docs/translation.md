@@ -54,15 +54,15 @@ make lang-validate
 make lang-compare
 
 # Validate a specific file
-python3 src/scripts/lang_tools.py validate src/resources/lang/French.txt
+python3 autobleem/scripts/lang_tools.py validate autobleem/resources/lang/French.txt
 
 # Compare a specific file
-python3 src/scripts/lang_tools.py compare src/resources/lang/French.txt
+python3 autobleem/scripts/lang_tools.py compare autobleem/resources/lang/French.txt
 ```
 
 ## Adding Translations
 
-1. Open the language file in `src/resources/lang/`
+1. Open the language file in `autobleem/resources/lang/`
 2. Find strings with empty values (e.g., `Some Text=`)
 3. Add the translation after the `=`
 4. Save the file

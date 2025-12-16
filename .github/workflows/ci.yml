@@ -18,7 +18,7 @@ jobs:
       - name: Check C++ formatting
         run: |
           echo "=== Running format check ==="
-          find src/code -type f \( -name '*.cpp' -o -name '*.h' \) -exec clang-format --dry-run --Werror {} +
+          find autobleem/code -type f \( -name '*.cpp' -o -name '*.h' \) -exec clang-format --dry-run --Werror {} +
           echo "=== Format check passed ==="
 
   language-check:
@@ -38,7 +38,7 @@ jobs:
       - name: Check translation coverage
         run: |
           echo "Checking translation coverage..."
-          for lang in src/resources/lang/*.txt; do
+          for lang in autobleem/resources/lang/*.txt; do
             if grep -q "Untranslated: [1-9]" "$lang"; then
               echo "::warning file=$lang::Language file has untranslated strings"
             fi

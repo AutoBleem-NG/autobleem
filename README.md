@@ -25,9 +25,9 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 ## Project Structure
 
 ```
-├── cmake/              # CMake toolchain files
 ├── docs/               # Documentation
-└── src/
+└── autobleem/
+    ├── cmake/          # CMake toolchain files
     ├── code/           # Main source code
     │   ├── engine/     # Game scanning, database, metadata
     │   ├── gui/        # GUI framework and screens
