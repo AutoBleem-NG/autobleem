@@ -29,6 +29,7 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
 
 target_link_libraries(
@@ -54,6 +55,7 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
 
 target_link_libraries(
@@ -74,6 +76,7 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
 
 target_link_libraries(
@@ -92,6 +95,7 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
 
 target_link_libraries(
@@ -101,3 +105,18 @@ target_link_libraries(
 )
 
 gtest_discover_tests(lang_test)
+
+# String utilities tests
+add_executable(
+    string_utils_test
+    string_utils_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+)
+
+target_link_libraries(
+    string_utils_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(string_utils_test)

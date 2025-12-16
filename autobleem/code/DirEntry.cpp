@@ -1,12 +1,11 @@
-#include "util.h"
 #include "DirEntry.h"
 #include "main.h"
+#include "utils/string_utils.h"
 
 #include <fstream>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
-#include "main.h"
 #include <dirent.h>
 #include <libgen.h>
 #include <iostream>
@@ -64,7 +63,7 @@ void DirEntry::generateM3UForDirectory(std::string path, std::string basename) {
     DirEntries filesInPath = DirEntry::diru_FilesOnly(path);
     for (const DirEntry &entry : filesInPath) {
         string ext = DirEntry::getFileExtension(entry.name);
-        if (Util::compareCaseInsensitive(ext, "pbp") || Util::compareCaseInsensitive(ext, "cue"))
+        if (StringUtils::compareCaseInsensitive(ext, "pbp") || StringUtils::compareCaseInsensitive(ext, "cue"))
             files.push_back(entry.name);
     }
     string m3uName = DirEntry::fixPath(path) + sep + basename + ".m3u";
@@ -174,7 +173,7 @@ bool DirEntry::fixCommaInDirOrFileName(const std::string &path, DirEntry *entry)
     // fix for comma in dirname
     if (entry->name.find(",") != string::npos) {
         string newName = entry->name;
-        Util::replaceAll(newName, ",", "-");
+        StringUtils::replaceAll(newName, ",", "-");
         DirEntry::renameFile(path + sep + entry->name, path + sep + newName);
         entry->name = newName;
         return true;
@@ -495,7 +494,7 @@ vector<string> DirEntry::cueToBinList(string cueFile) {
         line = cline;
         line = trim(line);
         if (line.substr(0, 4) == "FILE") {
-            binList.push_back(Util::getStringWithinChar(line, '"').c_str());
+            binList.push_back(StringUtils::getStringWithinChar(line, '"').c_str());
         }
     }
 
