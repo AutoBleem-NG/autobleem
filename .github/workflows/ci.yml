@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  format-check:
+    name: Code Formatting
+    runs-on: ubuntu-24.04
+    container:
+      image: xianpengshen/clang-tools:20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check C++ formatting
+        run: |
+          echo "=== Running format check ==="
+          find src/code -type f \( -name '*.cpp' -o -name '*.h' \) -exec clang-format --dry-run --Werror {} +
+          echo "=== Format check passed ==="
+
+  language-check:
+    name: Translation Validation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Validate language files
+        run: make lang-validate
+
+      - name: Check translation coverage
+        run: |
+          echo "Checking translation coverage..."
+          for lang in src/resources/lang/*.txt; do
+            if grep -q "Untranslated: [1-9]" "$lang"; then
+              echo "::warning file=$lang::Language file has untranslated strings"
+            fi
+          done
+
+  build-x86:
+    name: Build (x86_64)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libsqlite3-dev \
+            zlib1g-dev
+
+      - name: Build
+        run: make sys
+
+      - name: Run tests
+        run: |
+          cd build_sys
+          ctest --output-on-failure
+
+  build-arm:
+    name: Build (ARM Docker)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image with ARM toolchain
+        run: make build
+
+      - name: Extract ARM binaries from Docker image
+        run: make extract
+
+      - name: Verify ARM binary
+        run: |
+          if [ ! -f build_arm/autobleem-gui ]; then
+            echo "::error::ARM build failed - binary not found"
+            exit 1
+          fi
+          file build_arm/autobleem-gui | grep -q "ARM" || {
+            echo "::error::Binary is not ARM architecture"
+            exit 1
+          }
