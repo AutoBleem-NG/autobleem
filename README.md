@@ -1,6 +1,13 @@
 # AutoBleem-NG
 
-AutoBleem-NG (Next Generation) is a custom firmware for the PlayStation Classic, building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) improvements.
+[![CI](https://github.com/AutoBleem-NG/AutoBleem/actions/workflows/ci.yml/badge.svg)](https://github.com/AutoBleem-NG/AutoBleem/actions/workflows/ci.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![C++](https://img.shields.io/badge/C%2B%2B-11-00599C?logo=cplusplus)
+![Platform](https://img.shields.io/badge/Platform-PlayStation_Classic-003791?logo=playstation)
+
+AutoBleem-NG (Next Generation) is a custom boot menu and game launcher for the PlayStation Classic.
+
+Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) with continued development, bug fixes, and new features.
 
 ## Features
 
@@ -13,7 +20,7 @@ AutoBleem-NG (Next Generation) is a custom firmware for the PlayStation Classic,
 - Multi-disc game support
 - Docker-based ARM build (no toolchain installation required)
 - 17 languages supported with automated translation tooling
-- Structured logging for easier debugging
+- Structured logging for easier debugging (logs written to `/tmp/autobleem.log`)
 
 ## Project Structure
 
@@ -31,10 +38,6 @@ AutoBleem-NG (Next Generation) is a custom firmware for the PlayStation Classic,
 │   └── scripts/        # Development tools (lang_tools.py)
 └── tests/              # Unit tests
 ```
-
-## Logging
-
-Logs are written to `/tmp/autobleem.log` on the PlayStation Classic.
 
 ## Documentation
 
