@@ -9,19 +9,24 @@ on:
 jobs:
   format-check:
     name: Code Formatting
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
       - name: Install clang-format
-        run: sudo apt-get update && sudo apt-get install -y clang-format
+        run: |
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble main"
+          sudo apt-get update
+          sudo apt-get install -y clang-format-20
+          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-20 100
 
       - name: Check C++ formatting
         run: make format-check
 
   language-check:
     name: Translation Validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -44,7 +49,7 @@ jobs:
 
   build-x86:
     name: Build (x86_64)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -71,7 +76,7 @@ jobs:
 
   build-arm:
     name: Build (ARM Docker)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 

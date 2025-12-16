@@ -1,6 +1,7 @@
 # AutoBleem C++ Code Style
 # Based on LLVM style with minor adjustments
 # Run: make format
+# Requires: clang-format version 20
 
 BasedOnStyle: LLVM
 IndentWidth: 4
