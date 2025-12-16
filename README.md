@@ -27,16 +27,17 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 ```
 ├── cmake/              # CMake toolchain files
 ├── docs/               # Documentation
-├── libs/               # Bundled libraries (sqlite, nlohmann/json, libchdr, plog)
-├── payload/            # PSC payload scripts and structure
-├── src/
-│   ├── code/           # Main source code
-│   │   ├── engine/     # Game scanning, database, metadata
-│   │   ├── gui/        # GUI framework and screens
-│   │   └── launcher/   # Game launcher and emulator integration
-│   ├── resources/      # Assets (images, fonts, language files)
-│   └── scripts/        # Development tools (lang_tools.py)
-└── tests/              # Unit tests
+└── src/
+    ├── code/           # Main source code
+    │   ├── engine/     # Game scanning, database, metadata
+    │   ├── gui/        # GUI framework and screens
+    │   └── launcher/   # Game launcher and emulator integration
+    ├── db/             # Cover art databases
+    ├── libs/           # Bundled libraries (sqlite, nlohmann/json, libchdr, plog)
+    ├── payload/        # PSC payload scripts and structure
+    ├── resources/      # Assets (images, fonts, language files)
+    ├── scripts/        # Development tools (lang_tools.py)
+    └── tests/          # Unit tests
 ```
 
 ## Documentation

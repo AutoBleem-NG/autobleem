@@ -79,15 +79,15 @@ find_package(Threads REQUIRED
              SDL2 REQUIRED)
 
 # Global include directories for bundled libraries
-include_directories(${CMAKE_SOURCE_DIR}/libs)
+include_directories(${CMAKE_SOURCE_DIR}/src/libs)
 
 # Bundled sqlite3 library
-add_library(sqlite3 STATIC libs/sqlite/sqlite3ab.c)
+add_library(sqlite3 STATIC src/libs/sqlite/sqlite3ab.c)
 
 # Bundled libchdr for CHD file support (local builds only)
 if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
     set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-    add_subdirectory(libs/libchdr EXCLUDE_FROM_ALL)
+    add_subdirectory(src/libs/libchdr EXCLUDE_FROM_ALL)
 endif()
 
 # Unit tests (local builds only)
@@ -96,7 +96,7 @@ if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
     option(BUILD_TESTS "Build unit tests" ON)
     if (BUILD_TESTS)
         enable_testing()
-        add_subdirectory(tests)
+        add_subdirectory(src/tests)
     endif()
 endif()
 
@@ -242,9 +242,9 @@ add_executable(
 		src/code/gui/menus/gui_gameEditorMenu_RA.cpp)
 
 target_include_directories(autobleem-gui PUBLIC
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/sqlite>
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/nlohmann>
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/libchdr/include>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/libs/sqlite>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/libs/nlohmann>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/libs/libchdr/include>
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs>
 		)
 
@@ -261,7 +261,7 @@ add_executable(starter
 		)
 
 target_include_directories(starter PUBLIC
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/libs>
 		)
 
 # Link libraries for autobleem-gui
@@ -285,7 +285,7 @@ if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
              ${CMAKE_DL_LIBS}
     )
 else()
-    # Link against bundled libchdr (chdr-static target from libs/libchdr)
+    # Link against bundled libchdr (chdr-static target from src/libs/libchdr)
     # The chdr-static target already links its internal deps (lzma, zlib, zstd)
     target_link_libraries(autobleem-gui
              Threads::Threads

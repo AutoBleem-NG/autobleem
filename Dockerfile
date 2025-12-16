@@ -72,8 +72,8 @@ COPY . /build/
 #   - libchdr-static.a: Main CHD reading library
 #   - libz.a, liblzma.a, libzstd.a: Compression libraries (required by libchdr)
 #   - include/libchdr/: Header files
-RUN mkdir -p /build/libs/libchdr/build && \
-    cd /build/libs/libchdr/build && \
+RUN mkdir -p /build/src/libs/libchdr/build && \
+    cd /build/src/libs/libchdr/build && \
     cmake .. \
         -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-7 \
         -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++-7 \

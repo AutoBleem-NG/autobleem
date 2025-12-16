@@ -35,10 +35,10 @@ docs/
 .github/
 
 # Tests (x86_64 only, not needed for ARM build)
-tests/
+src/tests/
 
 # Database files (regenerated during build)
-db/
+src/db/
 
 # Payload structure (USB deployment files, not needed for build)
-payload/
+src/payload/
