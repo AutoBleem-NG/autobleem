@@ -7,6 +7,7 @@
 #include "isodir.h"
 #include <sstream>
 #include "../util.h"
+#include "../system/process_utils.h"
 #include <fstream>
 #include <iostream>
 #include "../log.h"
@@ -192,8 +193,8 @@ string SerialScanner::workarounds(ImageType imageType, string path, string first
 // SerialScanner::serialByMd5
 //*******************************
 string SerialScanner::serialByMd5(string scanFile) {
-    string head = Util::execUnixCommand(("head -c 1M \"" + scanFile + "\" | md5sum | awk '{print $1}'").c_str());
-    string tail = Util::execUnixCommand(("tail -c 1M \"" + scanFile + "\" | md5sum | awk '{print $1}'").c_str());
+    string head = System::executeCommand(("head -c 1M \"" + scanFile + "\" | md5sum | awk '{print $1}'").c_str());
+    string tail = System::executeCommand(("tail -c 1M \"" + scanFile + "\" | md5sum | awk '{print $1}'").c_str());
 
     return head + tail;
 }

@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <iostream>
 #include "../log.h"
+#include "../system/process_utils.h"
 #include <iomanip>
 #include <json.h>
 #include "../nlohmann/fifo_map.h"
@@ -533,13 +534,7 @@ void Gui::menuSelection() {
                     if (e.cbutton.button == SDL_BTN_R2) {
                         Mix_PlayChannel(-1, cursor, 0);
                         drawText(_("POWERING OFF... PLEASE WAIT"));
-#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
-                        exit(0);
-#else
-                        Util::execUnixCommand("shutdown -h now");
-                        sync();
-                        exit(1);
-#endif
+                        System::shutdown();
                     };
                 }
 

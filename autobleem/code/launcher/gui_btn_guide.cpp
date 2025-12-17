@@ -11,6 +11,7 @@
 #include "../gui/gui.h"
 #include "../lang.h"
 #include "../engine/scanner.h"
+#include "../system/process_utils.h"
 
 using namespace std;
 
@@ -72,7 +73,7 @@ void GuiBtnGuide::loop() {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
-                    Util::powerOff();
+                    System::shutdown();
                 }
             }
             // this is for pc Only

@@ -3,7 +3,7 @@
 //
 
 #include "padmapper.h"
-#include "../util.h"
+#include "../system/process_utils.h"
 #include <iostream>
 #include "../log.h"
 #include "../DirEntry.h"
@@ -51,7 +51,7 @@ void PadMapper::handlePowerBtn(SDL_Event *event) {
         PLOG_DEBUG << event->key.keysym.scancode << " " << event->key.keysym.sym;
         if (event->key.keysym.scancode == SDL_SCANCODE_SLEEP || event->key.keysym.sym == SDLK_ESCAPE) {
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
-            Util::powerOff();
+            System::shutdown();
         }
     }
 }
