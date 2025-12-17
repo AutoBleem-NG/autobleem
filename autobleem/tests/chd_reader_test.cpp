@@ -7,9 +7,11 @@
 // - Error handling
 // - Memory management
 //
-// Test files required in tests/test_data/:
+// Test files required in autobleem/tests/test_data/:
 // - test.chd - A small PlayStation CHD disc image
-// - test.iso - A small ISO9660 disc image
+// - test.bin - A small BIN disc image
+//
+// The TEST_DATA_DIR macro is defined by CMake at compile time.
 
 #include <gtest/gtest.h>
 #include "engine/cd_reader.h"
@@ -18,13 +20,13 @@
 
 // Test fixture for CHDReader tests
 class CHDReaderTest : public ::testing::Test {
-protected:
+  protected:
     CHDReader reader;
     std::string testDataDir;
 
     void SetUp() override {
-        // Path relative to build_sys/tests/ directory (where CTest runs)
-        testDataDir = "../../tests/test_data/";
+        // TEST_DATA_DIR is defined by CMake at compile time
+        testDataDir = TEST_DATA_DIR;
     }
 
     void TearDown() override {
@@ -33,7 +35,7 @@ protected:
         }
     }
 
-    bool hasTestFile(const std::string& filename) {
+    bool hasTestFile(const std::string &filename) {
         std::ifstream f(testDataDir + filename);
         return f.good();
     }
@@ -41,13 +43,13 @@ protected:
 
 // Test fixture for CDReader (ISO/BIN) tests
 class CDReaderTest : public ::testing::Test {
-protected:
+  protected:
     CDReader reader;
     std::string testDataDir;
 
     void SetUp() override {
-        // Path relative to build_sys/tests/ directory (where CTest runs)
-        testDataDir = "../../tests/test_data/";
+        // TEST_DATA_DIR is defined by CMake at compile time
+        testDataDir = TEST_DATA_DIR;
     }
 
     void TearDown() override {
@@ -56,7 +58,7 @@ protected:
         }
     }
 
-    bool hasTestFile(const std::string& filename) {
+    bool hasTestFile(const std::string &filename) {
         std::ifstream f(testDataDir + filename);
         return f.good();
     }
@@ -355,8 +357,8 @@ TEST_F(CHDReaderTest, ForwardAndReverse) {
 //=============================================================================
 
 TEST(CHDvsISOTest, BothFormatsReadSameData) {
-    // Path relative to build_sys/tests/ directory (where CTest runs)
-    std::string testDataDir = "../../tests/test_data/";
+    // TEST_DATA_DIR is defined by CMake at compile time
+    std::string testDataDir = TEST_DATA_DIR;
 
     // Check if both test files exist
     std::ifstream chd_check(testDataDir + "test.chd");

@@ -31,6 +31,10 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
 
+target_compile_definitions(chd_reader_test PRIVATE
+    TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test_data/"
+)
+
 target_link_libraries(
     chd_reader_test
     GTest::gtest_main  # Includes main() function
