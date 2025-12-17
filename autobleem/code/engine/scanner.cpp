@@ -3,16 +3,16 @@
 //
 
 #include "scanner.h"
-#include "ecmhelper.h"
-#include "cfgprocessor.h"
-#include "serialscanner.h"
+#include "ecm_helper.h"
+#include "cfg_processor.h"
+#include "serial_scanner.h"
 #include "../lang.h"
 #include "../log.h"
 #include "../utils/string_utils.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
-#include "GetGameDirHierarchy.h"
+#include "get_game_dir_hierarchy.h"
 #include "../environment.h"
 
 using namespace std;

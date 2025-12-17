@@ -1,0 +1,20 @@
+#pragma once
+
+#include "gui_string_menu.h"
+#include <vector>
+#include <string>
+#include "../../lang.h"
+
+//*******************************
+// class GuiGameDirMenu
+//*******************************
+class GuiGameDirMenu : public GuiStringMenu {
+  public:
+    explicit GuiGameDirMenu(SDL_Shared<SDL_Renderer> _renderer) : GuiStringMenu(_renderer) {}
+
+    std::string getTitle() override { return "-=" + _("Select PS1 Game Category") + "=-"; }
+    std::string getStatusLine() override { return GuiStringMenu::getStatusLine(); }
+
+    void doEnter() { doCross_Pressed(); }
+    void doEscape() { doCircle_Pressed(); }
+};

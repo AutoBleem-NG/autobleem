@@ -3,17 +3,17 @@
 //
 #pragma once
 
-#include "gui_NotificationLine.h"
+#include "gui_notification_line.h"
 #include "../gui/gui_screen.h"
 #include "ps_obj.h"
 #include "ps_settings_back.h"
-#include "ps_zoom_btn.h"
+#include "ps_zoom_button.h"
 #include "ps_meta.h"
 #include "ps_carousel.h"
-#include "ps_move_bnt.h"
+#include "ps_move_button.h"
 #include "ps_menu.h"
-#include "ps_centerlabel.h"
-#include "ps_stateselector.h"
+#include "ps_center_label.h"
+#include "ps_state_selector.h"
 #include "../main.h"
 #include <vector>
 #include <memory>

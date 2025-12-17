@@ -8,8 +8,8 @@
 #include "../utils/time_utils.h"
 #include "../gui/gui.h"
 #include "../lang.h"
-#include "../engine/memcard.h"
-#include "../engine/cfgprocessor.h"
+#include "../engine/mem_card.h"
+#include "../engine/cfg_processor.h"
 #include <fstream>
 #include <iostream>
 #include "../log.h"

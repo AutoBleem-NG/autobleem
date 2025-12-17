@@ -6,7 +6,7 @@
 
 #include <fstream>
 
-#include "DirEntry.h"
+#include "dir_entry.h"
 #include "environment.h"
 #include "log.h"
 #include "utils/string_utils.h"

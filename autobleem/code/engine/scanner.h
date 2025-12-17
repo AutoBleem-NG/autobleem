@@ -8,9 +8,9 @@
 #include "database.h"
 #include "../gui/gui.h"
 #include <map>
-#include "../DirEntry.h"
+#include "../dir_entry.h"
 #include <algorithm>
-#include "GetGameDirHierarchy.h"
+#include "get_game_dir_hierarchy.h"
 
 //******************
 // Scanner

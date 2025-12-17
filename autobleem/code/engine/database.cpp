@@ -1,11 +1,11 @@
 #include "database.h"
-#include "inifile.h"
+#include "ini_file.h"
 #include "../utils/string_utils.h"
 #include <iostream>
 #include "../log.h"
 #include <SDL2/SDL_ttf.h>
-#include "serialscanner.h"
-#include "../DirEntry.h"
+#include "serial_scanner.h"
+#include "../dir_entry.h"
 #include "../environment.h"
 
 using namespace std;

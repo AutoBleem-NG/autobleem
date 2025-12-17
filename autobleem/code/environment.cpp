@@ -1,5 +1,5 @@
 #include "environment.h"
-#include "DirEntry.h"
+#include "dir_entry.h"
 #include "log.h"
 #include <dirent.h>
 #include <unistd.h>

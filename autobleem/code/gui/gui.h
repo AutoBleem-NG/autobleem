@@ -13,14 +13,14 @@
 #include <memory>
 #include "../engine/database.h"
 #include "../engine/config.h"
-#include "../engine/coverdb.h"
+#include "../engine/cover_db.h"
 #include "../engine/scanner.h"
-#include "../engine/padmapper.h"
+#include "../engine/pad_mapper.h"
 #include "gui_sdl_wrapper.h"
 // #include "gui_font_wrapper.h"
 #include "gui_font.h"
 #include "../environment.h"
-#include "../LightgunGames.h"
+#include "../lightgun_games.h"
 
 enum MenuOption { MENU_OPTION_SCAN = 1, MENU_OPTION_RUN, MENU_OPTION_SONY, MENU_OPTION_RETRO, MENU_OPTION_START };
 

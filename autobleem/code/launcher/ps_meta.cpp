@@ -8,10 +8,10 @@
 #include "../utils/time_utils.h"
 #include <SDL2/SDL_image.h>
 #include "../lang.h"
-#include "../engine/inifile.h"
-#include "../DirEntry.h"
+#include "../engine/ini_file.h"
+#include "../dir_entry.h"
 #include "../environment.h"
-#include "../LightgunGames.h"
+#include "../lightgun_games.h"
 
 using namespace std;
 

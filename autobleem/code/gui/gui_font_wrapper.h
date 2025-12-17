@@ -6,7 +6,7 @@
 #include <memory>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include "SDL_FontCache.h"
+#include "sdl_font_cache.h"
 
 //********************
 // TTF_Font_Shared

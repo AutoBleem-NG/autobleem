@@ -6,7 +6,7 @@
 #include "ver_migration.h"
 #include "utils/string_utils.h"
 #include "engine/config.h"
-#include "engine/inifile.h"
+#include "engine/ini_file.h"
 #include <fstream>
 #include <iostream>
 #include "log.h"

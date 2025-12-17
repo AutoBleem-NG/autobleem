@@ -3,11 +3,11 @@
 //
 #include "game.h"
 #include "metadata.h"
-#include "isodir.h"
-#include "inifile.h"
-#include "cfgprocessor.h"
+#include "iso_dir.h"
+#include "ini_file.h"
+#include "cfg_processor.h"
 #include "../gui/gui.h"
-#include "serialscanner.h"
+#include "serial_scanner.h"
 #include "../utils/string_utils.h"
 #include <sstream>
 #include <fstream>

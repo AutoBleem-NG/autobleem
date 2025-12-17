@@ -11,8 +11,8 @@
 #include <algorithm>
 #include "../utils/string_utils.h"
 #include <json.h>
-#include "../engine/cfgprocessor.h"
-#include "../DirEntry.h"
+#include "../engine/cfg_processor.h"
+#include "../dir_entry.h"
 #include "../environment.h"
 
 using namespace nlohmann;

@@ -102,40 +102,40 @@ endif()
 
 add_executable(
         autobleem-gui
-        autobleem/code/DebugTimer.cpp
-        autobleem/code/DebugTimer.h
-        autobleem/code/DirEntry.cpp
-        autobleem/code/DirEntry.h
-        autobleem/code/engine/cardedit.cpp
-        autobleem/code/engine/cardedit.h
-        autobleem/code/engine/cfgprocessor.cpp
-        autobleem/code/engine/cfgprocessor.h
+        autobleem/code/debug_timer.cpp
+        autobleem/code/debug_timer.h
+        autobleem/code/dir_entry.cpp
+        autobleem/code/dir_entry.h
+        autobleem/code/engine/card_edit.cpp
+        autobleem/code/engine/card_edit.h
+        autobleem/code/engine/cfg_processor.cpp
+        autobleem/code/engine/cfg_processor.h
         autobleem/code/engine/config.cpp
         autobleem/code/engine/config.h
-        autobleem/code/engine/coverdb.cpp
-        autobleem/code/engine/coverdb.h
+        autobleem/code/engine/cover_db.cpp
+        autobleem/code/engine/cover_db.h
         autobleem/code/engine/database.cpp
         autobleem/code/engine/database.h
-        autobleem/code/engine/ecmhelper.cpp
-        autobleem/code/engine/ecmhelper.h
+        autobleem/code/engine/ecm_helper.cpp
+        autobleem/code/engine/ecm_helper.h
         autobleem/code/engine/game.cpp
         autobleem/code/engine/game.h
-        autobleem/code/engine/GetGameDirHierarchy.cpp
-        autobleem/code/engine/GetGameDirHierarchy.h
-        autobleem/code/engine/inifile.cpp
-        autobleem/code/engine/inifile.h
-        autobleem/code/engine/isodir.cpp
-        autobleem/code/engine/isodir.h
-        autobleem/code/engine/memcard.cpp
-        autobleem/code/engine/memcard.h
+        autobleem/code/engine/get_game_dir_hierarchy.cpp
+        autobleem/code/engine/get_game_dir_hierarchy.h
+        autobleem/code/engine/ini_file.cpp
+        autobleem/code/engine/ini_file.h
+        autobleem/code/engine/iso_dir.cpp
+        autobleem/code/engine/iso_dir.h
+        autobleem/code/engine/mem_card.cpp
+        autobleem/code/engine/mem_card.h
         autobleem/code/engine/metadata.cpp
         autobleem/code/engine/metadata.h
-        autobleem/code/engine/padmapper.cpp
-        autobleem/code/engine/padmapper.h
+        autobleem/code/engine/pad_mapper.cpp
+        autobleem/code/engine/pad_mapper.h
         autobleem/code/engine/scanner.cpp
         autobleem/code/engine/scanner.h
-        autobleem/code/engine/serialscanner.cpp
-        autobleem/code/engine/serialscanner.h
+        autobleem/code/engine/serial_scanner.cpp
+        autobleem/code/engine/serial_scanner.h
         autobleem/code/environment.cpp
         autobleem/code/environment.h
         autobleem/code/gui/gui.cpp
@@ -149,37 +149,37 @@ add_executable(
         autobleem/code/gui/gui_font_wrapper.h
         autobleem/code/gui/gui_keyboard.cpp
         autobleem/code/gui/gui_keyboard.h
-        autobleem/code/gui/gui_padTest.cpp
-        autobleem/code/gui/gui_padTest.h
+        autobleem/code/gui/gui_pad_test.cpp
+        autobleem/code/gui/gui_pad_test.h
         autobleem/code/gui/gui_screen.cpp
         autobleem/code/gui/gui_screen.h
-        autobleem/code/gui/gui_scrollWin.cpp
-        autobleem/code/gui/gui_scrollWin.h
+        autobleem/code/gui/gui_scroll_win.cpp
+        autobleem/code/gui/gui_scroll_win.h
         autobleem/code/gui/gui_sdl_wrapper.cpp
         autobleem/code/gui/gui_sdl_wrapper.h
-        autobleem/code/gui/gui_selectmemcard.cpp
-        autobleem/code/gui/gui_selectmemcard.h
+        autobleem/code/gui/gui_select_mem_card.cpp
+        autobleem/code/gui/gui_select_mem_card.h
         autobleem/code/gui/gui_splash.cpp
         autobleem/code/gui/gui_splash.h
-		autobleem/code/gui/SDL_FontCache.h
-		autobleem/code/gui/SDL_FontCache.c
-        autobleem/code/gui/menus/gui_gameDirMenu.h
-        autobleem/code/gui/menus/gui_gameEditorMenu.cpp
-        autobleem/code/gui/menus/gui_gameEditorMenu.h
-        autobleem/code/gui/menus/gui_gameManagerMenu.cpp
-        autobleem/code/gui/menus/gui_gameManagerMenu.h
-        autobleem/code/gui/menus/gui_memCardsMenu.cpp
-        autobleem/code/gui/menus/gui_memCardsMenu.h
-        autobleem/code/gui/menus/gui_menuBase.h
-        autobleem/code/gui/menus/gui_optionsMenu.cpp
-        autobleem/code/gui/menus/gui_optionsMenu.h
-        autobleem/code/gui/menus/gui_optionsMenuBase.cpp
-        autobleem/code/gui/menus/gui_optionsMenuBase.h
-        autobleem/code/gui/menus/gui_playlistsMenu.h
-        autobleem/code/gui/menus/gui_stringMenu.h
-        autobleem/code/gui/menus/gui_twoColumnStringMenu.h
-        autobleem/code/gui/starfx.cpp
-        autobleem/code/gui/starfx.h
+		autobleem/code/gui/sdl_font_cache.h
+		autobleem/code/gui/sdl_font_cache.c
+        autobleem/code/gui/menus/gui_game_dir_menu.h
+        autobleem/code/gui/menus/gui_game_editor_menu.cpp
+        autobleem/code/gui/menus/gui_game_editor_menu.h
+        autobleem/code/gui/menus/gui_game_manager_menu.cpp
+        autobleem/code/gui/menus/gui_game_manager_menu.h
+        autobleem/code/gui/menus/gui_mem_cards_menu.cpp
+        autobleem/code/gui/menus/gui_mem_cards_menu.h
+        autobleem/code/gui/menus/gui_menu_base.h
+        autobleem/code/gui/menus/gui_options_menu.cpp
+        autobleem/code/gui/menus/gui_options_menu.h
+        autobleem/code/gui/menus/gui_options_menu_base.cpp
+        autobleem/code/gui/menus/gui_options_menu_base.h
+        autobleem/code/gui/menus/gui_playlists_menu.h
+        autobleem/code/gui/menus/gui_string_menu.h
+        autobleem/code/gui/menus/gui_two_column_string_menu.h
+        autobleem/code/gui/star_fx.cpp
+        autobleem/code/gui/star_fx.h
         autobleem/code/lang.cpp
         autobleem/code/lang.h
         autobleem/code/launcher/emu_interceptor.cpp
@@ -191,36 +191,36 @@ add_executable(
         autobleem/code/launcher/gui_launcher.cpp
         autobleem/code/launcher/gui_launcher.h
         autobleem/code/launcher/gui_launcher_loop.cpp
-        autobleem/code/launcher/gui_mc_manager.cpp
-        autobleem/code/launcher/gui_mc_manager.h
-        autobleem/code/launcher/gui_NotificationLine.cpp
-        autobleem/code/launcher/gui_NotificationLine.h
+        autobleem/code/launcher/gui_mem_card_manager.cpp
+        autobleem/code/launcher/gui_mem_card_manager.h
+        autobleem/code/launcher/gui_notification_line.cpp
+        autobleem/code/launcher/gui_notification_line.h
         autobleem/code/launcher/launch_interceptor.cpp
         autobleem/code/launcher/launch_interceptor.h
         autobleem/code/launcher/pcsx_interceptor.cpp
         autobleem/code/launcher/pcsx_interceptor.h
         autobleem/code/launcher/ps_carousel.cpp
         autobleem/code/launcher/ps_carousel.h
-        autobleem/code/launcher/ps_centerlabel.cpp
-        autobleem/code/launcher/ps_centerlabel.h
+        autobleem/code/launcher/ps_center_label.cpp
+        autobleem/code/launcher/ps_center_label.h
         autobleem/code/launcher/ps_game.cpp
         autobleem/code/launcher/ps_game.h
         autobleem/code/launcher/ps_menu.cpp
         autobleem/code/launcher/ps_menu.h
         autobleem/code/launcher/ps_meta.cpp
         autobleem/code/launcher/ps_meta.h
-        autobleem/code/launcher/ps_move_bnt.cpp
-        autobleem/code/launcher/ps_move_bnt.h
+        autobleem/code/launcher/ps_move_button.cpp
+        autobleem/code/launcher/ps_move_button.h
         autobleem/code/launcher/ps_obj.cpp
         autobleem/code/launcher/ps_obj.h
         autobleem/code/launcher/ps_settings_back.cpp
         autobleem/code/launcher/ps_settings_back.h
-        autobleem/code/launcher/ps_stateselector.cpp
-        autobleem/code/launcher/ps_stateselector.h
+        autobleem/code/launcher/ps_state_selector.cpp
+        autobleem/code/launcher/ps_state_selector.h
         autobleem/code/launcher/ps_static.cpp
         autobleem/code/launcher/ps_static.h
-        autobleem/code/launcher/ps_zoom_btn.cpp
-        autobleem/code/launcher/ps_zoom_btn.h
+        autobleem/code/launcher/ps_zoom_button.cpp
+        autobleem/code/launcher/ps_zoom_button.h
         autobleem/code/launcher/ra_integrator.cpp
         autobleem/code/launcher/ra_integrator.h
         autobleem/code/launcher/retboot_interceptor.cpp
@@ -239,10 +239,10 @@ add_executable(
         autobleem/code/ver_migration.h
 		autobleem/code/gui/abl.c
 		autobleem/code/gui/abl.h
-		autobleem/code/LightgunGames.h
-		autobleem/code/LightgunGames.cpp
-		autobleem/code/gui/menus/gui_gameEditorMenu_RA.h
-		autobleem/code/gui/menus/gui_gameEditorMenu_RA.cpp)
+		autobleem/code/lightgun_games.h
+		autobleem/code/lightgun_games.cpp
+		autobleem/code/gui/menus/gui_game_editor_menu_ra.h
+		autobleem/code/gui/menus/gui_game_editor_menu_ra.cpp)
 
 target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/autobleem/libs/sqlite>
@@ -253,10 +253,10 @@ target_include_directories(autobleem-gui PUBLIC
 
 add_executable(starter
 		autobleem/code/starter.cpp
-		autobleem/code/DirEntry.h
-		autobleem/code/DirEntry.cpp
-        autobleem/code/engine/inifile.cpp
-        autobleem/code/engine/memcard.cpp autobleem/code/engine/memcard.h
+		autobleem/code/dir_entry.h
+		autobleem/code/dir_entry.cpp
+        autobleem/code/engine/ini_file.cpp
+        autobleem/code/engine/mem_card.cpp autobleem/code/engine/mem_card.h
 		autobleem/code/environment.h
 		autobleem/code/environment.cpp
 		autobleem/code/utils/file_utils.cpp

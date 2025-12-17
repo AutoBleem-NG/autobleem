@@ -3,7 +3,7 @@
 //
 
 #include "ps_game.h"
-#include "../engine/inifile.h"
+#include "../engine/ini_file.h"
 #include "../gui/gui.h"
 #include <fstream>
 #include <iostream>

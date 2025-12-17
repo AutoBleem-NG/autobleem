@@ -2,9 +2,9 @@
 #include <string>
 #include <unistd.h>
 #include <sys/wait.h>
-#include "DirEntry.h"
-#include "engine/inifile.h"
-#include "engine/memcard.h"
+#include "dir_entry.h"
+#include "engine/ini_file.h"
+#include "engine/mem_card.h"
 
 using namespace std;
 

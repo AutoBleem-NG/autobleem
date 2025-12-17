@@ -3,10 +3,10 @@
 //
 
 #include "config.h"
-#include "../DirEntry.h"
+#include "../dir_entry.h"
 #include "../environment.h"
 #include "../lang.h"
-#include "../launcher/gui_NotificationLine.h"
+#include "../launcher/gui_notification_line.h"
 
 //*******************************
 // Config::Config()

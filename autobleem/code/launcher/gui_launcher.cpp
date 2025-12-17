@@ -5,12 +5,12 @@
 #include <SDL2/SDL.h>
 #include "gui_launcher.h"
 #include "../gui/gui.h"
-#include "../gui/menus/gui_optionsMenu.h"
+#include "../gui/menus/gui_options_menu.h"
 #include "../gui/gui_confirm.h"
 #include <algorithm>
 #include <iostream>
 #include "../log.h"
-#include "gui_mc_manager.h"
+#include "gui_mem_card_manager.h"
 #include <cassert>
 
 using namespace std;

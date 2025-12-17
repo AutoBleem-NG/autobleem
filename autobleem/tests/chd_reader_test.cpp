@@ -12,7 +12,7 @@
 // - test.iso - A small ISO9660 disc image
 
 #include <gtest/gtest.h>
-#include "engine/cdreader.h"
+#include "engine/cd_reader.h"
 #include <fstream>
 #include <cstring>
 
