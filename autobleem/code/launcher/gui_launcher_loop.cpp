@@ -13,6 +13,7 @@
 #include "gui_mc_manager.h"
 #include "../gui/menus/gui_gameDirMenu.h"
 #include "gui_app_start.h"
+#include "../system/process_utils.h"
 
 using namespace std;
 
@@ -84,7 +85,7 @@ void GuiLauncher::loop() {
             case SDL_KEYDOWN:
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
-                    Util::powerOff();
+                    System::shutdown();
                 }
                 break;
             case SDL_CONTROLLERHATMOTIONDOWN: /* Handle Joystick Motion */
@@ -264,7 +265,7 @@ void GuiLauncher::loop_joyButton_Pressed() {
         if (e.cbutton.button == SDL_BTN_R2) {
             Mix_PlayChannel(-1, gui->cursor, 0);
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
-            Util::powerOff();
+            System::shutdown();
             return;
         }
     }

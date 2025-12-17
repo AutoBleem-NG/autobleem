@@ -12,6 +12,7 @@
 #include "gui.h"
 #include "../lang.h"
 #include "../engine/scanner.h"
+#include "../system/process_utils.h"
 #include <iostream>
 
 using namespace std;
@@ -154,7 +155,7 @@ bool GuiKeyboard::handlePowerShutdownAndQuit(SDL_Event &e) {
     if (e.type == SDL_KEYDOWN) {
         if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
             gui->drawText(_("POWERING OFF... PLEASE WAIT"));
-            Util::powerOff();
+            System::shutdown();
             return true; // but it will never get here
         }
     } else if (e.type == SDL_QUIT) { // this is for pc Only

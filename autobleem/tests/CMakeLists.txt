@@ -57,6 +57,7 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/system/process_utils.cpp
 )
 
 target_link_libraries(
@@ -151,3 +152,35 @@ target_link_libraries(
 )
 
 gtest_discover_tests(file_utils_test)
+
+# Process utilities tests
+add_executable(
+    process_utils_test
+    process_utils_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/system/process_utils.cpp
+)
+
+target_link_libraries(
+    process_utils_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(process_utils_test)
+
+# Storage info tests
+add_executable(
+    storage_info_test
+    storage_info_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/system/storage_info.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/system/process_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+)
+
+target_link_libraries(
+    storage_info_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(storage_info_test)

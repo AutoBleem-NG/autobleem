@@ -232,6 +232,7 @@ add_executable(
         autobleem/code/util.h
         autobleem/code/utils/file_utils.cpp
         autobleem/code/utils/string_utils.cpp
+        autobleem/code/system/process_utils.cpp
         autobleem/code/ver_migration.cpp
         autobleem/code/ver_migration.h
         autobleem/code/util_time.h

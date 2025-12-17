@@ -14,6 +14,7 @@
 #include "gui_confirm.h"
 #include "gui_keyboard.h"
 #include "../lang.h"
+#include "../system/process_utils.h"
 using namespace std;
 
 //*******************************
@@ -110,7 +111,7 @@ void GuiSelectMemcard::loop() {
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP || e.key.keysym.sym == SDLK_ESCAPE) {
                     gui->drawText(_("POWERING OFF... PLEASE WAIT"));
-                    Util::powerOff();
+                    System::shutdown();
                 }
             }
             // this is for pc Only
