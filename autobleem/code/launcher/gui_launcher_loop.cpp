@@ -14,6 +14,7 @@
 #include "../gui/menus/gui_gameDirMenu.h"
 #include "gui_app_start.h"
 #include "../system/process_utils.h"
+#include "../utils/random_utils.h"
 
 using namespace std;
 
@@ -615,7 +616,7 @@ void GuiLauncher::loop_startButton_Pressed() {
             return;
         }
 
-        selGameIndex = Util::getRandomIndex(carouselGames.size());
+        selGameIndex = RandomUtils::RandomGenerator::getInstance().generateInt(0, carouselGames.size() - 1);
         if (selGameIndexInCarouselGamesIsValid()) {
             Mix_PlayChannel(-1, gui->cursor, 0);
             setInitialPositions(selGameIndex);

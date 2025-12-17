@@ -231,7 +231,9 @@ add_executable(
         autobleem/code/util.cpp
         autobleem/code/util.h
         autobleem/code/utils/file_utils.cpp
+        autobleem/code/utils/random_utils.cpp
         autobleem/code/utils/string_utils.cpp
+        autobleem/code/io/binary_reader.cpp
         autobleem/code/system/process_utils.cpp
         autobleem/code/ver_migration.cpp
         autobleem/code/ver_migration.h
