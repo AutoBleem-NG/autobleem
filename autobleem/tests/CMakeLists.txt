@@ -55,6 +55,7 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
 
@@ -120,3 +121,33 @@ target_link_libraries(
 )
 
 gtest_discover_tests(string_utils_test)
+
+# Path utilities tests
+add_executable(
+    path_utils_test
+    path_utils_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
+)
+
+target_link_libraries(
+    path_utils_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(path_utils_test)
+
+# File utilities tests
+add_executable(
+    file_utils_test
+    file_utils_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+)
+
+target_link_libraries(
+    file_utils_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(file_utils_test)
