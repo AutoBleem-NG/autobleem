@@ -7,7 +7,7 @@
 #include <iostream>
 #include "../log.h"
 #include <fstream>
-#include "../util.h"
+#include "../utils/file_utils.h"
 #include "../utils/string_utils.h"
 
 using namespace std;
@@ -27,7 +27,7 @@ void Inifile::load(const string &_path) {
         return;
     }
 
-    while (Util::getlineRemoveCR(file, iniLine)) {
+    while (FileUtils::getlineRemoveCR(file, iniLine)) {
         StringUtils::removeComment(iniLine); // remove '#' to end of line
         iniLine = trim(iniLine);
         if (iniLine.length() == 0)

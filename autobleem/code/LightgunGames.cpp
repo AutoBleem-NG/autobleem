@@ -3,8 +3,8 @@
 //
 
 #include "LightgunGames.h"
-#include "util.h"
 #include "environment.h"
+#include "utils/file_utils.h"
 #include <algorithm>
 #include "DirEntry.h"
 #include "engine/database.h"
@@ -22,7 +22,7 @@ std::vector<std::string> LightgunGames::lightgunGamePaths;
 //********************
 LightgunGames::LightgunGames() {
     filename = Environment::getWorkingPath() + sep + string("lightguns.txt");
-    lightgunGamePaths = Util::ReadTextFileAsAStringArray(filename, true);
+    lightgunGamePaths = FileUtils::readTextFile(filename, true);
 
     // there shouldn't be any blank lines unless someone hand edited it.  but just to be sure.
     lightgunGamePaths.erase(
@@ -46,7 +46,7 @@ string LightgunGames::PathForLightgunFile(PsGamePtr game) {
 //********************
 // UpdateFile
 //********************
-void LightgunGames::UpdateFile() { Util::WriteStringsToTextFile(lightgunGamePaths, filename, true); }
+void LightgunGames::UpdateFile() { FileUtils::writeTextFile(filename, lightgunGamePaths, true); }
 
 //********************
 // IsGameALightgunGame
