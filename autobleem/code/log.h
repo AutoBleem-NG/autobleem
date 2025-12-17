@@ -13,8 +13,9 @@
 //   PLOG_WARNING << "Warning message";
 //   PLOG_ERROR << "Error message";
 //
-// Log files are written to /media/System/Logs/autobleem.log on device,
-// or ./autobleem.log during local development.
+// Log files are written to USB:/System/Logs/autobleem-ng.log on device,
+// or ./autobleem-ng.log during local development.
+// NOTE: Log::init() must be called AFTER environment paths are set up in main()
 //
 
 #pragma once
@@ -59,27 +60,16 @@ class Formatter {
 #endif
 #endif
 
-// Log file paths
-inline const char *getLogPath() {
-    // On PlayStation Classic, logs go to /media/System/Logs/
-    // For local development, use current directory
-    static const char *devicePath = "/media/System/Logs/autobleem.log";
-    static const char *localPath = "autobleem.log";
-
-    if (DirEntry::exists("/media/System/Logs")) {
-        return devicePath;
-    }
-    return localPath;
-}
-
 // Initialize logging - call once at startup
-inline void init(plog::Severity maxSeverity = LOG_LEVEL) {
-    static plog::RollingFileAppender<Formatter> fileAppender(getLogPath(), 1024 * 1024, 3);
+// logPath: optional path to log file (if not provided, uses "./autobleem-ng.log")
+inline void init(const std::string &logPath = "autobleem-ng.log", plog::Severity maxSeverity = LOG_LEVEL) {
+    static plog::RollingFileAppender<Formatter> fileAppender(logPath.c_str(), 1024 * 1024, 3);
     static plog::ColorConsoleAppender<Formatter> consoleAppender;
 
     plog::init(maxSeverity, &fileAppender).addAppender(&consoleAppender);
 
     PLOG_INFO << "=== AutoBleem started ===";
+    PLOG_INFO << "Log file: " << logPath;
 }
 
 // Change log level at runtime

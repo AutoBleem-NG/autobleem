@@ -20,7 +20,7 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 - Multi-disc game support
 - Docker-based ARM build (no toolchain installation required)
 - 17 languages supported with automated translation tooling
-- Structured logging for easier debugging (logs written to `/tmp/autobleem.log`)
+- Structured logging for easier debugging (logs written to `USB:/System/Logs/autobleem-ng.log`)
 
 ## Project Structure
 

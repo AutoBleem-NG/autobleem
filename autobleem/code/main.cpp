@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "log.h"
+#include "version.h"
 #include "engine/database.h"
 #include "engine/scanner.h"
 #include "gui/gui.h"
@@ -211,18 +212,7 @@ void rewriteGamelistXml() {
 // main
 //*******************************
 int main(int argc, char *argv[]) {
-    Log::init();
-    PLOG_INFO << "AutoBleem starting, argc=" << argc;
-    for (int i = 0; i < argc; i++) {
-        PLOG_DEBUG << "  argv[" << i << "]=" << argv[i];
-    }
-
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_InitSubSystem(SDL_INIT_AUDIO);
-    SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
-    Env::autobleemKernel = DirEntry::exists("/autobleem");
-    shared_ptr<Lang> lang(Lang::getInstance());
-
+    // Set up environment paths FIRST (needed for log file location)
     if (argc == 1 + 1) {
         // the single arg is the path to the usb drive
         private_singleArgPassed = true;
@@ -242,9 +232,30 @@ int main(int argc, char *argv[]) {
         private_pathToGamesDir = argv[2];
         private_pathToUSBDrive = DirEntry::getDirNameFromPath(private_pathToGamesDir);
     } else {
-        PLOG_ERROR << "USAGE: autobleem-gui /path/dbfilename.db /path/to/games";
+        // Can't use PLOG_ERROR yet - logger not initialized
+        std::cerr << "ERROR: USAGE: autobleem-gui /path/dbfilename.db /path/to/games" << std::endl;
         return EXIT_FAILURE;
     }
+
+    // NOW initialize logger - it will use USB:/System/Logs/autobleem-ng.log
+    string logDir = private_pathToUSBDrive + sep + "System" + sep + "Logs";
+    DirEntry::createDir(logDir);
+    string logPath = logDir + sep + "autobleem-ng.log";
+    Log::init(logPath);
+
+    // Log version and build information
+    PLOG_INFO << Version::FULL_VERSION << " - built " << Version::BUILD_TIMESTAMP << " UTC";
+
+    PLOG_INFO << "AutoBleem starting, argc=" << argc;
+    for (int i = 0; i < argc; i++) {
+        PLOG_DEBUG << "  argv[" << i << "]=" << argv[i];
+    }
+
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_InitSubSystem(SDL_INIT_AUDIO);
+    SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
+    Env::autobleemKernel = DirEntry::exists("/autobleem");
+    shared_ptr<Lang> lang(Lang::getInstance());
 
     // now that Environment is setup, routines that need the paths can be called
     shared_ptr<Gui> gui(Gui::getInstance());

@@ -4,6 +4,18 @@ project(autobleem-gui)
 set(CMAKE_CXX_STANDARD 11)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
+# Generate version.h with build information (git hash, branch, timestamp)
+execute_process(
+    COMMAND ${CMAKE_COMMAND}
+        -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+        -DBINARY_DIR=${CMAKE_BINARY_DIR}
+        -P ${CMAKE_SOURCE_DIR}/autobleem/cmake/generate_version.cmake
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
+# Add generated files directory to include path (for version.h)
+include_directories(${CMAKE_BINARY_DIR}/autobleem/code)
+
 # Optional: Enable clang-tidy static analysis
 # Usage: cmake -DENABLE_CLANG_TIDY=ON ..
 option(ENABLE_CLANG_TIDY "Run clang-tidy static analysis" OFF)

@@ -1,7 +1,7 @@
 #include "file_utils.h"
 #include "string_utils.h"
+#include "../log.h"
 #include <fstream>
-#include <iostream>
 
 using namespace std;
 
@@ -14,7 +14,7 @@ vector<string> readTextFile(const string &filePath, bool removeCRLF) {
 
     file.open(filePath);
     if (!file.good()) {
-        cerr << "Error opening file: " << filePath << endl;
+        PLOG_ERROR << "Error opening file: " << filePath;
         return contents;
     }
 
