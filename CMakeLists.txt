@@ -235,6 +235,7 @@ add_executable(
         autobleem/code/utils/string_utils.cpp
         autobleem/code/io/binary_reader.cpp
         autobleem/code/system/process_utils.cpp
+        autobleem/code/system/storage_info.cpp
         autobleem/code/ver_migration.cpp
         autobleem/code/ver_migration.h
         autobleem/code/util_time.h

@@ -8,6 +8,7 @@
 #include "cfgprocessor.h"
 #include "../gui/gui.h"
 #include "serialscanner.h"
+#include "../utils/string_utils.h"
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -365,18 +366,18 @@ void USBGame::updateObj() {
     string automation = valueOrDefault("automation", "0");
     automationUsed = atoi(automation.c_str());
     tmp = valueOrDefault("players", "1");
-    if (Util::isInteger(tmp.c_str()))
+    if (StringUtils::isInteger(tmp.c_str()))
         players = atoi(tmp.c_str());
     else
         players = 1;
     tmp = valueOrDefault("year", "2018");
 
-    if (Util::isInteger(tmp.c_str()))
+    if (StringUtils::isInteger(tmp.c_str()))
         year = atoi(tmp.c_str());
     else
         year = 2018;
     tmp = valueOrDefault("highres", "0");
-    if (Util::isInteger(tmp.c_str()))
+    if (StringUtils::isInteger(tmp.c_str()))
         highRes = atoi(tmp.c_str());
     else
         highRes = false;
@@ -391,7 +392,7 @@ void USBGame::updateObj() {
         istringstream f(tmp);
         string s;
         while (getline(f, s, ',')) {
-            s = Util::decode(s);
+            s = StringUtils::decode(s);
             strings.push_back(s);
         }
         for (int i = 0; i < strings.size(); i++) {
@@ -457,7 +458,7 @@ void USBGame::saveIni(string path) {
 
     stringstream ss;
     for (int i = 0; i < discs.size(); i++) {
-        ss << Util::escape(discs[i].diskName);
+        ss << StringUtils::escape(discs[i].diskName);
         if (i != discs.size() - 1) {
             ss << ",";
         }

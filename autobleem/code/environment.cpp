@@ -1,9 +1,10 @@
 #include "environment.h"
 #include "DirEntry.h"
+#include "log.h"
 #include <dirent.h>
 #include <unistd.h>
 #include <climits>
-#include <assert.h>
+#include <cassert>
 
 using namespace std;
 
@@ -158,4 +159,56 @@ string Environment::getPathToCoversDBDir() {
     string path = "../db";
     return path;
 #endif
+}
+
+// Configuration constants for argument parsing
+namespace {
+const char *const DATABASES_SUBDIR = "System/Databases";
+const char *const GAMES_SUBDIR = "Games";
+const char *const INTERNAL_DB_FILENAME = "internal.db";
+const char *const REGIONAL_DB_FILENAME = "regional.db";
+const char *const INTERNAL_DB_MEDIA_PATH = "/media/System/Databases/internal.db";
+const char *const MSG_USAGE = "Usage: autobleem-gui /path/to/database.db /path/to/games";
+
+inline string getDatabaseSubpath(const char *filename) { return string(DATABASES_SUBDIR) + sep + filename; }
+} // namespace
+
+// Reset environment paths (for testing)
+void Environment::resetPaths() {
+    private_singleArgPassed = false;
+    private_pathToUSBDrive.clear();
+    private_pathToGamesDir.clear();
+    private_pathToRegionalDBFile.clear();
+    private_pathToInternalDBFile.clear();
+}
+
+// Parse command line arguments and set up environment paths
+bool Environment::parseCommandLineArguments(int argc, char *argv[]) {
+    if (argc == 1 + 1) {
+        // the single arg is the path to the USB drive
+        private_singleArgPassed = true;
+        private_pathToUSBDrive = argv[1];
+        private_pathToRegionalDBFile = private_pathToUSBDrive + sep + getDatabaseSubpath(REGIONAL_DB_FILENAME);
+        private_pathToInternalDBFile = private_pathToUSBDrive + sep + getDatabaseSubpath(INTERNAL_DB_FILENAME);
+        private_pathToGamesDir = private_pathToUSBDrive + sep + GAMES_SUBDIR;
+        return true;
+    }
+
+    if (argc == 1 + 2) {
+        // the two args are the path to the regional.db file and the path to the /Games dir on the USB drive
+        private_singleArgPassed = false;
+        private_pathToRegionalDBFile = argv[1];
+#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
+        // in development, use internal.db in the same dir as the app
+        private_pathToInternalDBFile = INTERNAL_DB_FILENAME;
+#else
+        private_pathToInternalDBFile = INTERNAL_DB_MEDIA_PATH;
+#endif
+        private_pathToGamesDir = argv[2];
+        private_pathToUSBDrive = DirEntry::getDirNameFromPath(private_pathToGamesDir);
+        return true;
+    }
+
+    PLOG_ERROR << MSG_USAGE;
+    return false;
 }

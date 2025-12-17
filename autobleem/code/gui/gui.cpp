@@ -17,6 +17,8 @@
 #include <iostream>
 #include "../log.h"
 #include "../system/process_utils.h"
+#include "../system/storage_info.h"
+#include "../utils/string_utils.h"
 #include <iomanip>
 #include <json.h>
 #include "../nlohmann/fifo_map.h"
@@ -155,17 +157,17 @@ void splash(char *message) {
 //*******************************
 // Gui::getR
 //*******************************
-Uint8 Gui::getR(const string &val) { return atoi(Util::commaSep(val, 0).c_str()); }
+Uint8 Gui::getR(const string &val) { return atoi(StringUtils::getToken(val, ',', 0).c_str()); }
 
 //*******************************
 // Gui::getG
 //*******************************
-Uint8 Gui::getG(const string &val) { return atoi(Util::commaSep(val, 1).c_str()); }
+Uint8 Gui::getG(const string &val) { return atoi(StringUtils::getToken(val, ',', 1).c_str()); }
 
 //*******************************
 // Gui::getB
 //*******************************
-Uint8 Gui::getB(const string &val) { return atoi(Util::commaSep(val, 2).c_str()); }
+Uint8 Gui::getB(const string &val) { return atoi(StringUtils::getToken(val, ',', 2).c_str()); }
 
 void Gui::stopAudio() {
     int numtimesopened, frequency, channels;
@@ -616,7 +618,7 @@ void Gui::menuSelection() {
 #endif
                         string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
                         vector<const char *> argvNew{cmd.c_str(), nullptr};
-                        Util::execFork(cmd.c_str(), argvNew);
+                        System::executeFork(cmd.c_str(), argvNew);
                         SDL_PumpEvents();
                         SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT);
                         mapper.probePads();
@@ -854,7 +856,7 @@ void Gui::AllTextOrEmojiTokenInfo::getTokenInfo(FC_Font_Shared _font, const stri
     if (text.back() != '|') {
         text = text + "|"; // in case a terminating | is needed
     }
-    auto tokenStrings = Util::getTokens(text, '|');
+    auto tokenStrings = StringUtils::getTokens(text, '|');
 
     //
     // fill the info structures
@@ -1111,7 +1113,7 @@ void Gui::renderTextChar(const string &text, int line, int yoffset, int x) {
 void Gui::renderFreeSpace() {
     int x = atoi(themeData.values["fsposx"].c_str());
     int y = atoi(themeData.values["fsposy"].c_str());
-    renderText(themeFont, _("Free space") + " : " + Util::getAvailableSpace(), x, y);
+    renderText(themeFont, _("Free space") + " : " + System::getStorageInfo().formatted(), x, y);
 }
 
 //*******************************

@@ -230,3 +230,36 @@ target_link_libraries(
 )
 
 gtest_discover_tests(random_utils_test)
+
+# Environment tests
+add_executable(
+    environment_test
+    environment_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+)
+
+target_link_libraries(
+    environment_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(environment_test)
+
+# Util random index tests (uses new RandomUtils)
+add_executable(
+    util_test
+    util_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/random_utils.cpp
+)
+
+target_link_libraries(
+    util_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(util_test)

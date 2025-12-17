@@ -7,6 +7,7 @@
 #include "../gui_confirm.h"
 #include "../gui_keyboard.h"
 #include "../../lang.h"
+#include "../../utils/string_utils.h"
 
 using namespace std;
 
@@ -56,7 +57,7 @@ void GuiMemcards::doSquare_Pressed() {
     }
 
     string testResult = result;
-    if (Util::compareCaseInsensitive("sony", testResult)) {
+    if (StringUtils::compareCaseInsensitive("sony", testResult)) {
         cancelled = true;
     }
 
@@ -129,7 +130,7 @@ void GuiMemcards::doCross_Pressed() {
     }
 
     string testResult = result;
-    if (Util::compareCaseInsensitive("sony", testResult)) {
+    if (StringUtils::compareCaseInsensitive("sony", testResult)) {
         cancelled = true;
     }
 

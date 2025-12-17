@@ -29,6 +29,15 @@ struct Environment {
 
     static bool autobleemKernel; // true if the kernel is the AutoBleem Kernel
     static bool hiddenMenuEnabled;
+
+    // Parse command line arguments and set up environment paths
+    // Returns true on success, false if usage is incorrect
+    // - 1 arg (+ program name): USB root path
+    // - 2 args (+ program name): regional.db path + games directory path
+    static bool parseCommandLineArguments(int argc, char *argv[]);
+
+    // Reset environment paths (for testing)
+    static void resetPaths();
 };
 
 using Env = Environment;

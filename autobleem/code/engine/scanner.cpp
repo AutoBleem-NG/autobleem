@@ -8,6 +8,7 @@
 #include "serialscanner.h"
 #include "../lang.h"
 #include "../log.h"
+#include "../utils/string_utils.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -61,7 +62,7 @@ void Scanner::updateRegionalDB(GamesHierarchy &gamesHierarchy, Database *db) {
             }
             string gamePath = DirEntry::removeSeparatorFromEndOfPath(data->fullPath);
             string ssPath = DirEntry::removeSeparatorFromEndOfPath(data->saveStatePath);
-            outfile << i + 1 << "," << Util::escape(gamePath) << "," << Util::escape(ssPath) << '\n';
+            outfile << i + 1 << "," << StringUtils::escape(gamePath) << "," << StringUtils::escape(ssPath) << '\n';
         }
         db->commit();
     }
@@ -115,7 +116,7 @@ void repairBinCommaNames(const string &path) {
                     trim(line);
                     if (!line.empty()) {
                         if ((line.rfind("FILE", 0) == 0) || (line.rfind("file", 0) == 0)) {
-                            Util::replaceAll(line, ",", "-");
+                            StringUtils::replaceAll(line, ",", "-");
                         }
                     }
                     os << line << endl;
@@ -166,11 +167,11 @@ void repairMissingCue(const string &path, const string &folderName) {
                 cueElement = cue2;
             }
 
-            Util::replaceAll(cueElement, "{binName}", bin);
+            StringUtils::replaceAll(cueElement, "{binName}", bin);
             if (track < 10) {
-                Util::replaceAll(cueElement, "{track}", "0" + to_string(track));
+                StringUtils::replaceAll(cueElement, "{track}", "0" + to_string(track));
             } else {
-                Util::replaceAll(cueElement, "{track}", to_string(track));
+                StringUtils::replaceAll(cueElement, "{track}", to_string(track));
             }
             track++;
             first = false;
@@ -284,11 +285,11 @@ void Scanner::repairBrokenCueFiles(const string &path) {
                     newBinName = allBinFiles[startPos + binId];
                 }
 
-                Util::replaceAll(cueElement, "{binName}", newBinName);
+                StringUtils::replaceAll(cueElement, "{binName}", newBinName);
                 if (track < 10) {
-                    Util::replaceAll(cueElement, "{track}", "0" + to_string(track));
+                    StringUtils::replaceAll(cueElement, "{track}", "0" + to_string(track));
                 } else {
-                    Util::replaceAll(cueElement, "{track}", to_string(track));
+                    StringUtils::replaceAll(cueElement, "{track}", to_string(track));
                 }
                 track++;
                 first = false;
@@ -375,11 +376,11 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
 
             // for each file in the game dir
             for (const DirEntry &file : fileEntries) {
-                if (Util::compareCaseInsensitive(file.name, GAME_INI)) {
+                if (StringUtils::compareCaseInsensitive(file.name, GAME_INI)) {
                     game->gameIniFound = true;
                 }
 
-                if (Util::compareCaseInsensitive(file.name, PCSX_CFG)) {
+                if (StringUtils::compareCaseInsensitive(file.name, PCSX_CFG)) {
                     game->pcsxCfgFound = true;
                 }
 
