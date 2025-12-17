@@ -9,7 +9,7 @@
 #include "../log.h"
 #include <sstream>
 #include <algorithm>
-#include "../util.h"
+#include "../utils/string_utils.h"
 #include <json.h>
 #include "../engine/cfgprocessor.h"
 #include "../DirEntry.h"

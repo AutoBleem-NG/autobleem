@@ -3,7 +3,6 @@
 //
 
 #include "coverdb.h"
-#include "../util.h"
 #include <iostream>
 #include "../log.h"
 #include "../DirEntry.h"

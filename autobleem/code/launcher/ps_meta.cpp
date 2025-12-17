@@ -4,8 +4,8 @@
 
 #include "ps_meta.h"
 #include "ps_game.h"
-#include "../util.h"
-#include "../util_time.h"
+#include "../utils/string_utils.h"
+#include "../utils/time_utils.h"
 #include <SDL2/SDL_image.h>
 #include "../lang.h"
 #include "../engine/inifile.h"
@@ -69,7 +69,7 @@ void PsMeta::updateTexts(PsGamePtr &psGame, SDL_Color _textColor) {
         updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                     to_string(psGame->players) + " " + appendText, psGame->internal, psGame->hd, psGame->locked,
                     psGame->cds, psGame->favorite, psGame->play_using_ra, psGame->foreign, psGame->app,
-                    UtilTime::timeToDisplayTimeString(psGame->last_played),
+                    TimeUtils::timeToDisplayTimeString(psGame->last_played),
                     psGame->folder, // ps1 game path in /Games
                     _textColor);
     } else {
@@ -80,7 +80,7 @@ void PsMeta::updateTexts(PsGamePtr &psGame, SDL_Color _textColor) {
             updateTexts(psGame->title, psGame->publisher, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText, psGame->internal, psGame->hd, psGame->locked,
                         psGame->cds, psGame->favorite, psGame->play_using_ra, psGame->foreign, psGame->app,
-                        UtilTime::timeToDisplayTimeString(psGame->last_played), "", _textColor);
+                        TimeUtils::timeToDisplayTimeString(psGame->last_played), "", _textColor);
         } else {
             psGame->serial = "";
             psGame->region = "";
@@ -88,7 +88,7 @@ void PsMeta::updateTexts(PsGamePtr &psGame, SDL_Color _textColor) {
             updateTexts(psGame->title, psGame->core_name, to_string(psGame->year), psGame->serial, psGame->region,
                         to_string(psGame->players) + " " + appendText, psGame->internal, psGame->hd, psGame->locked,
                         psGame->cds, psGame->favorite, psGame->play_using_ra, psGame->foreign, psGame->app,
-                        UtilTime::timeToDisplayTimeString(psGame->last_played),
+                        TimeUtils::timeToDisplayTimeString(psGame->last_played),
                         psGame->image_path, // Retroarch roms image path
                         _textColor);
         }

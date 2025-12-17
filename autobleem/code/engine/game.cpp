@@ -16,7 +16,7 @@
 #include "../engine/scanner.h"
 #include "../environment.h"
 #include "../lang.h"
-#include "../util_time.h"
+#include "../utils/time_utils.h"
 #include <ctime>
 
 using namespace std;
@@ -171,7 +171,7 @@ bool USBGame::print() {
     PLOG_DEBUG << "Favorite: " << favorite;
     PLOG_DEBUG << "Play Using RA: " << play_using_ra;
     PLOG_DEBUG << "Last Played: " << last_played;
-    PLOG_DEBUG << "Last Played: " << UtilTime::timeToDisplayTimeString(last_played);
+    PLOG_DEBUG << "Last Played: " << TimeUtils::timeToDisplayTimeString(last_played);
 
     for (int i = 0; i < discs.size(); i++) {
         PLOG_DEBUG << "  Disc:" << i + 1 << "  " << discs[i].diskName;

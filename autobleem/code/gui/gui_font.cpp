@@ -1,7 +1,6 @@
 #include "gui_font.h"
 #include <iostream>
 #include "../log.h"
-#include "../util.h"
 #include <cassert>
 #include "../DirEntry.h"
 #include "gui.h"

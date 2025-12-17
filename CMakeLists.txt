@@ -228,18 +228,15 @@ add_executable(
         autobleem/code/main.cpp
         autobleem/code/main.h
         autobleem/code/unecm.c
-        autobleem/code/util.cpp
-        autobleem/code/util.h
         autobleem/code/utils/file_utils.cpp
         autobleem/code/utils/random_utils.cpp
         autobleem/code/utils/string_utils.cpp
+        autobleem/code/utils/time_utils.cpp
         autobleem/code/io/binary_reader.cpp
         autobleem/code/system/process_utils.cpp
         autobleem/code/system/storage_info.cpp
         autobleem/code/ver_migration.cpp
         autobleem/code/ver_migration.h
-        autobleem/code/util_time.h
-		autobleem/code/util_time.cpp
 		autobleem/code/gui/abl.c
 		autobleem/code/gui/abl.h
 		autobleem/code/LightgunGames.h
@@ -256,8 +253,6 @@ target_include_directories(autobleem-gui PUBLIC
 
 add_executable(starter
 		autobleem/code/starter.cpp
-		autobleem/code/util.h
-		autobleem/code/util.cpp
 		autobleem/code/DirEntry.h
 		autobleem/code/DirEntry.cpp
         autobleem/code/engine/inifile.cpp

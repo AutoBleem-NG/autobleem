@@ -3,7 +3,7 @@
 //
 
 #include "cfgprocessor.h"
-#include "../util.h"
+#include "../utils/string_utils.h"
 #include <fstream>
 #include "../DirEntry.h"
 #include <iostream>

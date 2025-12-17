@@ -4,7 +4,7 @@
 
 #if 0 // no longer used
 #include "ver_migration.h"
-#include "util.h"
+#include "utils/string_utils.h"
 #include "engine/config.h"
 #include "engine/inifile.h"
 #include <fstream>

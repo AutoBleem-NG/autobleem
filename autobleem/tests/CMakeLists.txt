@@ -27,7 +27,6 @@ add_executable(
     chd_reader_test
     chd_reader_test.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
@@ -53,7 +52,6 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/engine/inifile.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/engine/isodir.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
@@ -77,7 +75,6 @@ add_executable(
     log_test
     log_test.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
@@ -96,7 +93,6 @@ add_executable(
     lang_test.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/lang.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
@@ -237,7 +233,6 @@ add_executable(
     environment_test.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/DirEntry.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/util.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
 

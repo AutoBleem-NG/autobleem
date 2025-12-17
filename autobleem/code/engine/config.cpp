@@ -7,7 +7,6 @@
 #include "../environment.h"
 #include "../lang.h"
 #include "../launcher/gui_NotificationLine.h"
-#include "../util.h"
 
 //*******************************
 // Config::Config()

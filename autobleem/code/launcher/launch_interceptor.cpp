@@ -3,8 +3,7 @@
 //
 
 #include "launch_interceptor.h"
-#include "../util.h"
-#include "../util_time.h"
+#include "../utils/time_utils.h"
 #include "../gui/gui.h"
 #include <iostream>
 #include "../log.h"
@@ -23,9 +22,9 @@ bool LaunchInterceptor::execute(PsGamePtr &game, int resumepoint) {
     PLOG_INFO << "Starting External App";
 
     if (game->internal) {
-        gui->internalDB->updateDatePlayed(game->gameId, UtilTime::getCurrentTime());
+        gui->internalDB->updateDatePlayed(game->gameId, TimeUtils::getCurrentTime());
     } else {
-        gui->db->updateDatePlayed(game->gameId, UtilTime::getCurrentTime());
+        gui->db->updateDatePlayed(game->gameId, TimeUtils::getCurrentTime());
     }
 
     if (game->foreign) {
