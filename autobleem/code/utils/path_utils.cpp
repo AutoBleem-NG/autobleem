@@ -50,8 +50,10 @@ string getDirNameFromPath(const string &path) {
 }
 
 string joinPath(const string &dir, const string &file) {
-    if (dir.empty()) return file;
-    if (file.empty()) return dir;
+    if (dir.empty())
+        return file;
+    if (file.empty())
+        return dir;
 
     string result = dir;
     if (result.back() != separator) {
