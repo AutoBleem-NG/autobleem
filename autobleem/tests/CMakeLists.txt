@@ -57,6 +57,7 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/io/binary_reader.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/system/process_utils.cpp
 )
 
@@ -184,3 +185,48 @@ target_link_libraries(
 )
 
 gtest_discover_tests(storage_info_test)
+
+# Binary reader tests
+add_executable(
+    binary_reader_test
+    binary_reader_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/io/binary_reader.cpp
+)
+
+target_link_libraries(
+    binary_reader_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(binary_reader_test)
+
+# Time utilities tests
+add_executable(
+    time_utils_test
+    time_utils_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/time_utils.cpp
+)
+
+target_link_libraries(
+    time_utils_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(time_utils_test)
+
+# Random utilities tests
+add_executable(
+    random_utils_test
+    random_utils_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/random_utils.cpp
+)
+
+target_link_libraries(
+    random_utils_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(random_utils_test)

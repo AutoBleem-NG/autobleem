@@ -1,5 +1,5 @@
 #include "gui_optionsMenu.h"
-#include "../../util.h"
+#include "../../utils/random_utils.h"
 #include "../../environment.h"
 
 using namespace std;
@@ -156,7 +156,7 @@ string GuiOptions::doRandomOption() {
         auto &choices = lines[selected].choices;
         unsigned int size = choices.size();
         if (size > 1)
-            return doOptionIndex(Util::getRandomIndex(size));
+            return doOptionIndex(RandomUtils::RandomGenerator::getInstance().generateInt(0, size - 1));
     }
     return "";
 }

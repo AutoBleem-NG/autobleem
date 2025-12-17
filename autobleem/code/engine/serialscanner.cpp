@@ -6,7 +6,7 @@
 #include "serialscanner.h"
 #include "isodir.h"
 #include <sstream>
-#include "../util.h"
+#include "../io/binary_reader.h"
 #include "../system/process_utils.h"
 #include <fstream>
 #include <iostream>
@@ -70,28 +70,29 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
         if (pbpFileName != "") {
             ifstream is;
             is.open(destinationDir + sep + pbpFileName);
+            BinaryIO::Reader reader(&is);
 
-            long magic = Util::readDword(&is);
+            long magic = reader.readDword();
             if (magic != 0x50425000) {
                 return "";
             }
-            long second = Util::readDword(&is);
+            long second = reader.readDword();
             if (second != 0x10000) {
                 return "";
             }
-            long sfoStart = Util::readDword(&is);
+            long sfoStart = reader.readDword();
 
             is.seekg(sfoStart, ios::beg);
 
-            unsigned int signature = Util::readDword(&is);
+            unsigned int signature = reader.readDword();
             if (signature != 1179865088) {
                 return "";
             }
-            unsigned int version = Util::readDword(&is);
+            unsigned int version = reader.readDword();
             ;
-            unsigned int fields_table_offs = Util::readDword(&is);
-            unsigned int values_table_offs = Util::readDword(&is);
-            int nitems = Util::readDword(&is);
+            unsigned int fields_table_offs = reader.readDword();
+            unsigned int values_table_offs = reader.readDword();
+            int nitems = reader.readDword();
 
             vector<string> fields;
             vector<string> values;
@@ -100,16 +101,16 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
             is.seekg(sfoStart, ios::beg);
             is.seekg(fields_table_offs, ios::cur);
             for (int i = 0; i < nitems; i++) {
-                string fieldName = Util::readString(&is);
-                Util::skipZeros(&is);
+                string fieldName = reader.readNullTerminatedString();
+                reader.skipZeros();
                 fields.push_back(fieldName);
             }
 
             is.seekg(sfoStart, ios::beg);
             is.seekg(values_table_offs, ios::cur);
             for (int i = 0; i < nitems; i++) {
-                string valueName = Util::readString(&is);
-                Util::skipZeros(&is);
+                string valueName = reader.readNullTerminatedString();
+                reader.skipZeros();
                 values.push_back(valueName);
             }
 
