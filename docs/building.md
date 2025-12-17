@@ -25,15 +25,42 @@ Requires the PSC ARM toolchain installed at `/opt/toolchain/armv8-sony-linux-gnu
 
 ## Build Targets
 
+### Common Targets
+
 | Target | Description |
 |--------|-------------|
-| `make` | Build both ARM and local system |
-| `make sys` | Build for local system (x86_64) |
-| `make arm` | Build for ARM using PSCtoolchainV8 |
-| `make mac` | Build for ARM on macOS using MacToolchain |
-| `make english` | Generate English.txt from source strings |
-| `make clean` | Remove all build directories |
+| `make` | Build for local system (x86_64) - recommended default |
+| `make full` | Build sys + Docker ARM image + extract binaries (recommended for releases) |
+| `make test` | Run unit tests (requires `make sys` first) |
+| `make clean` | Remove all build directories and Docker image |
 | `make help` | Show all available targets |
+
+### Native Build Targets (Incremental)
+
+| Target | Description |
+|--------|-------------|
+| `make sys` | Build for local system (x86_64) - incremental |
+| `make arm` | Build for ARM using PSCtoolchainV8 (requires toolchain) |
+| `make mac` | Build for ARM on macOS using MacToolchain |
+
+### Clean Build Targets
+
+| Target | Description |
+|--------|-------------|
+| `make sys-clean` | Clean rebuild for local system |
+| `make arm-clean` | Clean rebuild for ARM |
+| `make mac-clean` | Clean rebuild for macOS |
+
+### Docker Build Targets
+
+| Target | Description |
+|--------|-------------|
+| `make build` | Build Docker image for ARM cross-compilation |
+| `make extract` | Extract ARM binaries from Docker image |
+| `make shell` | Open interactive shell in Docker container |
+| `make clean-build` | Remove build artifacts (keeps Docker image) |
+
+**Note:** By default, build targets use incremental builds (reuse build directory) for faster rebuilds. Use the `-clean` targets when you need a fresh build (e.g., after CMake configuration changes).
 
 ## Building for Local Development
 
@@ -47,12 +74,23 @@ Output binaries are placed in `build_sys/`:
 
 ## Building for PlayStation Classic
 
-### Option 1: Docker Build (Recommended)
+### Option 1: Full Build (Recommended for Releases)
 
-The easiest way to build for PlayStation Classic without installing toolchains:
+Build both local system and ARM binaries in one command:
 
 ```bash
-# Build Docker image and extract binaries
+make full
+```
+
+This runs `make sys` + `make build` + `make extract`, producing:
+- `build_sys/` - Local x86_64 binaries (for testing)
+- `build_arm/` - ARM binaries (for PlayStation Classic)
+
+### Option 2: Docker Build Only
+
+Build ARM binaries without local build:
+
+```bash
 make build extract
 ```
 
@@ -64,15 +102,9 @@ Output binaries are placed in `build_arm/`:
 **Prerequisites:**
 - Docker installed ([docker.com](https://docs.docker.com/get-docker/))
 
-**Available commands:**
-```bash
-make build         # Build Docker image
-make extract       # Extract binaries from image
-make shell         # Interactive shell in container
-make clean-build   # Remove build artifacts
-```
+### Option 3: Native ARM Cross-Compilation
 
-### Option 2: Native ARM Cross-Compilation
+For users with the PSC ARM toolchain installed:
 
 ```bash
 make arm
@@ -80,7 +112,7 @@ make arm
 
 Output binaries are placed in `build_arm/`.
 
-Requires the PSC ARM toolchain installed at `/opt/toolchain/armv8-sony-linux-gnueabihf/`. The toolchain file is located at `cmake/PSCtoolchainV8.cmake`.
+Requires the PSC ARM toolchain installed at `/opt/toolchain/armv8-sony-linux-gnueabihf/`. The toolchain file is located at `autobleem/cmake/PSCtoolchainV8.cmake`.
 
 ## Build Output Structure
 
@@ -98,7 +130,7 @@ build_arm/              # ARM build (same structure)
 
 ## Bundled Libraries
 
-The following libraries are bundled in `libs/`:
+The following libraries are bundled in `autobleem/libs/`:
 
 - **libchdr** - CHD (Compressed Hunks of Data) disc image format support
 - **nlohmann/json** - JSON parsing
@@ -107,7 +139,7 @@ The following libraries are bundled in `libs/`:
 
 ## Toolchain Files
 
-Located in `cmake/`:
+Located in `autobleem/cmake/`:
 
 | File | Description |
 |------|-------------|

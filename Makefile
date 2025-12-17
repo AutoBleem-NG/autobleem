@@ -6,15 +6,19 @@
 # - Native x86_64 builds for development/testing
 #
 # Usage:
-#   make              - Build for ARM and local system
+#   make              - Build for local system (x86_64) - recommended default
+#   make full         - Build sys + Docker ARM image + extract binaries (recommended for releases)
+#   make sys          - Build for local system (x86_64) - incremental
+#   make sys-clean    - Clean rebuild for local system
 #   make build        - Build Docker image for ARM
 #   make extract      - Extract ARM binaries from Docker image
-#   make sys          - Build for local system (x86_64)
-#   make arm          - Build for ARM using local toolchain
+#   make arm          - Build for ARM using local toolchain (requires PSCtoolchainV8)
+#   make arm-clean    - Clean rebuild for ARM
+#   make test         - Run unit tests
 #   make clean        - Remove all build artifacts
 #   make help         - Show this help
 
-.PHONY: all sys arm mac build extract shell clean-build docker-build docker-extract docker-shell docker-clean lang-update lang-validate lang-compare format format-check lint test clean help
+.PHONY: all full sys sys-clean arm arm-clean mac mac-clean build extract shell clean-build docker-build docker-extract docker-shell docker-clean lang-update lang-validate lang-compare format format-check lint test clean help
 
 # Docker image name
 DOCKER_IMAGE := autobleem-builder
@@ -22,8 +26,14 @@ DOCKER_IMAGE := autobleem-builder
 # Number of parallel jobs for make
 JOBS := 4
 
-# Default target: build both ARM and local system
-all: arm sys
+# CMake build type
+BUILD_TYPE := Release
+
+# Default target: build for local system (no ARM toolchain required)
+all: sys
+
+# Build for both local system and Docker ARM image, then extract binaries (recommended)
+full: sys build extract
 
 # Docker build targets for ARM (recommended - no toolchain installation required)
 
@@ -82,30 +92,54 @@ docker-clean:
 	@echo "Clean complete (Docker image preserved)"
 	@echo "To remove Docker image, run: docker rmi $(DOCKER_IMAGE)"
 
-# Native build for local system (x86_64) - for development/testing
+# Native build for local system (x86_64) - incremental
 sys:
-	@echo "Building for local system..."
-	rm -rf build_sys
-	mkdir -p build_sys
-	cd build_sys && cmake -DCMAKE_BUILD_TYPE=Release ..
+	@echo "Building for local system (incremental)..."
+	@mkdir -p build_sys
+	@cd build_sys && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) .. > /dev/null
 	cd build_sys && make -j $(JOBS)
 	@echo "Build complete: build_sys/"
 
-# Native ARM build using local toolchain (requires PSCtoolchainV8)
+# Clean rebuild for local system
+sys-clean:
+	@echo "Clean rebuilding for local system..."
+	rm -rf build_sys
+	mkdir -p build_sys
+	cd build_sys && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
+	cd build_sys && make -j $(JOBS)
+	@echo "Build complete: build_sys/"
+
+# Native ARM build using local toolchain - incremental (requires PSCtoolchainV8)
 arm:
-	@echo "Building for ARM using local toolchain..."
-	rm -rf build_arm
-	mkdir -p build_arm
-	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/PSCtoolchainV8.cmake ..
+	@echo "Building for ARM using local toolchain (incremental)..."
+	@mkdir -p build_arm
+	@cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/PSCtoolchainV8.cmake .. > /dev/null
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
-# Native ARM build for macOS using MacToolchain
-mac:
-	@echo "Building for ARM using Mac toolchain..."
+# Clean ARM build using local toolchain
+arm-clean:
+	@echo "Clean rebuilding for ARM using local toolchain..."
 	rm -rf build_arm
 	mkdir -p build_arm
-	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/MacToolchain.cmake ..
+	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/PSCtoolchainV8.cmake ..
+	cd build_arm && make -j $(JOBS)
+	@echo "Build complete: build_arm/"
+
+# Native ARM build for macOS - incremental
+mac:
+	@echo "Building for ARM using Mac toolchain (incremental)..."
+	@mkdir -p build_arm
+	@cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/MacToolchain.cmake .. > /dev/null
+	cd build_arm && make -j $(JOBS)
+	@echo "Build complete: build_arm/"
+
+# Clean ARM build for macOS
+mac-clean:
+	@echo "Clean rebuilding for ARM using Mac toolchain..."
+	rm -rf build_arm
+	mkdir -p build_arm
+	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/MacToolchain.cmake ..
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
@@ -207,11 +241,19 @@ help:
 	@echo "  make shell        Open interactive shell in Docker container"
 	@echo "  make clean-build  Remove build artifacts (keeps Docker image)"
 	@echo ""
-	@echo "Native Build Targets:"
-	@echo "  make              Build for ARM and local system"
-	@echo "  make sys          Build for local system (x86_64)"
-	@echo "  make arm          Build for ARM (requires PSCtoolchainV8)"
+	@echo "Native Build Targets (Incremental - reuses build directory):"
+	@echo "  make              Build for local system (x86_64)"
+	@echo "  make sys          Build for local system (x86_64) - incremental"
+	@echo "  make arm          Build for ARM (requires PSCtoolchainV8 toolchain)"
 	@echo "  make mac          Build for ARM on macOS (requires MacToolchain)"
+	@echo ""
+	@echo "Combined Targets:"
+	@echo "  make full         Build sys + Docker image + extract (recommended for releases)"
+	@echo ""
+	@echo "Native Clean Build Targets (Remove build directory):"
+	@echo "  make sys-clean    Clean rebuild for local system"
+	@echo "  make arm-clean    Clean rebuild for ARM"
+	@echo "  make mac-clean    Clean rebuild for macOS"
 	@echo ""
 	@echo "Code Quality:"
 	@echo "  make format       Format source code with clang-format"
