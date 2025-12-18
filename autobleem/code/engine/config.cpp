@@ -3,7 +3,7 @@
 //
 
 #include "config.h"
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 #include "../environment.h"
 #include "../lang.h"
 #include "../launcher/gui_notification_line.h"

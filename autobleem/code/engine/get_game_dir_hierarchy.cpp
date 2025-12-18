@@ -1,5 +1,5 @@
 #include "get_game_dir_hierarchy.h"
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 #include "../utils/string_utils.h"
 #include <iostream>
 #include "../log.h"
@@ -21,8 +21,8 @@ using namespace std;
 // GameSubDir::GameSubDir
 //*******************************
 GameSubDir::GameSubDir(const std::string &_fullPath, int _displayIndentLevel, GameSubDirRows *_displayRows) {
-    fullPath = DirEntry::removeSeparatorFromEndOfPath(_fullPath);
-    subDirName = DirEntry::getFileNameFromPath(fullPath);
+    fullPath = FileUtils::removeSeparatorFromEndOfPath(_fullPath);
+    subDirName = FileUtils::getFileNameFromPath(fullPath);
     displayIndentLevel = _displayIndentLevel;
     displayRows = _displayRows;
 }
@@ -32,18 +32,18 @@ GameSubDir::GameSubDir(const std::string &_fullPath, int _displayIndentLevel, Ga
 // recursive scan of the sub directories
 //*******************************
 void GameSubDir::scanAll() {
-    DirEntries dirs = DirEntry::diru_DirsOnly(fullPath);
+    DirEntries dirs = FileUtils::diru_DirsOnly(fullPath);
     for (auto &dirEntry : dirs) {
         if (dirEntry.name == "!SaveStates")
             continue;
         if (dirEntry.name == "!MemCards")
             continue;
 
-        DirEntry::fixCommaInDirOrFileName(fullPath, &dirEntry);
+        FileUtils::fixCommaInDirOrFileName(fullPath, &dirEntry);
 
         string path = fullPath + sep + dirEntry.name;
         // PLOG_DEBUG << "path: " << path ;
-        if (DirEntry::thereIsAGameFile(path)) {
+        if (FileUtils::thereIsAGameFile(path)) {
             USBGamePtr game{new USBGame};
             game->fullPath = path;
             game->gameDirName = dirEntry.name;

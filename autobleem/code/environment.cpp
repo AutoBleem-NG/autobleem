@@ -1,5 +1,5 @@
 #include "environment.h"
-#include "dir_entry.h"
+#include "utils/file_utils.h"
 #include "log.h"
 #include <dirent.h>
 #include <unistd.h>
@@ -93,7 +93,7 @@ string Environment::getWorkingPath() {
 string Environment::getSonyPath() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     string sonypath = getWorkingPath() + sep + "sony";
-    assert(DirEntry::exists(sonypath));
+    assert(FileUtils::exists(sonypath));
     return sonypath;
 #else
     return "/usr/sony/share/data";
@@ -205,7 +205,7 @@ bool Environment::parseCommandLineArguments(int argc, char *argv[]) {
         private_pathToInternalDBFile = INTERNAL_DB_MEDIA_PATH;
 #endif
         private_pathToGamesDir = argv[2];
-        private_pathToUSBDrive = DirEntry::getDirNameFromPath(private_pathToGamesDir);
+        private_pathToUSBDrive = FileUtils::getDirNameFromPath(private_pathToGamesDir);
         return true;
     }
 

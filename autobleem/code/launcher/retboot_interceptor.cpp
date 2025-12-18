@@ -42,17 +42,17 @@ bool RetroArchInterceptor::execute(PsGamePtr &game, int resumepoint) {
 
     if (!game->foreign) {
         gameFile += (game->folder + sep + game->base);
-        if (!(DirEntry::matchExtension(game->base, ".pbp") || DirEntry::matchExtension(game->base, ".chd"))) {
+        if (!(FileUtils::matchExtension(game->base, ".pbp") || FileUtils::matchExtension(game->base, ".chd"))) {
             gameFile += ".cue";
         }
         gameFile += "";
         string base;
-        if (DirEntry::isPBPFile(game->base)) {
+        if (FileUtils::isPBPFile(game->base)) {
             base = game->base.substr(0, game->base.length() - 4);
         } else {
             base = game->base;
         }
-        if (DirEntry::exists(game->folder + sep + base + ".m3u")) {
+        if (FileUtils::exists(game->folder + sep + base + ".m3u")) {
             gameFile = game->folder + sep + base + ".m3u";
         }
     } else {
@@ -135,7 +135,7 @@ void RetroArchInterceptor::memcardIn(PsGamePtr &game) {
             memcard = gameini.values["memcard"];
         }
         if (memcard != "SONY") {
-            if (DirEntry::exists(Env::getPathToMemCardsDir() + sep + game->memcard)) {
+            if (FileUtils::exists(Env::getPathToMemCardsDir() + sep + game->memcard)) {
                 Memcard *card = new Memcard(Env::getPathToGamesDir() + sep);
                 if (!card->swapIn(game->ssFolder, game->memcard)) {
                     game->setMemCard("SONY");
@@ -146,7 +146,7 @@ void RetroArchInterceptor::memcardIn(PsGamePtr &game) {
 
         // Copy the card moved to RA
         string base;
-        if (DirEntry::isPBPFile(game->base)) {
+        if (FileUtils::isPBPFile(game->base)) {
             base = game->base.substr(0, game->base.length() - 4);
         } else {
             base = game->base;
@@ -155,13 +155,13 @@ void RetroArchInterceptor::memcardIn(PsGamePtr &game) {
         string inpath = game->ssFolder + sep + "memcards" + sep + "card1.mcd";
         string outpath = string("") + RA_MEMCARDLOC + sep + base + ".srm";
         string backup = outpath + ".bak";
-        if (!DirEntry::exists(backup)) {
-            if (DirEntry::exists(outpath)) {
-                DirEntry::copy(outpath, backup);
+        if (!FileUtils::exists(backup)) {
+            if (FileUtils::exists(outpath)) {
+                FileUtils::copy(outpath, backup);
             }
         }
-        if (DirEntry::exists(inpath)) {
-            DirEntry::copy(inpath, outpath);
+        if (FileUtils::exists(inpath)) {
+            FileUtils::copy(inpath, outpath);
         }
     }
 }
@@ -183,7 +183,7 @@ void RetroArchInterceptor::memcardOut(PsGamePtr &game) {
             delete card;
         }
         string base;
-        if (DirEntry::isPBPFile(game->base)) {
+        if (FileUtils::isPBPFile(game->base)) {
             base = game->base.substr(0, game->base.length() - 4);
         } else {
             base = game->base;
@@ -192,31 +192,31 @@ void RetroArchInterceptor::memcardOut(PsGamePtr &game) {
         string outpath = game->ssFolder + sep + "memcards" + sep + "card1.mcd";
         string inpath = string("") + RA_MEMCARDLOC + sep + base + ".srm";
         string backup = inpath + ".bak";
-        if (DirEntry::exists(inpath)) {
-            DirEntry::copy(inpath, outpath);
+        if (FileUtils::exists(inpath)) {
+            FileUtils::copy(inpath, outpath);
         }
 
-        if (DirEntry::exists(backup)) {
-            DirEntry::removeFile(inpath);
-            DirEntry::renameFile(backup, inpath);
+        if (FileUtils::exists(backup)) {
+            FileUtils::removeFile(inpath);
+            FileUtils::renameFile(backup, inpath);
         }
     }
 }
 
 void RetroArchInterceptor::backupCoreConfig() {
 
-    DirEntry::copy(RA_CORE_CONFIG, string(RA_CORE_CONFIG) + ".bak");
-    DirEntry::copy(RA_CONFIG, string(RA_CONFIG) + ".bak");
+    FileUtils::copy(RA_CORE_CONFIG, string(RA_CORE_CONFIG) + ".bak");
+    FileUtils::copy(RA_CONFIG, string(RA_CONFIG) + ".bak");
 }
 
 void RetroArchInterceptor::restoreCoreConfig() {
-    if (DirEntry::exists(string(RA_CORE_CONFIG) + ".bak")) {
-        DirEntry::copy(string(RA_CORE_CONFIG) + ".bak", RA_CORE_CONFIG);
-        DirEntry::removeFile(string(RA_CORE_CONFIG) + ".bak");
+    if (FileUtils::exists(string(RA_CORE_CONFIG) + ".bak")) {
+        FileUtils::copy(string(RA_CORE_CONFIG) + ".bak", RA_CORE_CONFIG);
+        FileUtils::removeFile(string(RA_CORE_CONFIG) + ".bak");
     }
-    if (DirEntry::exists(string(RA_CONFIG) + ".bak")) {
-        DirEntry::copy(string(RA_CONFIG) + ".bak", RA_CONFIG);
-        DirEntry::removeFile(string(RA_CONFIG) + ".bak");
+    if (FileUtils::exists(string(RA_CONFIG) + ".bak")) {
+        FileUtils::copy(string(RA_CONFIG) + ".bak", RA_CONFIG);
+        FileUtils::removeFile(string(RA_CONFIG) + ".bak");
     }
 }
 

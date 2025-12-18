@@ -11,7 +11,7 @@
 #include <fstream>
 #include <iostream>
 #include "../log.h"
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 
 using namespace std;
 
@@ -66,7 +66,7 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
     PLOG_DEBUG << imageType << "   " << path << "   " << firstBinPath;
     if (imageType == IMAGE_PBP) {
         string destinationDir = path;
-        string pbpFileName = DirEntry::findFirstFile(EXT_PBP, destinationDir);
+        string pbpFileName = FileUtils::findFirstFile(EXT_PBP, destinationDir);
         if (pbpFileName != "") {
             ifstream is;
             is.open(destinationDir + sep + pbpFileName);
@@ -124,7 +124,7 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
             }
         }
     }
-    if (DirEntry::imageTypeUsesACueFile(imageType) || (imageType == IMAGE_CHD)) {
+    if (FileUtils::imageTypeUsesACueFile(imageType) || (imageType == IMAGE_CHD)) {
         string prefixes[] = {"CPCS", "ESPM", "HPS",  "LPS",  "LSP",  "SCAJ", "SCED", "SCES",
                              "SCPS", "SCUS", "SIPS", "SLES", "SLKA", "SLPM", "SLPS", "SLUS"};
         if (firstBinPath == "") {
@@ -173,14 +173,14 @@ string SerialScanner::scanSerialInternal(ImageType imageType, string path, strin
 //*******************************
 string SerialScanner::workarounds(ImageType imageType, string path, string firstBinPath) {
     string fileToScan = "";
-    if (DirEntry::imageTypeUsesACueFile(imageType)) {
+    if (FileUtils::imageTypeUsesACueFile(imageType)) {
         fileToScan = firstBinPath;
     }
     if (imageType == IMAGE_PBP) {
-        fileToScan = DirEntry::findFirstFile(EXT_PBP, path);
+        fileToScan = FileUtils::findFirstFile(EXT_PBP, path);
     }
     if (imageType == IMAGE_CHD) {
-        fileToScan = DirEntry::findFirstFile(EXT_CHD, path);
+        fileToScan = FileUtils::findFirstFile(EXT_CHD, path);
     }
 
     // BH2 - Resident Evil 1.5

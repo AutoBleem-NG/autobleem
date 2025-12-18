@@ -6,7 +6,7 @@
 #include "environment.h"
 #include "utils/file_utils.h"
 #include <algorithm>
-#include "dir_entry.h"
+#include "utils/file_utils.h"
 #include "engine/database.h"
 #include "gui/gui.h"
 #include "launcher/ra_integrator.h"
@@ -100,7 +100,7 @@ void LightgunGames::RemoveGame(const std::string &gamepath) {
 //********************
 void LightgunGames::PurgeGamesNotFound() {
     lightgunGamePaths.erase(remove_if(begin(lightgunGamePaths), end(lightgunGamePaths),
-                                      [](const string &gamepath) { return !DirEntry::exists(gamepath); }),
+                                      [](const string &gamepath) { return !FileUtils::exists(gamepath); }),
                             end(lightgunGamePaths));
     UpdateFile();
 }

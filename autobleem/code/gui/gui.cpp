@@ -65,13 +65,13 @@ GuiBase::~GuiBase() { SDL_Quit(); }
 string GuiBase::getCurrentThemePath() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     string path = Env::getPathToThemesDir() + sep + cfg.inifile.values["theme"];
-    if (!DirEntry::exists(path)) {
+    if (!FileUtils::exists(path)) {
         path = Env::getSonyPath();
     }
     return path;
 #else
     string path = "/media/themes/" + cfg.inifile.values["theme"] + "";
-    if (!DirEntry::exists(path)) {
+    if (!FileUtils::exists(path)) {
         path = "/usr/sony/share/data";
     }
     return path;
@@ -84,13 +84,13 @@ string GuiBase::getCurrentThemePath() {
 string GuiBase::getCurrentThemeImagePath() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     string path = getCurrentThemePath() + sep + "images";
-    if (!DirEntry::exists(path)) {
+    if (!FileUtils::exists(path)) {
         path = Env::getSonyPath() + sep + "images";
     }
     return path;
 #else
     string path = "/media/themes/" + cfg.inifile.values["theme"] + "/images";
-    if (!DirEntry::exists(path)) {
+    if (!FileUtils::exists(path)) {
         path = "/usr/sony/share/data/images";
     }
     return path;
@@ -103,14 +103,14 @@ string GuiBase::getCurrentThemeImagePath() {
 string GuiBase::getCurrentThemeSoundPath() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     string path = getCurrentThemePath() + sep + "sounds";
-    if (!DirEntry::exists(path)) {
+    if (!FileUtils::exists(path)) {
         path = Env::getSonyPath() + sep + "sounds";
     }
     PLOG_DEBUG << path;
     return path;
 #else
     string path = "/media/themes/" + cfg.inifile.values["theme"] + "/sounds";
-    if (!DirEntry::exists(path)) {
+    if (!FileUtils::exists(path)) {
         path = "/usr/sony/share/data/sounds";
     }
     return path;
@@ -123,13 +123,13 @@ string GuiBase::getCurrentThemeSoundPath() {
 string GuiBase::getCurrentThemeFontPath() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     string path = getCurrentThemePath() + sep + "font";
-    if (!DirEntry::exists(path)) {
+    if (!FileUtils::exists(path)) {
         path = Env::getSonyPath() + sep + "font";
     }
     return path;
 #else
     string path = "/media/themes/" + cfg.inifile.values["theme"] + "/font";
-    if (!DirEntry::exists(path)) {
+    if (!FileUtils::exists(path)) {
         path = "/usr/sony/share/data/font";
     }
     return path;
@@ -239,7 +239,7 @@ void Gui::freeMusic() {
 SDL_Shared<SDL_Texture> Gui::loadThemeTexture(const string &themePath, const string &defaultPath,
                                               const string &texname) {
     SDL_Shared<SDL_Texture> tex = nullptr;
-    if (DirEntry::exists(themePath + themeData.values[texname])) {
+    if (FileUtils::exists(themePath + themeData.values[texname])) {
         tex = IMG_LoadTexture(renderer, (themePath + themeData.values[texname]).c_str());
     } else {
         tex = IMG_LoadTexture(renderer, (defaultPath + defaultData.values[texname]).c_str());
@@ -257,7 +257,7 @@ void Gui::loadAssets(bool reloadMusic) {
     themePath = getCurrentThemePath() + sep;
 
     PLOG_DEBUG << "Loading UI theme:" << themePath;
-    if (!DirEntry::exists(themePath + "theme.ini")) {
+    if (!FileUtils::exists(themePath + "theme.ini")) {
         themePath = defaultPath;
         cfg.inifile.values["theme"] = "default";
         cfg.save();
@@ -330,7 +330,7 @@ void Gui::loadAssets(bool reloadMusic) {
         musicPath = cfg.inifile.values["music"];
     }
 
-    if (DirEntry::getFileExtension(musicPath) == "ogg") {
+    if (FileUtils::getFileExtension(musicPath) == "ogg") {
         freq = 44100;
     }
 
@@ -447,7 +447,7 @@ void Gui::menuSelection() {
     string mainMenu = "|@Start| " + _("AutoBleem") + "    |@X|  " + _("Re/Scan") + " ";
     string RA_or_EA = _("RetroArch");
     string cfgPath = Env::getPathToRetroarchDir() + sep + "retroboot/retroboot.cfg";
-    if (DirEntry::exists(cfgPath)) {
+    if (FileUtils::exists(cfgPath)) {
         Inifile RBcfg;
         RBcfg.load(cfgPath);
         if (RBcfg.values["use_emulationstation"] == "1")
@@ -562,7 +562,7 @@ void Gui::menuSelection() {
                     if (!forceScan)
                         if (e.cbutton.button == SDL_BTN_SQUARE) {
                             Mix_PlayChannel(-1, cursor, 0);
-                            if (!DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) {
+                            if (!FileUtils::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) {
 
                                 auto confirm = new GuiConfirm(renderer);
                                 confirm->label = _("RetroArch is not installed");
@@ -694,18 +694,18 @@ void Gui::exportDBToRetroarch() {
         ordered_json item = ordered_json::object();
 
         string gameFile = (game->folder + sep + game->base);
-        if (!DirEntry::matchExtension(game->base, ".pbp") && !DirEntry::matchExtension(game->base, ".chd")) {
+        if (!FileUtils::matchExtension(game->base, ".pbp") && !FileUtils::matchExtension(game->base, ".chd")) {
             gameFile += ".cue";
         }
         gameFile += "";
 
         string base;
-        if (DirEntry::isPBPFile(game->base)) {
+        if (FileUtils::isPBPFile(game->base)) {
             base = game->base.substr(0, game->base.length() - 4);
         } else {
             base = game->base;
         }
-        if (DirEntry::exists(game->folder + sep + base + ".m3u")) {
+        if (FileUtils::exists(game->folder + sep + base + ".m3u")) {
             gameFile = game->folder + sep + base + ".m3u";
         }
 

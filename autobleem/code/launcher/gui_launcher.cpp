@@ -147,15 +147,15 @@ void GuiLauncher::getGames_SET_APPS(PsGames *gamesList) {
     PsGames completeList;
 
     std::string appPath = Environment::getPathToAppsDir();
-    if (!DirEntry::exists(appPath)) {
+    if (!FileUtils::exists(appPath)) {
         return;
     }
-    DirEntries dirs = DirEntry::diru_DirsOnly(appPath);
+    DirEntries dirs = FileUtils::diru_DirsOnly(appPath);
     PLOG_DEBUG << "Scanning apps in: " << appPath;
     for (auto &dir : dirs) {
         std::string appIni = appPath + sep + dir.name + sep + "app.ini";
         PLOG_DEBUG << "AppIni: " << appIni;
-        if (DirEntry::exists(appIni)) {
+        if (FileUtils::exists(appIni)) {
             Inifile *file = new Inifile();
             file->load(appIni);
             PsGamePtr game{new PsGame};
@@ -317,7 +317,7 @@ void GuiLauncher::showSetName() {
                                          timeout);
         }
     } else if (currentSet == SET_RETROARCH) {
-        string playlist = DirEntry::getFileNameWithoutExtension(currentRAPlaylistName);
+        string playlist = FileUtils::getFileNameWithoutExtension(currentRAPlaylistName);
         notificationLines[0].setText(setNames[currentSet] + playlist + " " + numGames, timeout);
     } else if (currentSet == SET_LIGHTGUN) {
         notificationLines[0].setText(setNames[currentSet] + numGames, timeout);
@@ -333,7 +333,7 @@ void GuiLauncher::showSetName() {
 void GuiLauncher::loadAssets() {
     PLOG_DEBUG << "Loading playlists";
     raPlaylists.clear();
-    if (DirEntry::exists(Env::getPathToRetroarchDir())) {
+    if (FileUtils::exists(Env::getPathToRetroarchDir())) {
         raPlaylists = raIntegrator->getPlaylists();
     }
     vector<string> headers = {_("SETTINGS"), _("GAME"), _("MEMORY CARD"), _("RESUME")};
@@ -362,7 +362,7 @@ void GuiLauncher::loadAssets() {
     }
 
     Inifile colorsFile;
-    if (DirEntry::exists(gui->getCurrentThemePath() + sep + "colors.ini")) {
+    if (FileUtils::exists(gui->getCurrentThemePath() + sep + "colors.ini")) {
         colorsFile.load(gui->getCurrentThemePath() + sep + "colors.ini");
         fgColor.r = gui->getR(colorsFile.values["fg"]);
         fgColor.g = gui->getG(colorsFile.values["fg"]);
@@ -400,7 +400,7 @@ void GuiLauncher::loadAssets() {
     long time = SDL_GetTicks();
 
     PLOG_DEBUG << "Loading theme and creating objects";
-    if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png")) {
+    if (FileUtils::exists(gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png")) {
         staticMeta = true;
         background = new PsObj("background", gui->getCurrentThemeImagePath() + sep + "GR/AB_BG.png");
     } else {
@@ -413,7 +413,7 @@ void GuiLauncher::loadAssets() {
     background->visible = true;
     staticElements.push_back(background);
     string footerFile = "";
-    if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "GR/Footer_AB.png")) {
+    if (FileUtils::exists(gui->getCurrentThemeImagePath() + sep + "GR/Footer_AB.png")) {
         footerFile = "GR/Footer_AB.png";
     } else {
         footerFile = "GR/Footer.png";
@@ -439,7 +439,7 @@ void GuiLauncher::loadAssets() {
 
     staticElements.push_back(playText);
     string settingsFile = "";
-    if (DirEntry::exists(gui->getCurrentThemeImagePath() + sep + "CB/Function_AB.png")) {
+    if (FileUtils::exists(gui->getCurrentThemeImagePath() + sep + "CB/Function_AB.png")) {
         settingsFile = "/CB/Function_AB.png";
     } else {
         settingsFile = "/CB/Function_BG.png";

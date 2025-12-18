@@ -12,7 +12,7 @@
 #include "../utils/string_utils.h"
 #include <json.h>
 #include "../engine/cfg_processor.h"
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 #include "../environment.h"
 
 using namespace nlohmann;
@@ -44,7 +44,7 @@ RAIntegrator::~RAIntegrator() = default;
 //********************
 bool RAIntegrator::isValidPlaylist(string path) {
     // check file extension
-    if (ReturnLowerCase(DirEntry::getFileExtension(path)) != "lpl") {
+    if (ReturnLowerCase(FileUtils::getFileExtension(path)) != "lpl") {
         PLOG_DEBUG << "Extension is not .lpl";
         return false;
     }
@@ -92,7 +92,7 @@ PsGames RAIntegrator::readGamesFromPlaylistFile(const std::string &path) {
 // returns "" if not found
 string RAIntegrator::findFavoritesPlaylistPath() {
     string defaultPath{Env::getPathToRetroarchDir() + sep + "content_favorites.lpl"};
-    if (DirEntry::exists(defaultPath))
+    if (FileUtils::exists(defaultPath))
         return defaultPath;
     else
         return "";
@@ -104,7 +104,7 @@ string RAIntegrator::findFavoritesPlaylistPath() {
 // returns "" if not found
 string RAIntegrator::findHistoryPlaylistPath() {
     string defaultPath{Env::getPathToRetroarchDir() + sep + "content_history.lpl"};
-    if (DirEntry::exists(defaultPath))
+    if (FileUtils::exists(defaultPath))
         return defaultPath;
     else
         return "";
@@ -216,14 +216,14 @@ void RAIntegrator::readGamesFromAllPlaylistsIntoRAPlaylistInfos() {
     string path = Env::getPathToRetroarchPlaylistsDir();
     PLOG_DEBUG << "Checking playlists path" << path;
 
-    if (DirEntry::exists(path)) {
-        vector<DirEntry> entries = DirEntry::diru_FilesOnly(path);
+    if (FileUtils::exists(path)) {
+        vector<DirEntry> entries = FileUtils::diru_FilesOnly(path);
         PLOG_DEBUG << "Total Playlists:" << entries.size();
         vector<string> playlistNames;
         for (const DirEntry &entry : entries) {
-            if (DirEntry::getFileNameWithoutExtension(entry.name) == "AutoBleem")
+            if (FileUtils::getFileNameWithoutExtension(entry.name) == "AutoBleem")
                 continue;
-            if (DirEntry::getFileNameWithoutExtension(entry.name) == "Applications")
+            if (FileUtils::getFileNameWithoutExtension(entry.name) == "Applications")
                 continue;
             playlistNames.emplace_back(entry.name);
         }
@@ -236,7 +236,7 @@ void RAIntegrator::readGamesFromAllPlaylistsIntoRAPlaylistInfos() {
             string path = Env::getPathToRetroarchPlaylistsDir() + sep + playlistName;
             if (isValidPlaylist(path)) {
                 PsGames games = readGamesFromPlaylistFile(path);
-                string nameOnly = DirEntry::getFileNameWithoutExtension(playlistName);
+                string nameOnly = FileUtils::getFileNameWithoutExtension(playlistName);
                 if (games.size() > 0)
                     playlistInfos.emplace_back(nameOnly, path, games);
                 else
@@ -306,7 +306,7 @@ int RAIntegrator::getGamesNumber(string playlist) {
 // RAIntegrator::findOverrideCore
 //********************
 bool RAIntegrator::findOverrideCore(PsGamePtr game, string &core_name, string &core_path) {
-    string dbName = DirEntry::getFileNameWithoutExtension(game->db_name);
+    string dbName = FileUtils::getFileNameWithoutExtension(game->db_name);
 
     lcase(dbName);
     trim(dbName);
@@ -383,7 +383,7 @@ PsGames RAIntegrator::parseJSON(string path) {
             autoDetectCorePath(game, game->core_name, game->core_path);
         }
 
-        if (!DirEntry::exists(game->core_path)) {
+        if (!FileUtils::exists(game->core_path)) {
             autoDetectCorePath(game, game->core_name, game->core_path);
         }
         if (isGameValid(game)) {
@@ -457,7 +457,7 @@ PsGames RAIntegrator::parse6line(string path) {
             game->core_name = core_name;
             game->core_path = core_path;
         }
-        if (!DirEntry::exists(game->core_path)) {
+        if (!FileUtils::exists(game->core_path)) {
             bool coreFound = autoDetectCorePath(game, core_name, core_path);
             if (!coreFound)
                 continue;
@@ -479,7 +479,7 @@ bool RAIntegrator::autoDetectCorePath(PsGamePtr game, string &core_name, string 
     if (findOverrideCore(game, core_name, core_path)) {
         return true;
     }
-    string dbName = DirEntry::getFileNameWithoutExtension(game->db_name);
+    string dbName = FileUtils::getFileNameWithoutExtension(game->db_name);
     map<string, CoreInfoPtr>::const_iterator pos = defaultCores.find(dbName);
     if (pos == defaultCores.end()) {
         core_name = "DETECT";
@@ -496,7 +496,7 @@ bool RAIntegrator::autoDetectCorePath(PsGamePtr game, string &core_name, string 
 //********************
 void RAIntegrator::initCoreInfo() {
     PLOG_DEBUG << "Building core list";
-    if (!DirEntry::exists(Env::getPathToRetroarchDir())) {
+    if (!FileUtils::exists(Env::getPathToRetroarchDir())) {
         PLOG_DEBUG << "Retroarch Not Found";
         return;
     }
@@ -505,10 +505,10 @@ void RAIntegrator::initCoreInfo() {
     defaultCores.clear();
     string infoFolder = Env::getPathToRetroarchDir() + sep + "info/";
     PLOG_DEBUG << "Scanning: " << infoFolder;
-    vector<DirEntry> entries = DirEntry::diru_FilesOnly(infoFolder);
+    vector<DirEntry> entries = FileUtils::diru_FilesOnly(infoFolder);
     PLOG_DEBUG << "Found files:" << entries.size();
     for (const DirEntry &entry : entries) {
-        if (DirEntry::getFileExtension(entry.name) == "info") {
+        if (FileUtils::getFileExtension(entry.name) == "info") {
             string fullPath = infoFolder + sep + entry.name;
 
             CoreInfoPtr ci = parseCoreInfo(fullPath, entry.name);
@@ -567,26 +567,26 @@ void RAIntegrator::initCoreInfo() {
 // RAIntegrator::escapeName
 //********************
 string RAIntegrator::escapeName(string text) {
-    return DirEntry::replaceTheseCharsWithThisChar(text, "&*/:`<>?\\|", '_');
+    return FileUtils::replaceTheseCharsWithThisChar(text, "&*/:`<>?\\|", '_');
 }
 
 //********************
 // RAIntegrator::isGameValid
 //********************
 bool RAIntegrator::isGameValid(PsGamePtr game) {
-    if (!DirEntry::exists(game->core_path)) {
+    if (!FileUtils::exists(game->core_path)) {
         return false;
     }
     string path = game->image_path;
     if (path.find("#") != string::npos) {
         int pos = path.find("#");
         string check = path.substr(0, pos);
-        if (!DirEntry::exists(check)) {
+        if (!FileUtils::exists(check)) {
 
             return false;
         }
     } else {
-        if (!DirEntry::exists(path)) {
+        if (!FileUtils::exists(path)) {
 
             return false;
         }
@@ -604,7 +604,7 @@ CoreInfoPtr RAIntegrator::parseCoreInfo(string file, string entry) {
     PLOG_DEBUG << "Parsing ";
     CoreInfoPtr coreInfoPtr{new CoreInfo};
     coreInfoPtr->core_path =
-        Env::getPathToRetroarchDir() + sep + "cores/" + DirEntry::getFileNameWithoutExtension(entry) + ".so";
+        Env::getPathToRetroarchDir() + sep + "cores/" + FileUtils::getFileNameWithoutExtension(entry) + ".so";
     coreInfoPtr->extensions.clear();
     PLOG_DEBUG << "CorePath: " << coreInfoPtr->core_path;
     while (getline(in, line)) {

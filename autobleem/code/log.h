@@ -27,7 +27,7 @@
 #include <plog/Appenders/RollingFileAppender.h>
 #include <plog/Util.h>
 
-#include "dir_entry.h"
+#include "utils/file_utils.h"
 
 namespace Log {
 

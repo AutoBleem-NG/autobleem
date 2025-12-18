@@ -17,7 +17,7 @@ using namespace std;
 bool PsGame::isCleanExit() {
     if (!foreign) {
         string filenamefile = ssFolder + sep + "filename.txt";
-        bool ret = DirEntry::exists(filenamefile);
+        bool ret = FileUtils::exists(filenamefile);
         if (!ret)
             PLOG_DEBUG << "PsGame::isCleanExit() failed '" << filenamefile << "' not found";
         return ret;
@@ -48,10 +48,10 @@ void PsGame::removeResumePoint(int slot) {
     if (!foreign) {
         string filenamefile = ssFolder + sep + "filename.txt.res";
         string filenamepoint = ssFolder + sep + "filename." + to_string(slot) + ".txt.res";
-        if (DirEntry::exists(filenamepoint)) {
+        if (FileUtils::exists(filenamepoint)) {
             filenamefile = filenamepoint;
         }
-        if (DirEntry::exists(filenamefile)) {
+        if (FileUtils::exists(filenamefile)) {
             ifstream is(filenamefile.c_str());
             if (is.is_open()) {
 
@@ -60,15 +60,15 @@ void PsGame::removeResumePoint(int slot) {
                 std::getline(is, line);
 
                 string ssfile = ssFolder + sep + "sstates/" + line + ".00" + to_string(slot) + ".res";
-                DirEntry::removeFile(ssfile);
+                FileUtils::removeFile(ssfile);
                 // last line is our filename
                 if (slot == 0) {
                     string slot0img = ssFolder + sep + "screenshots/" + line + ".png.res";
-                    DirEntry::removeFile(slot0img);
+                    FileUtils::removeFile(slot0img);
 
                 } else {
                     string slotnimg = ssFolder + sep + "screenshots/" + line + "." + to_string(slot) + ".png.res";
-                    DirEntry::removeFile(slotnimg);
+                    FileUtils::removeFile(slotnimg);
                 }
                 is.close();
             }
@@ -83,10 +83,10 @@ bool PsGame::isResumeSlotActive(int slot) {
     if (!foreign) {
         string filenamefile = ssFolder + sep + "filename.txt.res";
         string filenamepoint = ssFolder + sep + "filename." + to_string(slot) + ".txt.res";
-        if (DirEntry::exists(filenamepoint)) {
+        if (FileUtils::exists(filenamepoint)) {
             filenamefile = filenamepoint;
         }
-        if (DirEntry::exists(filenamefile)) {
+        if (FileUtils::exists(filenamefile)) {
             ifstream is(filenamefile.c_str());
             if (is.is_open()) {
 
@@ -97,12 +97,12 @@ bool PsGame::isResumeSlotActive(int slot) {
                 // last line is our filename
                 if (slot == 0) {
                     string slot0img = ssFolder + sep + "screenshots/" + line + ".png.res";
-                    if (DirEntry::exists(slot0img)) {
+                    if (FileUtils::exists(slot0img)) {
                         return true;
                     }
                 } else {
                     string slotnimg = ssFolder + sep + "screenshots/" + line + "." + to_string(slot) + ".png.res";
-                    if (DirEntry::exists(slotnimg)) {
+                    if (FileUtils::exists(slotnimg)) {
                         return true;
                     }
                 }
@@ -120,10 +120,10 @@ void PsGame::storeResumePicture(int slot) {
     if (!foreign) {
         string filenamefile = ssFolder + sep + "filename.txt.res";
         string filenamepoint = ssFolder + sep + "filename." + to_string(slot) + ".txt.res";
-        if (DirEntry::exists(filenamepoint)) {
+        if (FileUtils::exists(filenamepoint)) {
             filenamefile = filenamepoint;
         }
-        if (DirEntry::exists(filenamefile)) {
+        if (FileUtils::exists(filenamefile)) {
             ifstream is(filenamefile.c_str());
             if (is.is_open()) {
 
@@ -132,7 +132,7 @@ void PsGame::storeResumePicture(int slot) {
                 std::getline(is, line);
 
                 string inputImg = ssFolder + sep + "screenshots/" + line + ".png";
-                if (!DirEntry::exists(inputImg)) {
+                if (!FileUtils::exists(inputImg)) {
                     return;
                 }
                 string slotImg;
@@ -145,9 +145,9 @@ void PsGame::storeResumePicture(int slot) {
                 }
                 is.close();
 
-                DirEntry::removeFile(slotImg);
-                DirEntry::copy(inputImg, slotImg);
-                DirEntry::removeFile(inputImg);
+                FileUtils::removeFile(slotImg);
+                FileUtils::copy(inputImg, slotImg);
+                FileUtils::removeFile(inputImg);
             }
         }
     }
@@ -160,10 +160,10 @@ string PsGame::findResumePicture(int slot) {
     if (!foreign) {
         string filenamefile = ssFolder + sep + "filename.txt.res";
         string filenamepoint = ssFolder + sep + "filename." + to_string(slot) + ".txt.res";
-        if (DirEntry::exists(filenamepoint)) {
+        if (FileUtils::exists(filenamepoint)) {
             filenamefile = filenamepoint;
         }
-        if (DirEntry::exists(filenamefile)) {
+        if (FileUtils::exists(filenamefile)) {
             ifstream is(filenamefile.c_str());
             if (is.is_open()) {
 
@@ -174,12 +174,12 @@ string PsGame::findResumePicture(int slot) {
                 // last line is our filename
                 if (slot == 0) {
                     string slot0img = ssFolder + sep + "screenshots/" + line + ".png.res";
-                    if (DirEntry::exists(slot0img)) {
+                    if (FileUtils::exists(slot0img)) {
                         return slot0img;
                     }
                 } else {
                     string slotnimg = ssFolder + sep + "screenshots/" + line + "." + to_string(slot) + ".png.res";
-                    if (DirEntry::exists(slotnimg)) {
+                    if (FileUtils::exists(slotnimg)) {
                         return slotnimg;
                     }
                 }
@@ -199,12 +199,12 @@ string PsGame::findResumePicture() {
         string filenamefile = ssFolder + sep + "filename.txt.res";
         for (int i = 0; i < 4; i++) {
             string filenamepoint = ssFolder + sep + "filename." + to_string(i) + ".txt.res";
-            if (DirEntry::exists(filenamepoint)) {
+            if (FileUtils::exists(filenamepoint)) {
                 filenamefile = filenamepoint;
                 break;
             }
         }
-        if (DirEntry::exists(filenamefile)) {
+        if (FileUtils::exists(filenamefile)) {
             ifstream is(filenamefile.c_str());
             if (is.is_open()) {
 
@@ -214,7 +214,7 @@ string PsGame::findResumePicture() {
 
                 // last line is our filename
                 string pngfile = ssFolder + sep + "screenshots/" + line + ".png.res";
-                if (DirEntry::exists(pngfile)) {
+                if (FileUtils::exists(pngfile)) {
                     return pngfile;
                 }
                 is.close();

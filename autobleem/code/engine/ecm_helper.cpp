@@ -5,7 +5,7 @@
 #include "ecm_helper.h"
 #include <iostream>
 #include "../log.h"
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 
 using namespace std;
 
@@ -23,7 +23,7 @@ int unecmify(FILE *in, FILE *out);
 //*******************************
 bool Ecmhelper::unecm(string input, string output) {
     PLOG_DEBUG << "Unpacking: " << input << " to " << output;
-    if (!DirEntry::matchExtension(output, EXT_BIN)) {
+    if (!FileUtils::matchExtension(output, EXT_BIN)) {
         output = output + ".bin";
     }
     eccedc_init();

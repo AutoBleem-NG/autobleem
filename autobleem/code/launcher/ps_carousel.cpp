@@ -38,7 +38,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 
             string imagePath = (*this)->folder + sep + (*this)->base + ".png";
             SDL_SetRenderTarget(renderer, nullptr);
-            if (DirEntry::exists(imagePath)) {
+            if (FileUtils::exists(imagePath)) {
                 coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
             } else {
                 coverPng = nullptr;
@@ -116,19 +116,19 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             if (!(*this)->app) { // RA Game
                 auto makeBoxArtPath = [&](const string &boxartDir) -> string {
                     return Env::getPathToRetroarchDir() + sep + "thumbnails" + sep +
-                           DirEntry::getFileNameWithoutExtension((*this)->db_name) + sep + boxartDir + sep +
+                           FileUtils::getFileNameWithoutExtension((*this)->db_name) + sep + boxartDir + sep +
                            RAIntegrator::escapeName((*this)->title) + ".png";
                 };
 
                 imagePath = makeBoxArtPath("Named_Boxarts");
                 string imagePath2 = makeBoxArtPath("Named_Titles");
                 string imagePath3 = makeBoxArtPath("Named_Snaps");
-                if (DirEntry::exists(imagePath)) {
+                if (FileUtils::exists(imagePath)) {
                     coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-                } else if (DirEntry::exists(imagePath2)) {
+                } else if (FileUtils::exists(imagePath2)) {
                     imagePath = imagePath2;
                     coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-                } else if (DirEntry::exists(imagePath3)) {
+                } else if (FileUtils::exists(imagePath3)) {
                     imagePath = imagePath3;
                     coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
                 } else {
@@ -140,7 +140,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             {
                 imagePath = (*this)->image_path;
 
-                if (DirEntry::exists(imagePath)) {
+                if (FileUtils::exists(imagePath)) {
                     coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
                 } else {
                     // use default
