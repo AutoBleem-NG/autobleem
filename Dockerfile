@@ -8,6 +8,12 @@ FROM ubuntu:18.04
 LABEL maintainer="AutoBleem Team"
 LABEL description="Docker build environment for AutoBleem - PlayStation Classic payload"
 
+# Build arguments for version info (passed from host where .git exists)
+ARG GIT_COMMIT_HASH=unknown
+ARG GIT_BRANCH=unknown
+ARG GIT_VERSION=1.1.0-dev
+ARG GIT_CHANGED=false
+
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -92,6 +98,12 @@ RUN mkdir -p /build/autobleem/libs/libchdr/build && \
 # Set environment variables for cross-compilation
 ENV PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig
 ENV CROSS_PREFIX=/usr/local/cross-tools/arm-linux-gnueabihf
+
+# Set version info as environment variables for CMake
+ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_VERSION=${GIT_VERSION}
+ENV GIT_CHANGED=${GIT_CHANGED}
 
 # Build AutoBleem for ARM
 RUN make arm JOBS=$(nproc)

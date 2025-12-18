@@ -47,7 +47,18 @@ docker-build:
 		echo "Install from: https://docs.docker.com/get-docker/"; \
 		exit 1; \
 	fi
-	docker build -t $(DOCKER_IMAGE) .
+	@echo "Extracting git version info..."
+	$(eval GIT_HASH := $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown"))
+	$(eval GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown"))
+	$(eval GIT_VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "1.1.0-dev"))
+	$(eval GIT_CHANGED := $(shell git diff-index --quiet HEAD -- 2>/dev/null && echo "false" || echo "true"))
+	@echo "  Version: $(GIT_VERSION) ($(GIT_BRANCH)@$(GIT_HASH))"
+	docker build -t $(DOCKER_IMAGE) \
+		--build-arg GIT_COMMIT_HASH=$(GIT_HASH) \
+		--build-arg GIT_BRANCH=$(GIT_BRANCH) \
+		--build-arg GIT_VERSION=$(GIT_VERSION) \
+		--build-arg GIT_CHANGED=$(GIT_CHANGED) \
+		.
 	@echo "Docker image built successfully: $(DOCKER_IMAGE)"
 
 # Extract built ARM binaries from Docker image
