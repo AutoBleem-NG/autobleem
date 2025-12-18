@@ -6,7 +6,7 @@
 
 #include <fstream>
 
-#include "dir_entry.h"
+#include "utils/file_utils.h"
 #include "environment.h"
 #include "log.h"
 #include "utils/string_utils.h"
@@ -113,8 +113,8 @@ vector<string> Lang::getListOfLanguages() {
 
     string langDir = Env::getWorkingPath() + sep + "lang";
     string defaultFile = DEFAULT_LANG + ".txt";
-    for (const DirEntry &entry : DirEntry::diru(langDir)) {
-        if (DirEntry::matchExtension(entry.name, ".txt") &&
+    for (const DirEntry &entry : FileUtils::diru(langDir)) {
+        if (FileUtils::matchExtension(entry.name, ".txt") &&
             !StringUtils::compareCaseInsensitive(entry.name, defaultFile)) {
             // Strip .txt extension
             languages.push_back(entry.name.substr(0, entry.name.size() - 4));

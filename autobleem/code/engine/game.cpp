@@ -43,7 +43,7 @@ bool USBGame::validateCue(string cuePath, string path) {
     }
     for (int i = 0; i < binFiles.size(); i++) {
         string binPath = path + sep + binFiles[i];
-        if (!DirEntry::exists(binPath)) {
+        if (!FileUtils::exists(binPath)) {
             result = false;
         } else {
             if (i == 0) {
@@ -204,7 +204,7 @@ void USBGame::recoverMissingFiles() {
     if (this->imageType == IMAGE_PBP) {
         // disc link
         string destinationDir = fullPath;
-        string pbpFileName = DirEntry::findFirstFile(EXT_PBP, destinationDir);
+        string pbpFileName = FileUtils::findFirstFile(EXT_PBP, destinationDir);
         if (pbpFileName != "") {
             if (discs.size() == 0) {
                 automationUsed = false;
@@ -222,14 +222,14 @@ void USBGame::recoverMissingFiles() {
     } else if (this->imageType == IMAGE_CHD) {
         // disc link
         string destinationDir = fullPath;
-        string chdFileName = DirEntry::findFirstFile(EXT_CHD, destinationDir);
+        string chdFileName = FileUtils::findFirstFile(EXT_CHD, destinationDir);
         if (chdFileName != "") {
             firstBinPath = destinationDir + sep + chdFileName;
             if (discs.size() == 0) {
                 vector<string> extensions;
                 extensions.push_back("chd");
-                DirEntries allFiles = DirEntry::diru(destinationDir);
-                DirEntries fileList = DirEntry::getFilesWithExtension(destinationDir, allFiles, extensions);
+                DirEntries allFiles = FileUtils::diru(destinationDir);
+                DirEntries fileList = FileUtils::getFilesWithExtension(destinationDir, allFiles, extensions);
                 automationUsed = false;
                 for (DirEntry dirEntry : fileList) {
                     Disc *disc = new Disc();
@@ -248,14 +248,14 @@ void USBGame::recoverMissingFiles() {
             PLOG_DEBUG << "Switching automation in CHD";
         }
     }
-    if (DirEntry::imageTypeUsesACueFile(this->imageType)) {
+    if (FileUtils::imageTypeUsesACueFile(this->imageType)) {
         if (discs.size() == 0) {
             automationUsed = true;
             PLOG_DEBUG << "Switching automation no discs";
             // find cue files
             string destination = fullPath;
-            for (const DirEntry &entry : DirEntry::diru(destination)) {
-                if (DirEntry::matchExtension(entry.name, EXT_CUE)) {
+            for (const DirEntry &entry : FileUtils::diru(destination)) {
+                if (FileUtils::matchExtension(entry.name, EXT_CUE)) {
                     Disc disc;
                     string discEntry = entry.name.substr(0, entry.name.size() - 4); // remove .CUE
                     disc.diskName = discEntry;                                      // the CUE filename without the .CUE
@@ -275,7 +275,7 @@ void USBGame::recoverMissingFiles() {
             string source = workingPath + sep + "default.lic";
             string destination = fullPath + sep + discs[0].diskName + ".lic";
             PLOG_DEBUG << "Copy: " << source << " -> " << destination;
-            DirEntry::copy(source, destination);
+            FileUtils::copy(source, destination);
             licFound = true;
         }
         if (!coverImageFound) {
@@ -284,7 +284,7 @@ void USBGame::recoverMissingFiles() {
             string source = workingPath + sep + "default.png";
             string destination = fullPath + sep + discs[0].diskName + ".png";
             PLOG_DEBUG << "Copy: " << source << " -> " << destination;
-            DirEntry::copy(source, destination);
+            FileUtils::copy(source, destination);
             // maybe we can do better ?
             PLOG_DEBUG << "getting serial from Image File";
 
@@ -341,7 +341,7 @@ void USBGame::recoverMissingFiles() {
         }
         md.clean();
         shared_ptr<Gui> gui(Gui::getInstance());
-        DirEntry::copy(source, destination);
+        FileUtils::copy(source, destination);
 
         CfgProcessor *processor = new CfgProcessor();
         processor->replaceUSB(gameDirName, fullPath, "region", "region = " + to_string(region));
@@ -398,9 +398,9 @@ void USBGame::updateObj() {
         for (int i = 0; i < strings.size(); i++) {
             Disc disc;
             disc.diskName = strings[i];
-            if (DirEntry::imageTypeUsesACueFile(imageType)) {
+            if (FileUtils::imageTypeUsesACueFile(imageType)) {
                 string cueFile = fullPath + sep + disc.diskName + EXT_CUE;
-                bool discCueExists = DirEntry::exists(cueFile);
+                bool discCueExists = FileUtils::exists(cueFile);
                 if (discCueExists) {
                     disc.binVerified = validateCue(cueFile, fullPath);
                     disc.cueFound = true;
@@ -409,7 +409,7 @@ void USBGame::updateObj() {
                 discs.push_back(disc);
             }
             if (imageType == IMAGE_PBP) {
-                string pbpName = DirEntry::findFirstFile(EXT_PBP, fullPath);
+                string pbpName = FileUtils::findFirstFile(EXT_PBP, fullPath);
                 if (pbpName == disc.diskName) {
                     disc.cueFound = true;
                 } else {
@@ -421,7 +421,7 @@ void USBGame::updateObj() {
                 discs.push_back(disc);
             }
             if (imageType == IMAGE_CHD) {
-                string chdName = DirEntry::findFirstFile(EXT_CHD, fullPath);
+                string chdName = FileUtils::findFirstFile(EXT_CHD, fullPath);
                 disc.cueFound = true;
                 disc.binVerified = true;
                 disc.cueName = disc.diskName;

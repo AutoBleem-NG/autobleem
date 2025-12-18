@@ -116,8 +116,6 @@ add_executable(
         autobleem-gui
         autobleem/code/debug_timer.cpp
         autobleem/code/debug_timer.h
-        autobleem/code/dir_entry.cpp
-        autobleem/code/dir_entry.h
         autobleem/code/engine/card_edit.cpp
         autobleem/code/engine/card_edit.h
         autobleem/code/engine/cfg_processor.cpp
@@ -241,6 +239,7 @@ add_executable(
         autobleem/code/main.h
         autobleem/code/unecm.c
         autobleem/code/utils/file_utils.cpp
+        autobleem/code/utils/path_utils.cpp
         autobleem/code/utils/random_utils.cpp
         autobleem/code/utils/string_utils.cpp
         autobleem/code/utils/time_utils.cpp
@@ -265,13 +264,12 @@ target_include_directories(autobleem-gui PUBLIC
 
 add_executable(starter
 		autobleem/code/starter.cpp
-		autobleem/code/dir_entry.h
-		autobleem/code/dir_entry.cpp
         autobleem/code/engine/ini_file.cpp
         autobleem/code/engine/mem_card.cpp autobleem/code/engine/mem_card.h
 		autobleem/code/environment.h
 		autobleem/code/environment.cpp
 		autobleem/code/utils/file_utils.cpp
+		autobleem/code/utils/path_utils.cpp
 		autobleem/code/utils/string_utils.cpp
 		)
 

@@ -512,7 +512,7 @@ void GuiLauncher::loop_chooseGameDir() {
 // GuiLauncher::loop_chooseRAPlaylist
 //*******************************
 void GuiLauncher::loop_chooseRAPlaylist() {
-    if (!DirEntry::exists(Env::getPathToRetroarchDir())) {
+    if (!FileUtils::exists(Env::getPathToRetroarchDir())) {
         return;
     }
     if (raPlaylists.empty()) {
@@ -699,7 +699,7 @@ void GuiLauncher::loop_triangleButton_Pressed() {
 //*******************************
 void GuiLauncher::loop_squareButton_Pressed() {
 
-    if (DirEntry::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) { // retroarch is a file!!
+    if (FileUtils::exists(Env::getPathToRetroarchDir() + sep + "retroarch")) { // retroarch is a file!!
         if (state == STATE_GAMES) {
             if (carouselGames.empty()) {
                 return;
@@ -957,9 +957,9 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
                 editor->gameFolder = carouselGames[selGameIndex]->folder;
                 editor->gameData = carouselGames[selGameIndex];
                 gameIni.load(carouselGames[selGameIndex]->folder + sep + GAME_INI);
-                string folderNoLast = DirEntry::removeSeparatorFromEndOfPath(carouselGames[selGameIndex]->folder);
+                string folderNoLast = FileUtils::removeSeparatorFromEndOfPath(carouselGames[selGameIndex]->folder);
                 // change "/media/Games/Racing/Driver 2" to "Driver 2"
-                gameIni.entry = DirEntry::getFileNameFromPath(folderNoLast);
+                gameIni.entry = FileUtils::getFileNameFromPath(folderNoLast);
                 editor->gameIni = gameIni;
             } else {
                 editor->gameData = carouselGames[selGameIndex];
@@ -1031,7 +1031,7 @@ void GuiLauncher::loop_crossButtonPressed_STATE_SET__OPT_EDIT_GAME_SETTINGS() {
         GuiEditor_RA *editor = new GuiEditor_RA(renderer);
         if (selGameIndexInCarouselGamesIsValid()) {
             editor->gameData = carouselGames[selGameIndex];
-            string folderNoLast = DirEntry::removeSeparatorFromEndOfPath(carouselGames[selGameIndex]->folder);
+            string folderNoLast = FileUtils::removeSeparatorFromEndOfPath(carouselGames[selGameIndex]->folder);
         }
 
         editor->show();

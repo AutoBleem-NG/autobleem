@@ -64,7 +64,7 @@ void GuiEditor_RA::refreshData() { shared_ptr<Gui> gui(Gui::getInstance()); }
 SDL_Shared<SDL_Texture> GuiEditor_RA::GetBoxArtTexture() {
     auto makeBoxArtPath = [&](const string &boxartDir) -> string {
         return Env::getPathToRetroarchDir() + sep + "thumbnails" + sep +
-               DirEntry::getFileNameWithoutExtension(gameData->db_name) + sep + boxartDir + sep +
+               FileUtils::getFileNameWithoutExtension(gameData->db_name) + sep + boxartDir + sep +
                RAIntegrator::escapeName(gameData->title) + ".png";
     };
 
@@ -72,12 +72,12 @@ SDL_Shared<SDL_Texture> GuiEditor_RA::GetBoxArtTexture() {
     string imagePath = makeBoxArtPath("Named_Boxarts");
     string imagePath2 = makeBoxArtPath("Named_Titles");
     string imagePath3 = makeBoxArtPath("Named_Snaps");
-    if (DirEntry::exists(imagePath)) {
+    if (FileUtils::exists(imagePath)) {
         coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-    } else if (DirEntry::exists(imagePath2)) {
+    } else if (FileUtils::exists(imagePath2)) {
         imagePath = imagePath2;
         coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-    } else if (DirEntry::exists(imagePath3)) {
+    } else if (FileUtils::exists(imagePath3)) {
         imagePath = imagePath3;
         coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
     } else {

@@ -21,7 +21,7 @@ string VerMigration::getLastRunVersion()
 {
     string version="";
 
-    if (!DirEntry::exists(verFile))
+    if (!FileUtils::exists(verFile))
     {
         version="v0.4.0";
     } else
@@ -78,11 +78,11 @@ void VerMigration::migrate04_05(Database * db)
             PLOG_DEBUG << folder ;
 
             string gameIniLoc = folder + sep + "GameData" + sep + "Game.ini";
-            if (!DirEntry::exists(gameIniLoc))
+            if (!FileUtils::exists(gameIniLoc))
             {
                 gameIniLoc = folder + sep + GAME_INI;
             }
-            if (!DirEntry::exists(gameIniLoc))
+            if (!FileUtils::exists(gameIniLoc))
             {
                 continue;
             }
@@ -116,7 +116,7 @@ void VerMigration::migrate(Database * db)
     string last=getLastRunVersion();
     Config cfg;
     string current=cfg.inifile.values["version"];
-    bool autobleemEverRun = DirEntry::exists("/media/System/Logs/autobleem.log");
+    bool autobleemEverRun = FileUtils::exists("/media/System/Logs/autobleem.log");
     if ((autobleemEverRun) && (current!=last))
     {
         // we need to migrate from 0.4 to 0.5.0

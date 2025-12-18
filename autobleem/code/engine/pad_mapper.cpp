@@ -6,7 +6,7 @@
 #include "../system/process_utils.h"
 #include <iostream>
 #include "../log.h"
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 #include "../environment.h"
 #include "../gui/abl.h"
 #include "../lang.h"
@@ -98,7 +98,7 @@ void PadMapper::probePads() {
     }
     bool mappingsLoaded = false;
     for (string controllerdbPath : gamedbpaths) {
-        if (DirEntry::exists(controllerdbPath)) {
+        if (FileUtils::exists(controllerdbPath)) {
             int loadedMappings = SDL_GameControllerAddMappingsFromFile(controllerdbPath.c_str());
             PLOG_DEBUG << "Loaded pad mappings " << loadedMappings << " from " << controllerdbPath;
             mappingsLoaded = true;

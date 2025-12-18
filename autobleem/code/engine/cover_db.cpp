@@ -5,7 +5,7 @@
 #include "cover_db.h"
 #include <iostream>
 #include "../log.h"
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 #include "../environment.h"
 
 using namespace std;
@@ -21,7 +21,7 @@ Coverdb::Coverdb() {
     for (int i = 0; i < 3; i++) {
         covers[i] = nullptr;
         auto filename = Env::getPathToCoversDBDir() + sep + "covers" + regionStr[i] + ".db";
-        if (DirEntry::exists(filename)) {
+        if (FileUtils::exists(filename)) {
             covers[i] = new Database();
             bool success = covers[i]->connect(filename);
             if (!success) {

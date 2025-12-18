@@ -18,9 +18,9 @@ string GuiOptions::getStatusLine() {
 vector<string> GuiOptions::getThemes() {
     vector<string> list;
     string uiThemePath = Env::getPathToThemesDir();
-    DirEntries uiThemeFolders = DirEntry::diru_DirsOnly(uiThemePath);
+    DirEntries uiThemeFolders = FileUtils::diru_DirsOnly(uiThemePath);
     for (const DirEntry &entry : uiThemeFolders) {
-        if (DirEntry::exists(uiThemePath + sep + entry.name + sep + "theme.ini")) {
+        if (FileUtils::exists(uiThemePath + sep + entry.name + sep + "theme.ini")) {
             list.push_back(entry.name); // add the theme dir name
         }
     }
@@ -33,9 +33,9 @@ vector<string> GuiOptions::getThemes() {
 //*******************************
 vector<string> GuiOptions::getJewels() {
     vector<string> list;
-    DirEntries folders = DirEntry::diru_FilesOnly(Env::getWorkingPath() + sep + "evoimg/frames");
+    DirEntries folders = FileUtils::diru_FilesOnly(Env::getWorkingPath() + sep + "evoimg/frames");
     for (const DirEntry &entry : folders) {
-        if (DirEntry::getFileExtension(entry.name) == "png") {
+        if (FileUtils::getFileExtension(entry.name) == "png") {
             list.push_back(entry.name);
         }
     }
@@ -49,9 +49,9 @@ vector<string> GuiOptions::getJewels() {
 vector<string> GuiOptions::getMusic() {
     vector<string> list;
     list.push_back("--");
-    DirEntries folders = DirEntry::diru_FilesOnly(Env::getWorkingPath() + sep + "music");
+    DirEntries folders = FileUtils::diru_FilesOnly(Env::getWorkingPath() + sep + "music");
     for (const DirEntry &entry : folders) {
-        if (DirEntry::getFileExtension(entry.name) == "ogg") {
+        if (FileUtils::getFileExtension(entry.name) == "ogg") {
             list.push_back(entry.name);
         }
     }

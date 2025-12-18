@@ -2,7 +2,7 @@
 #include <string>
 #include <unistd.h>
 #include <sys/wait.h>
-#include "dir_entry.h"
+#include "utils/file_utils.h"
 #include "engine/ini_file.h"
 #include "engine/mem_card.h"
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     cfg.load("/media/Autobleem/bin/autobleem/config.ini");
 
     if (memcard != "SONY") {
-        if (DirEntry::exists(sourceCard + memcard)) {
+        if (FileUtils::exists(sourceCard + memcard)) {
             Memcard *card = new Memcard("/media/Games/");
             if (!card->swapIn("./.pcsx", memcard)) {
                 memcard = "SONY";
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < arguments.size(); i++) {
             if (arguments[i] == "-cdfile") {
                 string image = arguments[i + 1];
-                if (DirEntry::matchExtension(image, ".cue")) {
+                if (FileUtils::matchExtension(image, ".cue")) {
                     image = image.substr(0, image.size() - 4);
                 }
                 arguments[i + 1] = image;

@@ -335,14 +335,14 @@ void GuiEditor::init() {
     if (!internal) {
         if (this->gameIni.values["memcard"] != "SONY") {
             string cardpath = Env::getPathToMemCardsDir() + sep + this->gameIni.values["memcard"];
-            if (!DirEntry::exists(cardpath)) {
+            if (!FileUtils::exists(cardpath)) {
                 this->gameIni.values["memcard"] = "SONY";
             }
         }
 
         bool pngLoaded = false;
-        for (const DirEntry &entry : DirEntry::diru(gameFolder)) {
-            if (DirEntry::matchExtension(entry.name, EXT_PNG)) {
+        for (const DirEntry &entry : FileUtils::diru(gameFolder)) {
+            if (FileUtils::matchExtension(entry.name, EXT_PNG)) {
                 cover = IMG_LoadTexture(renderer, (gameFolder + sep + entry.name).c_str());
                 pngLoaded = true;
             }
@@ -360,14 +360,14 @@ void GuiEditor::init() {
 
         if (this->gameIni.values["memcard"] != "SONY") {
             string cardpath = Env::getPathToMemCardsDir() + sep + this->gameIni.values["memcard"];
-            if (!DirEntry::exists(cardpath)) {
+            if (!FileUtils::exists(cardpath)) {
                 this->gameIni.values["memcard"] = "SONY";
             }
         }
 
         bool pngLoaded = false;
-        for (const DirEntry &entry : DirEntry::diru(gameData->folder)) {
-            if (DirEntry::matchExtension(entry.name, EXT_PNG)) {
+        for (const DirEntry &entry : FileUtils::diru(gameData->folder)) {
+            if (FileUtils::matchExtension(entry.name, EXT_PNG)) {
                 cover = IMG_LoadTexture(renderer, (gameData->folder + sep + entry.name).c_str());
                 pngLoaded = true;
             }

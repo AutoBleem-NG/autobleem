@@ -9,7 +9,7 @@
 #include <SDL2/SDL_image.h>
 #include "../lang.h"
 #include "../engine/ini_file.h"
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 #include "../environment.h"
 #include "../lightgun_games.h"
 

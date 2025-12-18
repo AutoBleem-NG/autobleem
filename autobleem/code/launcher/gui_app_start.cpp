@@ -31,7 +31,7 @@ void GuiAppStart::init() {
     // Try to load app.ini
     appName = game->title;
 
-    if (DirEntry::exists(game->readme_path)) {
+    if (FileUtils::exists(game->readme_path)) {
         std::ifstream t(game->readme_path);
         t.seekg(0, std::ios::end);
         size_t size = t.tellg();

@@ -8,7 +8,7 @@
 #include "database.h"
 #include "../gui/gui.h"
 #include <map>
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 #include <algorithm>
 #include "get_game_dir_hierarchy.h"
 

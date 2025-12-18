@@ -5,7 +5,7 @@
 #include "../log.h"
 #include <SDL2/SDL_ttf.h>
 #include "serial_scanner.h"
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 #include "../environment.h"
 
 using namespace std;
@@ -450,7 +450,7 @@ bool Database::refreshGameInternal(PsGamePtr &psGame) {
             psGame->last_played = last_played;
 
             string gameIniPath = psGame->folder + sep + GAME_INI;
-            if (DirEntry::exists(gameIniPath)) {
+            if (FileUtils::exists(gameIniPath)) {
                 Inifile ini;
                 ini.load(gameIniPath);
                 psGame->locked = !(ini.values["automation"] == "1");
@@ -503,7 +503,7 @@ bool Database::refreshGame(PsGamePtr &game) {
             game->cds = discs;
 
             string gameIniPath = game->folder + sep + GAME_INI;
-            if (DirEntry::exists(gameIniPath)) {
+            if (FileUtils::exists(gameIniPath)) {
                 Inifile ini;
                 ini.load(gameIniPath);
                 game->locked = !(ini.values["automation"] == "1");
@@ -555,7 +555,7 @@ bool Database::getGames(PsGames *result) {
             game->cds = discs;
 
             string gameIniPath = game->folder + sep + GAME_INI;
-            if (DirEntry::exists(gameIniPath)) {
+            if (FileUtils::exists(gameIniPath)) {
                 Inifile ini;
                 ini.load(gameIniPath);
                 game->locked = !(ini.values["automation"] == "1");

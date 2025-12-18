@@ -57,34 +57,34 @@ bool copyGameFilesInGamesDirToSubDirs(const string &path) {
     extensions.push_back("chd");
 
     // Getting all files in USBGames Dir
-    DirEntries globalFileList = DirEntry::diru(path);
-    DirEntries fileList = DirEntry::getFilesWithExtension(path, globalFileList, extensions);
+    DirEntries globalFileList = FileUtils::diru(path);
+    DirEntries fileList = FileUtils::getFilesWithExtension(path, globalFileList, extensions);
 
     // On first run, we won't process bin/img files, as cue file may handle a part of them
     for (const auto &entry : fileList) {
         Gui::splash(_("Moving") + ": " + entry.name);
-        fileExt = DirEntry::getFileExtension(entry.name);
-        filenameWE = DirEntry::getFileNameWithoutExtension(entry.name);
+        fileExt = FileUtils::getFileExtension(entry.name);
+        filenameWE = FileUtils::getFileNameWithoutExtension(entry.name);
         // Checking if file exists
         if (access((path + sep + entry.name).c_str(), F_OK) != -1) {
             if (fileExt == "cue") {
-                binList = DirEntry::cueToBinList(path + sep + entry.name);
+                binList = FileUtils::cueToBinList(path + sep + entry.name);
                 if (!binList.empty()) {
                     // Create directory for game
-                    DirEntry::createDir(path + sep + filenameWE);
+                    FileUtils::createDir(path + sep + filenameWE);
                     // Move cue file
-                    DirEntry::renameFile(path + "/" + entry.name, path + sep + filenameWE + "/" + entry.name);
+                    FileUtils::renameFile(path + "/" + entry.name, path + sep + filenameWE + "/" + entry.name);
                     // Move bin files
                     for (const auto &bin : binList) {
                         Gui::splash(_("Moving") + ": " + bin);
-                        DirEntry::renameFile(path + sep + bin, path + sep + filenameWE + sep + bin);
+                        FileUtils::renameFile(path + sep + bin, path + sep + filenameWE + sep + bin);
                     }
                     ret = true;
                 }
             } else {
-                DirEntry::createDir(path + sep + filenameWE);
+                FileUtils::createDir(path + sep + filenameWE);
 
-                DirEntry::renameFile(path + sep + entry.name, path + sep + filenameWE + sep + entry.name);
+                FileUtils::renameFile(path + sep + entry.name, path + sep + filenameWE + sep + entry.name);
                 ret = true;
             }
         }
@@ -94,15 +94,15 @@ bool copyGameFilesInGamesDirToSubDirs(const string &path) {
     extensions.clear();
     extensions.push_back("img");
     extensions.push_back("bin");
-    fileList = DirEntry::getFilesWithExtension(path, globalFileList, extensions);
+    fileList = FileUtils::getFilesWithExtension(path, globalFileList, extensions);
     for (const auto &entry : fileList) {
         Gui::splash(_("Moving") + ": " + entry.name);
-        fileExt = DirEntry::getFileExtension(entry.name);
-        filenameWE = DirEntry::getFileNameWithoutExtension(entry.name);
+        fileExt = FileUtils::getFileExtension(entry.name);
+        filenameWE = FileUtils::getFileNameWithoutExtension(entry.name);
         // Checking if file exists
         if (access((path + sep + entry.name).c_str(), F_OK) != -1) {
-            DirEntry::createDir(path + sep + filenameWE);
-            DirEntry::renameFile(path + sep + entry.name, path + sep + filenameWE + sep + entry.name);
+            FileUtils::createDir(path + sep + filenameWE);
+            FileUtils::renameFile(path + sep + entry.name, path + sep + filenameWE + sep + entry.name);
             ret = true;
         }
     }
@@ -165,13 +165,13 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
 //*******************************
 void rewriteGamelistXml() {
     // this file was used during 0.9.0 testing.  it must be removed or ES will use it by mistake.
-    DirEntry::removeFile(Env::getPathToGamesDir() + sep + "gamelist.xml");
+    FileUtils::removeFile(Env::getPathToGamesDir() + sep + "gamelist.xml");
 
     string path = Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx";
-    DirEntry::createDir(path);
+    FileUtils::createDir(path);
     string filePath = path + sep + "gamelist.xml";
 
-    DirEntry::removeFile(filePath);
+    FileUtils::removeFile(filePath);
 
     PsGames currentGames;
     Gui::getInstance()->db->getGames(&currentGames);
@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
         private_pathToInternalDBFile = "/media/System/Databases/internal.db";
 #endif
         private_pathToGamesDir = argv[2];
-        private_pathToUSBDrive = DirEntry::getDirNameFromPath(private_pathToGamesDir);
+        private_pathToUSBDrive = FileUtils::getDirNameFromPath(private_pathToGamesDir);
     } else {
         // Can't use PLOG_ERROR yet - logger not initialized
         std::cerr << "ERROR: USAGE: autobleem-gui /path/dbfilename.db /path/to/games" << std::endl;
@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
 
     // NOW initialize logger - it will use USB:/System/Logs/autobleem-ng.log
     string logDir = private_pathToUSBDrive + sep + "System" + sep + "Logs";
-    DirEntry::createDir(logDir);
+    FileUtils::createDir(logDir);
     string logPath = logDir + sep + "autobleem-ng.log";
     Log::init(logPath);
 
@@ -254,7 +254,7 @@ int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_InitSubSystem(SDL_INIT_AUDIO);
     SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
-    Env::autobleemKernel = DirEntry::exists("/autobleem");
+    Env::autobleemKernel = FileUtils::exists("/autobleem");
     shared_ptr<Lang> lang(Lang::getInstance());
 
     // now that Environment is setup, routines that need the paths can be called
@@ -302,8 +302,8 @@ int main(int argc, char *argv[]) {
     delete memcardOperation;
 
     string prevPath = Env::getWorkingPath() + sep + "autobleem.prev";
-    bool prevFileExists = DirEntry::exists(prevPath);
-    bool gamelistXmlExists = DirEntry::exists(
+    bool prevFileExists = FileUtils::exists(prevPath);
+    bool gamelistXmlExists = FileUtils::exists(
         Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx/gamelist.xml");
 
     GamesHierarchy gamesHierarchy;

@@ -30,8 +30,8 @@ void GuiManager::init() {
     for (auto &psGame : psGames) {
         // left column              right column
         // "title"                  "path"
-        string path = DirEntry::removeSeparatorFromEndOfPath(psGame->folder);
-        path = DirEntry::removeGamesPathFromFrontOfPath(path);
+        string path = FileUtils::removeSeparatorFromEndOfPath(psGame->folder);
+        path = FileUtils::removeGamesPathFromFrontOfPath(path);
         lines.emplace_back(TwoColumnsOfText(psGame->title, path));
     }
 }
@@ -76,7 +76,7 @@ string GuiManager::getStatusLine() {
 int GuiManager::flushCovers(const char *file, const struct stat * /*sb*/, int /*flag*/, struct FTW * /*s*/) {
     int retval = 0;
 
-    if (DirEntry::getFileExtension(file) == "png") {
+    if (FileUtils::getFileExtension(file) == "png") {
         remove(file);
     }
 
@@ -114,7 +114,7 @@ void GuiManager::doSquare_Pressed() {
         gui->renderStatus(_("Please wait... deleting") + " " + gameName);
         bool success = gui->db->deleteGameIdFromAllTables(gameId);
         if (success) {
-            success = DirEntry::removeDirAndContents(game->folder);
+            success = FileUtils::removeDirAndContents(game->folder);
             if (success) {
                 PsGames currentGames;
                 gui->db->getGames(&currentGames);
@@ -128,7 +128,7 @@ void GuiManager::doSquare_Pressed() {
                     bool delSSFolder = confirm->result;
                     delete confirm;
                     if (delSSFolder)
-                        DirEntry::removeDirAndContents(gameSaveStateFolder);
+                        FileUtils::removeDirAndContents(gameSaveStateFolder);
                 }
             }
         } else {
@@ -162,7 +162,7 @@ void GuiManager::doTriangle_Pressed() {
 
         int errors = 0;
         int flags = FTW_DEPTH | FTW_PHYS | FTW_CHDIR;
-        if (nftw(DirEntry::fixPath(gui->pathToGamesDir).c_str(), flushCovers, 1, flags) != 0) {
+        if (nftw(FileUtils::fixPath(gui->pathToGamesDir).c_str(), flushCovers, 1, flags) != 0) {
             errors++;
         }
 
@@ -184,9 +184,9 @@ void GuiManager::doCross_Pressed() {
         editor->gameData = psGames[selected];
         editor->gameFolder = selectedGameFolder;
         editor->gameIni.load(selectedGameFolder + sep + GAME_INI);
-        string folderNoLast = DirEntry::removeSeparatorFromEndOfPath(selectedGameFolder);
+        string folderNoLast = FileUtils::removeSeparatorFromEndOfPath(selectedGameFolder);
         // change "/media/Games/Racing/Driver 2" to "Driver 2"
-        editor->gameIni.entry = DirEntry::getFileNameFromPath(folderNoLast);
+        editor->gameIni.entry = FileUtils::getFileNameFromPath(folderNoLast);
         editor->show();
         if (editor->changes) {
             changes = true;

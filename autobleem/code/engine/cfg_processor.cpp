@@ -5,7 +5,7 @@
 #include "cfg_processor.h"
 #include "../utils/string_utils.h"
 #include <fstream>
-#include "../dir_entry.h"
+#include "../utils/file_utils.h"
 #include <iostream>
 #include "../log.h"
 #include "../environment.h"
@@ -17,7 +17,7 @@ using namespace std;
 //*******************************
 void CfgProcessor::replaceProperty(string fullCfgFilePath, string property, string newline) {
     //   PLOG_DEBUG << "cfg replace, '" << fullCfgFilePath << "', '" << property << "' with: '" << newline << "'" ;
-    if (!DirEntry::exists(fullCfgFilePath)) {
+    if (!FileUtils::exists(fullCfgFilePath)) {
         PLOG_DEBUG << "  cfg file doesn't exist";
         return;
     }
@@ -103,7 +103,7 @@ string CfgProcessor::getValueFromCfgFile(string fullCfgFilePath, string property
 //*******************************
 string CfgProcessor::getValue(string gamePath, string property) {
     string fullCfgFilePath = gamePath + sep + PCSX_CFG;
-    if (!DirEntry::exists(fullCfgFilePath)) {
+    if (!FileUtils::exists(fullCfgFilePath)) {
         PLOG_DEBUG << "  cfg file doesn't exist";
         PLOG_DEBUG << "  return: ''";
         return "";
@@ -119,8 +119,8 @@ string CfgProcessor::getValue(string gamePath, string property) {
 //*******************************
 void CfgProcessor::replacePropertyInAllCfgsInDir(string pathToCfgDir, string property, string newline) {
     PLOG_DEBUG << "cfg replaceInAllCfg, '" << pathToCfgDir << "', '" << property << "'";
-    for (const DirEntry &cfgEntry : DirEntry::diru_FilesOnly(pathToCfgDir)) {
-        if (DirEntry::matchExtension(cfgEntry.name, ".cfg")) {
+    for (const DirEntry &cfgEntry : FileUtils::diru_FilesOnly(pathToCfgDir)) {
+        if (FileUtils::matchExtension(cfgEntry.name, ".cfg")) {
             string fullCfgFilePath = pathToCfgDir + sep + cfgEntry.name;
             replaceProperty(fullCfgFilePath, property, newline);
         }
@@ -164,7 +164,7 @@ void CfgProcessor::replace(string entry, string gamePath, string property, strin
     if (internal)
         replaceInternal(gamePath, property, newline);
     else
-        replaceUSB(entry, DirEntry::getDirNameFromPath(gamePath), property, newline);
+        replaceUSB(entry, FileUtils::getDirNameFromPath(gamePath), property, newline);
 }
 
 //*******************************

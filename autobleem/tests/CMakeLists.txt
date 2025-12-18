@@ -26,7 +26,8 @@ include_directories(
 add_executable(
     chd_reader_test
     chd_reader_test.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/dir_entry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
@@ -55,9 +56,11 @@ add_executable(
     ${CMAKE_SOURCE_DIR}/autobleem/code/engine/serial_scanner.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/engine/ini_file.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/engine/iso_dir.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/dir_entry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/io/binary_reader.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/system/process_utils.cpp
@@ -78,7 +81,8 @@ gtest_discover_tests(database_test)
 add_executable(
     log_test
     log_test.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/dir_entry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
@@ -96,7 +100,8 @@ add_executable(
     lang_test
     lang_test.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/lang.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/dir_entry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
@@ -144,6 +149,9 @@ add_executable(
     file_utils_test
     file_utils_test.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
 )
 
 target_link_libraries(
@@ -236,7 +244,8 @@ add_executable(
     environment_test
     environment_test.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
-    ${CMAKE_SOURCE_DIR}/autobleem/code/dir_entry.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
     ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
 )
 
