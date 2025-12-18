@@ -13,7 +13,7 @@ Fixes #(issue)
 ## Testing
 - [ ] Tested on PlayStation Classic hardware
 - [ ] Tested with local build (x86_64)
-- [ ] ARM build succeeds (`make arm`)
+- [ ] ARM build succeeds (`make build`)
 - [ ] x86_64 build succeeds (`make sys`)
 
 <!-- Describe your testing and results -->
