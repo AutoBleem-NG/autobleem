@@ -1,12 +1,8 @@
-//
-// Created by screemer on 2/4/19.
-//
+// Original author: screemer
 // Localization support for AutoBleem UI strings.
-// Language files are stored in lang/*.txt with alternating lines:
-//   - Odd lines: English source string
-//   - Even lines: Translated string
-//
-
+// Language files stored in lang/*.txt use key=value format:
+//   English Text=Translated Text
+// Lines starting with # are comments.
 #pragma once
 
 #include <map>

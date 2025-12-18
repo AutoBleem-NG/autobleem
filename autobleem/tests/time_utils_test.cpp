@@ -1,11 +1,13 @@
 // Unit tests for time utilities
 #include <gtest/gtest.h>
+
 #include <ctime>
-#include <cstring>
 
 #include "../code/utils/time_utils.h"
 
-// Tests for getCurrentTime
+// =============================================================================
+// Tests for getCurrentTime()
+// =============================================================================
 class GetCurrentTimeTest : public ::testing::Test {};
 
 TEST_F(GetCurrentTimeTest, ReturnsValidTimestamp) {
@@ -14,7 +16,6 @@ TEST_F(GetCurrentTimeTest, ReturnsValidTimestamp) {
     time_t result = TimeUtils::getCurrentTime();
     time_t after = time(nullptr);
 
-    // Result should be between before and after
     EXPECT_GE(result, before);
     EXPECT_LE(result, after);
 }
@@ -25,30 +26,24 @@ TEST_F(GetCurrentTimeTest, ReturnsPositiveValue) {
     EXPECT_GT(result, 0);
 }
 
-TEST_F(GetCurrentTimeTest, MultipleCallsReturnIncreasingValues) {
+TEST_F(GetCurrentTimeTest, MultipleCallsAreConsistent) {
+    // Multiple calls in quick succession should return the same or increasing values
     time_t first = TimeUtils::getCurrentTime();
-    // Small delay to ensure time progresses
-    sleep(1);
     time_t second = TimeUtils::getCurrentTime();
 
-    // Second call should be >= first (allowing for very fast execution)
     EXPECT_GE(second, first);
 }
 
-// Tests for usingWiFiUpdatedTime
+// =============================================================================
+// Tests for usingWiFiUpdatedTime()
+// =============================================================================
 class UsingWiFiUpdatedTimeTest : public ::testing::Test {};
 
-TEST_F(UsingWiFiUpdatedTimeTest, ReturnsBooleanValue) {
-    bool result = TimeUtils::usingWiFiUpdatedTime();
-    // Should be a boolean (true or false)
-    EXPECT_TRUE(result == true || result == false);
-}
-
 TEST_F(UsingWiFiUpdatedTimeTest, ReturnsTrueForCurrentTime) {
-    // Current system time (if properly set) should be >= 2020
+    // On a modern system with proper time set, should return true (year >= 2020)
     bool result = TimeUtils::usingWiFiUpdatedTime();
     time_t now = time(nullptr);
-    tm *local = localtime(&now);
+    std::tm *local = std::localtime(&now);
 
     if (local != nullptr && local->tm_year + 1900 >= 2020) {
         EXPECT_TRUE(result);
@@ -58,17 +53,20 @@ TEST_F(UsingWiFiUpdatedTimeTest, ReturnsTrueForCurrentTime) {
 }
 
 TEST_F(UsingWiFiUpdatedTimeTest, ConsistentWithManualYearCheck) {
+    // Verify our function matches the expected logic
     bool result = TimeUtils::usingWiFiUpdatedTime();
     time_t now = time(nullptr);
-    tm *local = localtime(&now);
+    std::tm *local = std::localtime(&now);
 
     bool expectedResult = (local != nullptr) && (local->tm_year + 1900 >= 2020);
     EXPECT_EQ(result, expectedResult);
 }
 
-// Tests for timeToDisplayTimeString
+// =============================================================================
+// Tests for timeToDisplayTimeString()
+// =============================================================================
 class TimeToDisplayTimeStringTest : public ::testing::Test {
-protected:
+  protected:
     void SetUp() override {
         // Test with a known timestamp: 2023-06-15 10:30:45 UTC
         // This is 1686820245 in Unix timestamp

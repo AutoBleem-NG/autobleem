@@ -25,9 +25,27 @@ protected:
     }
 };
 
-// ============================================================================
+// isValid() Tests
+
+TEST_F(BinaryReaderTest, IsValidWithNullStream) {
+    BinaryIO::Reader reader(nullptr);
+    EXPECT_FALSE(reader.isValid());
+}
+
+TEST_F(BinaryReaderTest, IsValidWithValidStream) {
+    writeTestFile({0x42});
+    std::ifstream file(testFile, std::ios::binary);
+    BinaryIO::Reader reader(&file);
+    EXPECT_TRUE(reader.isValid());
+}
+
+TEST_F(BinaryReaderTest, IsValidWithBadStream) {
+    std::ifstream file("/nonexistent/path/file.bin", std::ios::binary);
+    BinaryIO::Reader reader(&file);
+    EXPECT_FALSE(reader.isValid());
+}
+
 // readByte() Tests
-// ============================================================================
 
 TEST_F(BinaryReaderTest, ReadByte) {
     writeTestFile({0x42, 0xFF, 0x00});
@@ -39,9 +57,12 @@ TEST_F(BinaryReaderTest, ReadByte) {
     EXPECT_EQ(reader.readByte(), 0x00);
 }
 
-// ============================================================================
+TEST_F(BinaryReaderTest, ReadByteWithNullStream) {
+    BinaryIO::Reader reader(nullptr);
+    EXPECT_EQ(reader.readByte(), 0x00);
+}
+
 // readDword() Tests (Little-Endian)
-// ============================================================================
 
 TEST_F(BinaryReaderTest, ReadDword) {
     // 0x12345678 in little-endian: 78 56 34 12
@@ -61,9 +82,7 @@ TEST_F(BinaryReaderTest, ReadDwordZeroAndMax) {
     EXPECT_EQ(reader.readDword(), 0xFFFFFFFFU);
 }
 
-// ============================================================================
 // readFixedString() Tests
-// ============================================================================
 
 TEST_F(BinaryReaderTest, ReadFixedString) {
     writeTestFile({'h', 'e', 'l', 'l', 'o'});
@@ -71,6 +90,19 @@ TEST_F(BinaryReaderTest, ReadFixedString) {
     BinaryIO::Reader reader(&file);
 
     EXPECT_EQ(reader.readFixedString(5), "hello");
+}
+
+TEST_F(BinaryReaderTest, ReadFixedStringWithNullStream) {
+    BinaryIO::Reader reader(nullptr);
+    EXPECT_EQ(reader.readFixedString(5), "");
+}
+
+TEST_F(BinaryReaderTest, ReadFixedStringZeroSize) {
+    writeTestFile({'h', 'e', 'l', 'l', 'o'});
+    std::ifstream file(testFile, std::ios::binary);
+    BinaryIO::Reader reader(&file);
+
+    EXPECT_EQ(reader.readFixedString(0), "");
 }
 
 TEST_F(BinaryReaderTest, ReadFixedStringWithNulls) {
@@ -83,9 +115,7 @@ TEST_F(BinaryReaderTest, ReadFixedStringWithNulls) {
     EXPECT_EQ(result, "hello");
 }
 
-// ============================================================================
 // readNullTerminatedString() Tests
-// ============================================================================
 
 TEST_F(BinaryReaderTest, ReadNullTerminatedString) {
     writeTestFile({'h', 'e', 'l', 'l', 'o', '\0', 'w', 'o', 'r', 'l', 'd', '\0'});
@@ -104,9 +134,12 @@ TEST_F(BinaryReaderTest, ReadNullTerminatedStringEmpty) {
     EXPECT_EQ(reader.readNullTerminatedString(), "");
 }
 
-// ============================================================================
+TEST_F(BinaryReaderTest, ReadNullTerminatedStringWithNullStream) {
+    BinaryIO::Reader reader(nullptr);
+    EXPECT_EQ(reader.readNullTerminatedString(), "");
+}
+
 // skipZeros() Tests
-// ============================================================================
 
 TEST_F(BinaryReaderTest, SkipZeros) {
     writeTestFile({0x00, 0x00, 0x00, 0x42});
@@ -126,9 +159,23 @@ TEST_F(BinaryReaderTest, SkipZerosNoZeros) {
     EXPECT_EQ(reader.readByte(), 0x42);
 }
 
-// ============================================================================
+TEST_F(BinaryReaderTest, SkipZerosWithNullStream) {
+    BinaryIO::Reader reader(nullptr);
+    reader.skipZeros();  // Should not crash
+    EXPECT_FALSE(reader.isValid());
+}
+
+TEST_F(BinaryReaderTest, SkipZerosAllZeros) {
+    writeTestFile({0x00, 0x00, 0x00});
+    std::ifstream file(testFile, std::ios::binary);
+    BinaryIO::Reader reader(&file);
+
+    reader.skipZeros();
+    // Stream should be at EOF, next read returns 0
+    EXPECT_EQ(reader.readByte(), 0x00);
+}
+
 // Integration Test
-// ============================================================================
 
 TEST_F(BinaryReaderTest, ReadMixedData) {
     std::vector<uint8_t> data;

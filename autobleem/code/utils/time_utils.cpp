@@ -4,42 +4,46 @@
 // Original author: screemer
 //
 #include "time_utils.h"
-#include <time.h>
 
-using namespace std;
+#include <ctime>
 
 namespace TimeUtils {
 
-time_t getCurrentTime() { return time(nullptr); }
+// The PlayStation Classic hardware clock resets to approximately 1970 or 2000
+// when power is lost. When the AutoBleem kernel has WiFi connectivity, it syncs
+// the system time via NTP. We use year >= 2020 as a heuristic to detect whether
+// the time has been properly synchronized (since PSC was released in 2018).
+static constexpr int MIN_VALID_YEAR = 2020;
 
-// Returns true if using AB kernel and it used WiFi to update the current time
+time_t getCurrentTime() { return std::time(nullptr); }
+
 bool usingWiFiUpdatedTime() {
-    time_t t = time(nullptr);
-    tm *local = localtime(&t);
+    time_t t = std::time(nullptr);
+    std::tm *local = std::localtime(&t);
 
-    return (local != nullptr) && (local->tm_year + 1900 >= 2020); // return true if the year >= 2020
+    return (local != nullptr) && (local->tm_year + 1900 >= MIN_VALID_YEAR);
 }
 
-// For custom datetimeformat from config.ini, callers should pass
-// Gui::getInstance()->cfg.inifile.values["datetimeformat"] as the format parameter.
-string timeToDisplayTimeString(time_t t, const string &_format) {
-    string datetime;
-    string format = _format; // if you pass a format it uses that
+std::string timeToDisplayTimeString(time_t t, const std::string &format) {
+    // Use caller's format, or default to ISO date with 12-hour time
+    std::string effectiveFormat = format.empty() ? "%F %I:%M:%S %p" : format;
 
-    if (format == "") {
-        format = "%F %I:%M:%S %p"; // default: YYYY-MM-DD HH:MM:SS AM/PM
+    if (t == 0) {
+        return "";
     }
 
-    if (t != 0) {
-        tm *local = localtime(&t);
-        if ((local != nullptr) && (local->tm_year + 1900 >= 2020)) { // if datetime is from a WiFi enabled datetime
-            char buf[200];
-            if (std::strftime(buf, sizeof(buf), format.c_str(), local))
-                datetime = buf;
-        }
+    std::tm *local = std::localtime(&t);
+    if (local == nullptr || local->tm_year + 1900 < MIN_VALID_YEAR) {
+        // Time is invalid or predates NTP sync (PSC clock not set properly)
+        return "";
     }
 
-    return datetime;
+    char buf[200];
+    if (std::strftime(buf, sizeof(buf), effectiveFormat.c_str(), local) == 0) {
+        return "";
+    }
+
+    return buf;
 }
 
 } // namespace TimeUtils

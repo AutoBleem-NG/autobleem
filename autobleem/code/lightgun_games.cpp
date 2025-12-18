@@ -1,25 +1,20 @@
-//
-// Created by steve on 3/24/22.
-//
-
+// Original author: steve
 #include "lightgun_games.h"
-#include "environment.h"
-#include "utils/file_utils.h"
+
 #include <algorithm>
-#include "utils/file_utils.h"
+#include <iostream>
+
 #include "engine/database.h"
+#include "environment.h"
 #include "gui/gui.h"
 #include "launcher/ra_integrator.h"
-#include <iostream>
+#include "utils/file_utils.h"
 
 using namespace std;
 
 std::string LightgunGames::filename;
 std::vector<std::string> LightgunGames::lightgunGamePaths;
 
-//********************
-// LightgunGames
-//********************
 LightgunGames::LightgunGames() {
     filename = Environment::getWorkingPath() + sep + string("lightguns.txt");
     lightgunGamePaths = FileUtils::readTextFile(filename, true);
@@ -30,9 +25,9 @@ LightgunGames::LightgunGames() {
         end(lightgunGamePaths));
 }
 
-//********************
-// PathForLightgunFile
-//********************
+// Returns the path used as identifier for lightgun game tracking
+// - RetroArch roms: image_path (the ROM file path)
+// - PS1 games: folder (the game directory)
 string LightgunGames::PathForLightgunFile(PsGamePtr game) {
     if (game == nullptr)
         return "";
@@ -43,14 +38,8 @@ string LightgunGames::PathForLightgunFile(PsGamePtr game) {
         return game->folder; // /Games PS1 game
 }
 
-//********************
-// UpdateFile
-//********************
 void LightgunGames::UpdateFile() { FileUtils::writeTextFile(filename, lightgunGamePaths, true); }
 
-//********************
-// IsGameALightgunGame
-//********************
 bool LightgunGames::IsGameALightgunGame(PsGamePtr game) { return IsGameALightgunGame(PathForLightgunFile(game)); }
 
 bool LightgunGames::IsGameALightgunGame(const std::string &gamepath) {
@@ -61,9 +50,6 @@ bool LightgunGames::IsGameALightgunGame(const std::string &gamepath) {
     return it != end(lightgunGamePaths);
 }
 
-//********************
-// AddGame
-//********************
 void LightgunGames::AddGame(PsGamePtr game) {
     if (game)
         AddGame(PathForLightgunFile(game));
@@ -79,9 +65,6 @@ void LightgunGames::AddGame(const std::string &gamepath) {
     }
 }
 
-//********************
-// RemoveGame
-//********************
 void LightgunGames::RemoveGame(PsGamePtr game) {
     if (game)
         RemoveGame(PathForLightgunFile(game));
@@ -95,9 +78,7 @@ void LightgunGames::RemoveGame(const std::string &gamepath) {
     UpdateFile();
 }
 
-//********************
-// PurgeGamesNotFound
-//********************
+// Removes entries for games that no longer exist on disk
 void LightgunGames::PurgeGamesNotFound() {
     lightgunGamePaths.erase(remove_if(begin(lightgunGamePaths), end(lightgunGamePaths),
                                       [](const string &gamepath) { return !FileUtils::exists(gamepath); }),
@@ -105,9 +86,7 @@ void LightgunGames::PurgeGamesNotFound() {
     UpdateFile();
 }
 
-//********************
-// GetAllLightgunGames
-//********************
+// Returns all games marked as lightgun games (PS1 and RetroArch), sorted by title
 PsGames LightgunGames::GetAllLightgunGames() {
     PsGames lightgunGames;
 

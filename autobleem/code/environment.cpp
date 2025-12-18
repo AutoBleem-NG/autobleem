@@ -27,10 +27,6 @@ string private_pathToInternalDBFile;
 bool Env::autobleemKernel = false;
 bool Env::hiddenMenuEnabled = false;
 
-//*******************************
-// Environment:: One Liners
-//*******************************
-
 string Environment::getPathToUSBRoot() { return private_pathToUSBDrive; }
 
 string Environment::getPathToAutobleemDir() { return private_pathToUSBDrive + sep + "Autobleem"; }
@@ -63,33 +59,22 @@ string Environment::getPathToRegionalDBFile() { return private_pathToRegionalDBF
 // includes the "internal.db" filename
 string Environment::getPathToInternalDBFile() { return private_pathToInternalDBFile; }
 
-//*******************************
-// Environment::getWorkingPath
 // 1 arg: "usb:/Autobleem/bin/autobleem"
 // 2 arg: autobleem-gui executable dir
 // PSC: autobleem-gui executable dir
-//*******************************
 string Environment::getWorkingPath() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     if (private_singleArgPassed) {
-        string path = private_pathToUSBDrive + sep + "Autobleem/bin/autobleem";
-        return path;
-    } else {
-        char temp[PATH_MAX];
-        return (getcwd(temp, sizeof(temp)) ? string(temp) : string(""));
+        return private_pathToUSBDrive + sep + "Autobleem/bin/autobleem";
     }
-#else
-    char temp[PATH_MAX];
-    return (getcwd(temp, sizeof(temp)) ? string(temp) : string(""));
 #endif
+    char temp[PATH_MAX];
+    return getcwd(temp, sizeof(temp)) ? string(temp) : string("");
 }
 
-//*******************************
-// Environment::getSonyPath
 // 1 arg: "usb:/Autobleem/bin/autobleem/sony"
-// 2 arg: autobleem-gui executable dir + sep + "sony"
-// PSC: autobleem-gui executable dir
-//*******************************
+// 2 arg: autobleem-gui executable dir + "/sony"
+// PSC: "/usr/sony/share/data"
 string Environment::getSonyPath() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     string sonypath = getWorkingPath() + sep + "sony";
@@ -100,64 +85,36 @@ string Environment::getSonyPath() {
 #endif
 }
 
-//*******************************
-// Environment::getSonyFontPath
 // 1 arg: "usb:/Autobleem/bin/autobleem/sony/font"
-// 2 arg: autobleem-gui executable dir + sep + "sony" + sep + "font"
-// PSC: autobleem-gui executable dir
-//*******************************
+// 2 arg: autobleem-gui executable dir + "/sony/font"
+// PSC: "/usr/sony/share/data/font"
 string Environment::getSonyFontPath() { return getSonyPath() + sep + "font"; }
 
-#if 0
-//*******************************
-// Environment::getPathToWorkingPathFile
-// return path to file in working path
-// 1 arg: "usb:/Autobleem/bin/autobleem/filename"
-// 2 arg: autobleem-gui executable dir/filename
-// PSC: autobleem-gui executable dir/filename
-//*******************************
-string Environment::getPathToWorkingPathFile(const std::string &filename) {
-    return getWorkingPath() + sep + filename;
-}
-#endif
-
-//*******************************
-// Environment::getPathToThemesDir
-// 1 arg: "usb:/themes", 2 arg: "./themes"
+// 1 arg: "usb:/themes"
+// 2 arg: "./themes"
 // PSC: "/media/themes"
-//*******************************
 string Environment::getPathToThemesDir() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     if (private_singleArgPassed) {
-        string path = private_pathToUSBDrive + sep + "themes";
-        return path;
-    } else {
-        string path = getWorkingPath() + sep + "themes";
-        return path;
+        return private_pathToUSBDrive + sep + "themes";
     }
+    return getWorkingPath() + sep + "themes";
 #else
-    string path = "/media/themes";
-    return path;
+    return "/media/themes";
 #endif
 }
 
-//*******************************
-// Environment::getPathToCoversDBDir
-// 1 arg: "usb:/Autobleem/bin/db", 2 arg: "../db"
+// 1 arg: "usb:/Autobleem/bin/db"
+// 2 arg: "../db"
 // PSC: "../db"
-//*******************************
 string Environment::getPathToCoversDBDir() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     if (private_singleArgPassed) {
-        string path = private_pathToUSBDrive + sep + "Autobleem/bin/db";
-        return path;
-    } else {
-        string path = "../db";
-        return path;
+        return private_pathToUSBDrive + sep + "Autobleem/bin/db";
     }
+    return "../db";
 #else
-    string path = "../db";
-    return path;
+    return "../db";
 #endif
 }
 

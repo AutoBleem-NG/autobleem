@@ -1,4 +1,3 @@
-// Unit tests for random utilities
 #include <gtest/gtest.h>
 #include <set>
 #include <cmath>
@@ -16,7 +15,6 @@ protected:
     RandomUtils::RandomGenerator* rng;
 };
 
-// Tests for generateInt
 class GenerateIntTest : public RandomGeneratorTest {};
 
 TEST_F(GenerateIntTest, ReturnsValueWithinRange) {
@@ -87,7 +85,6 @@ TEST_F(GenerateIntTest, DifferentWithDifferentSeed) {
     EXPECT_NE(value1, value2);
 }
 
-// Tests for generateFloat
 class GenerateFloatTest : public RandomGeneratorTest {};
 
 TEST_F(GenerateFloatTest, ReturnsValueWithinRange) {
@@ -147,7 +144,6 @@ TEST_F(GenerateFloatTest, ReproducibleWithSameSeed) {
     EXPECT_EQ(sequence1, sequence2);
 }
 
-// Tests for singleton pattern
 class SingletonTest : public ::testing::Test {};
 
 TEST_F(SingletonTest, ReturnsConsistentInstance) {
@@ -174,7 +170,6 @@ TEST_F(SingletonTest, StatePreservedBetweenCalls) {
     EXPECT_EQ(val1, val3);
 }
 
-// Tests for threading safety (basic)
 class ThreadSafetyTest : public RandomGeneratorTest {};
 
 TEST_F(ThreadSafetyTest, ConcurrentAccessDoesNotCrash) {
@@ -187,7 +182,6 @@ TEST_F(ThreadSafetyTest, ConcurrentAccessDoesNotCrash) {
     }
 }
 
-// Integration test: typical usage pattern
 class UsagePatternTest : public RandomGeneratorTest {};
 
 TEST_F(UsagePatternTest, TypicalScreenPositionGeneration) {

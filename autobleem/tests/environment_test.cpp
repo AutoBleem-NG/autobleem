@@ -1,7 +1,7 @@
 // Unit tests for environment path configuration
 #include <gtest/gtest.h>
 
-#include "environment.h"
+#include "../code/environment.h"
 
 class EnvironmentTest : public ::testing::Test {
   protected:
@@ -111,4 +111,11 @@ TEST_F(EnvironmentTest, NestedPathsAreCorrect) {
     EXPECT_EQ(Env::getPathToSaveStatesDir(), "/media/usb0/Games/!SaveStates");
     EXPECT_EQ(Env::getPathToRCDir(), "/media/usb0/Autobleem/rc");
     EXPECT_EQ(Env::getPathToRetroarchPlaylistsDir(), "/media/usb0/retroarch/playlists");
+}
+
+TEST_F(EnvironmentTest, RetroarchCoreFilePathIsCorrect) {
+    const char *argv[] = {"autobleem-gui", "/media/usb0"};
+    Env::parseCommandLineArguments(2, const_cast<char **>(argv));
+
+    EXPECT_EQ(Env::getPathToRetroarchCoreFile(), "/media/usb0/retroarch/cores/km_pcsx_rearmed_neon_libretro.so");
 }

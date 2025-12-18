@@ -1025,3 +1025,256 @@ TEST_F(DirEntryTest, SortByNameSortsCaseInsensitive) {
     EXPECT_EQ(entries[1].name, "banana");
     EXPECT_EQ(entries[2].name, "Cherry");
 }
+
+// ========================================
+// Tests for Separator Helper
+// ========================================
+
+class SeparatorTest : public ::testing::Test {};
+
+TEST_F(SeparatorTest, SepAddsSeparatorWhenNeeded) {
+    std::string path = "/home/user";
+    path += sep;
+    EXPECT_EQ(path, "/home/user/");
+}
+
+TEST_F(SeparatorTest, SepDoesNotAddDuplicateSeparator) {
+    std::string path = "/home/user/";
+    path += sep;
+    EXPECT_EQ(path, "/home/user/");
+}
+
+TEST_F(SeparatorTest, SepHandlesEmptyString) {
+    std::string path = "";
+    path += sep;
+    EXPECT_EQ(path, "");
+}
+
+TEST_F(SeparatorTest, SepConcatenationOperator) {
+    std::string path = "/home/user";
+    std::string result = path + sep;
+    EXPECT_EQ(result, "/home/user/");
+}
+
+TEST_F(SeparatorTest, SepConcatenationWithFilename) {
+    std::string dir = "/home/user";
+    std::string filename = "file.txt";
+    std::string result = dir + sep + filename;
+    EXPECT_EQ(result, "/home/user/file.txt");
+}
+
+// ========================================
+// Tests for matchExtension with various extension lengths
+// ========================================
+
+class MatchExtensionEdgeCasesTest : public ::testing::Test {};
+
+TEST_F(MatchExtensionEdgeCasesTest, MatchesShortExtensions) {
+    EXPECT_TRUE(FileUtils::matchExtension("file.7z", "7z"));
+    EXPECT_TRUE(FileUtils::matchExtension("file.gz", ".gz"));
+}
+
+TEST_F(MatchExtensionEdgeCasesTest, MatchesLongExtensions) {
+    EXPECT_TRUE(FileUtils::matchExtension("photo.jpeg", "jpeg"));
+    EXPECT_TRUE(FileUtils::matchExtension("playlist.m3u8", "m3u8"));
+    EXPECT_TRUE(FileUtils::matchExtension("archive.tar.gz", "gz"));
+}
+
+TEST_F(MatchExtensionEdgeCasesTest, MatchesSingleCharExtension) {
+    EXPECT_TRUE(FileUtils::matchExtension("file.c", "c"));
+    EXPECT_TRUE(FileUtils::matchExtension("file.h", ".h"));
+}
+
+TEST_F(MatchExtensionEdgeCasesTest, RejectsNoExtension) {
+    EXPECT_FALSE(FileUtils::matchExtension("filename", "txt"));
+    EXPECT_FALSE(FileUtils::matchExtension("Makefile", "txt"));
+}
+
+// ========================================
+// Tests for cueToBinList
+// ========================================
+
+class CueToBinListTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override {
+        tempBase = "/tmp/cue_test_" + std::to_string(rand());
+        FileUtils::createDir(tempBase);
+    }
+
+    void TearDown() override { FileUtils::removeDirAndContents(tempBase); }
+};
+
+TEST_F(CueToBinListTest, ParsesSingleTrackCue) {
+    std::string cueFile = tempBase + "/game.cue";
+    std::ofstream out(cueFile);
+    out << "FILE \"game.bin\" BINARY\n";
+    out << "  TRACK 01 MODE2/2352\n";
+    out << "    INDEX 01 00:00:00\n";
+    out.close();
+
+    auto binList = FileUtils::cueToBinList(cueFile);
+    EXPECT_EQ(binList.size(), 1);
+    EXPECT_EQ(binList[0], "game.bin");
+}
+
+TEST_F(CueToBinListTest, ParsesMultiTrackCue) {
+    std::string cueFile = tempBase + "/multidisc.cue";
+    std::ofstream out(cueFile);
+    out << "FILE \"disc1.bin\" BINARY\n";
+    out << "  TRACK 01 MODE2/2352\n";
+    out << "    INDEX 01 00:00:00\n";
+    out << "FILE \"disc2.bin\" BINARY\n";
+    out << "  TRACK 02 AUDIO\n";
+    out << "    INDEX 00 00:00:00\n";
+    out << "FILE \"disc3.bin\" BINARY\n";
+    out << "  TRACK 03 MODE2/2352\n";
+    out << "    INDEX 01 00:00:00\n";
+    out.close();
+
+    auto binList = FileUtils::cueToBinList(cueFile);
+    EXPECT_EQ(binList.size(), 3);
+    EXPECT_EQ(binList[0], "disc1.bin");
+    EXPECT_EQ(binList[1], "disc2.bin");
+    EXPECT_EQ(binList[2], "disc3.bin");
+}
+
+TEST_F(CueToBinListTest, ReturnsEmptyForNonexistentFile) {
+    auto binList = FileUtils::cueToBinList("/nonexistent/path.cue");
+    EXPECT_EQ(binList.size(), 0);
+}
+
+TEST_F(CueToBinListTest, ReturnsEmptyForCueWithNoFiles) {
+    std::string cueFile = tempBase + "/empty.cue";
+    std::ofstream out(cueFile);
+    out << "REM This is a comment\n";
+    out << "TITLE \"Test\"\n";
+    out.close();
+
+    auto binList = FileUtils::cueToBinList(cueFile);
+    EXPECT_EQ(binList.size(), 0);
+}
+
+// ========================================
+// Tests for rmDir
+// ========================================
+
+class RmDirTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override { tempBase = "/tmp/rmdir_test_" + std::to_string(rand()); }
+
+    void TearDown() override {
+        // Clean up if test failed
+        FileUtils::removeDirAndContents(tempBase);
+    }
+};
+
+TEST_F(RmDirTest, RemovesEmptyDirectory) {
+    FileUtils::createDir(tempBase);
+    EXPECT_TRUE(FileUtils::exists(tempBase));
+
+    int result = FileUtils::rmDir(tempBase);
+    EXPECT_EQ(result, 0);
+    EXPECT_FALSE(FileUtils::exists(tempBase));
+}
+
+TEST_F(RmDirTest, RemovesDirectoryWithFiles) {
+    FileUtils::createDir(tempBase);
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file1.txt", content, true);
+    FileUtils::writeTextFile(tempBase + "/file2.txt", content, true);
+
+    int result = FileUtils::rmDir(tempBase);
+    EXPECT_EQ(result, 0);
+    EXPECT_FALSE(FileUtils::exists(tempBase));
+}
+
+TEST_F(RmDirTest, RemovesNestedDirectories) {
+    FileUtils::createDirRecursive(tempBase + "/level1/level2");
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/level1/file.txt", content, true);
+    FileUtils::writeTextFile(tempBase + "/level1/level2/deep.txt", content, true);
+
+    int result = FileUtils::rmDir(tempBase);
+    EXPECT_EQ(result, 0);
+    EXPECT_FALSE(FileUtils::exists(tempBase));
+}
+
+TEST_F(RmDirTest, ReturnsErrorForNonexistent) {
+    int result = FileUtils::rmDir("/nonexistent/path/12345");
+    EXPECT_NE(result, 0);
+}
+
+// ========================================
+// Tests for removeDirAndContents
+// ========================================
+
+class RemoveDirAndContentsTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override { tempBase = "/tmp/removedir_test_" + std::to_string(rand()); }
+
+    void TearDown() override { FileUtils::removeDirAndContents(tempBase); }
+};
+
+TEST_F(RemoveDirAndContentsTest, RemovesEmptyDirectory) {
+    FileUtils::createDir(tempBase);
+    EXPECT_TRUE(FileUtils::exists(tempBase));
+
+    bool result = FileUtils::removeDirAndContents(tempBase);
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(FileUtils::exists(tempBase));
+}
+
+TEST_F(RemoveDirAndContentsTest, RemovesDirectoryWithContents) {
+    FileUtils::createDir(tempBase);
+    FileUtils::createDir(tempBase + "/subdir");
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file.txt", content, true);
+    FileUtils::writeTextFile(tempBase + "/subdir/nested.txt", content, true);
+
+    bool result = FileUtils::removeDirAndContents(tempBase);
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(FileUtils::exists(tempBase));
+}
+
+// ========================================
+// Tests for Path Delegation Functions
+// ========================================
+
+class PathDelegationTest : public ::testing::Test {};
+
+TEST_F(PathDelegationTest, FixPathTrimsAndRemovesTrailingSeparator) {
+    EXPECT_EQ(FileUtils::fixPath("  /path/to/dir/  "), "/path/to/dir");
+    EXPECT_EQ(FileUtils::fixPath("/path/to/dir/"), "/path/to/dir");
+}
+
+TEST_F(PathDelegationTest, RemoveSeparatorFromEndOfPath) {
+    EXPECT_EQ(FileUtils::removeSeparatorFromEndOfPath("/path/"), "/path");
+    EXPECT_EQ(FileUtils::removeSeparatorFromEndOfPath("/path"), "/path");
+}
+
+TEST_F(PathDelegationTest, GetFileNameFromPath) {
+    EXPECT_EQ(FileUtils::getFileNameFromPath("/path/to/file.txt"), "file.txt");
+    EXPECT_EQ(FileUtils::getFileNameFromPath("file.txt"), "file.txt");
+}
+
+TEST_F(PathDelegationTest, GetDirNameFromPath) {
+    EXPECT_EQ(FileUtils::getDirNameFromPath("/path/to/file.txt"), "/path/to");
+}
+
+TEST_F(PathDelegationTest, GetFileExtension) {
+    // Note: getFileExtension returns extension WITHOUT the dot
+    EXPECT_EQ(FileUtils::getFileExtension("file.txt"), "txt");
+    EXPECT_EQ(FileUtils::getFileExtension("file.tar.gz"), "gz");
+}
+
+TEST_F(PathDelegationTest, GetFileNameWithoutExtension) {
+    EXPECT_EQ(FileUtils::getFileNameWithoutExtension("file.txt"), "file");
+    // Note: Works on full path, returns full path without extension
+    EXPECT_EQ(FileUtils::getFileNameWithoutExtension("/path/to/file.txt"), "/path/to/file");
+}

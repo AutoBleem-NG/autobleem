@@ -271,3 +271,38 @@ target_link_libraries(
 )
 
 gtest_discover_tests(util_test)
+
+# Main tests (constants and types)
+add_executable(
+    main_test
+    main_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+)
+
+target_link_libraries(
+    main_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(main_test)
+
+# Debug timer tests
+add_executable(
+    debug_timer_test
+    debug_timer_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/debug_timer.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+)
+
+target_link_libraries(
+    debug_timer_test
+    GTest::gtest_main
+    Threads::Threads
+    SDL2
+)
+
+gtest_discover_tests(debug_timer_test)
