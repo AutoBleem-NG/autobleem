@@ -1,15 +1,13 @@
-//
-// Created by steve on 3/24/22.
-//
+// Original author: steve
+// Manages the list of games that use lightgun controllers.
+// Stored in lightguns.txt with one game path per line.
 #pragma once
 
 #include <string>
 #include <vector>
+
 #include "launcher/ps_game.h"
 
-//********************
-// LightgunGames
-//********************
 struct LightgunGames {
     static std::string filename;
     static std::vector<std::string> lightgunGamePaths;

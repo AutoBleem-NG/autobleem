@@ -6,7 +6,7 @@
 
 namespace PathUtils {
 
-// Get the file extension from a path (e.g., ".bin" from "/path/to/file.bin")
+// Get the file extension from a path WITHOUT the dot (e.g., "bin" from "/path/to/file.bin")
 // Returns empty string if no extension found
 std::string getFileExtension(const std::string &path);
 

@@ -1,8 +1,6 @@
-//
 // Random number generation utilities
 // Modern C++11 replacement for util.cpp getRandomNumber/getRandomIndex
 // Uses Mersenne Twister (mt19937) instead of C stdlib rand()
-//
 #pragma once
 
 #include <random>

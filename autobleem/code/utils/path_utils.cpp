@@ -1,61 +1,53 @@
 #include "path_utils.h"
+
 #include <libgen.h>
-#include <cstring>
-
-using namespace std;
-
-// Platform-specific separator
-#ifdef _WIN32
-const char PathUtils::separator = '\\';
-#else
-const char PathUtils::separator = '/';
-#endif
+#include <vector>
 
 namespace PathUtils {
 
-string getFileExtension(const string &path) {
+#ifdef _WIN32
+const char separator = '\\';
+#else
+const char separator = '/';
+#endif
+
+std::string getFileExtension(const std::string &path) {
     size_t i = path.rfind('.', path.length());
-    if (i != string::npos) {
+    if (i != std::string::npos) {
         return path.substr(i + 1, path.length() - i);
     }
     return "";
 }
 
-string getFileNameWithoutExtension(const string &filename) {
+std::string getFileNameWithoutExtension(const std::string &filename) {
     size_t indexBeforeDot = filename.find_last_of(".");
-    if (indexBeforeDot != string::npos) {
+    if (indexBeforeDot != std::string::npos) {
         return filename.substr(0, indexBeforeDot);
     }
     return filename;
 }
 
-string getFileNameFromPath(const string &path) {
-    string result = "";
-    char *cstr = new char[path.length() + 1];
-    strcpy(cstr, path.c_str());
-    char *base = basename(cstr);
-    result += base;
-    delete[] cstr;
-    return result;
+std::string getFileNameFromPath(const std::string &path) {
+    std::vector<char> buffer(path.begin(), path.end());
+    buffer.push_back('\0');
+    return std::string(basename(buffer.data()));
 }
 
-string getDirNameFromPath(const string &path) {
-    string result = "";
-    char *cstr = new char[path.length() + 1];
-    strcpy(cstr, path.c_str());
-    char *base = dirname(cstr);
-    result += base;
-    delete[] cstr;
-    return result;
+std::string getDirNameFromPath(const std::string &path) {
+    std::vector<char> buffer(path.begin(), path.end());
+    buffer.push_back('\0');
+    return std::string(dirname(buffer.data()));
 }
 
-string joinPath(const string &dir, const string &file) {
-    if (dir.empty())
+std::string joinPath(const std::string &dir, const std::string &file) {
+    if (dir.empty()) {
         return file;
-    if (file.empty())
+    }
+    if (file.empty()) {
         return dir;
+    }
 
-    string result = dir;
+    std::string result = dir;
     if (result.back() != separator) {
         result += separator;
     }
@@ -63,26 +55,25 @@ string joinPath(const string &dir, const string &file) {
     return result;
 }
 
-string removeSeparatorFromEndOfPath(const string &path) {
-    string ret = path;
-    if (ret.length() > 0 && ret.back() == separator) {
+std::string removeSeparatorFromEndOfPath(const std::string &path) {
+    std::string ret = path;
+    if (!ret.empty() && ret.back() == separator) {
         ret.pop_back();
     }
     return ret;
 }
 
-string fixPath(const string &path) {
-    string result = path;
-    // Remove leading/trailing spaces
+std::string fixPath(const std::string &path) {
+    std::string result = path;
+
     size_t start = result.find_first_not_of(" \n\r\t\f\v");
-    if (start == string::npos) {
+    if (start == std::string::npos) {
         return "";
     }
     size_t end = result.find_last_not_of(" \n\r\t\f\v");
     result = result.substr(start, end - start + 1);
 
-    // Remove trailing separator
-    if (result.size() > 0 && result.back() == separator) {
+    if (!result.empty() && result.back() == separator) {
         result.pop_back();
     }
 

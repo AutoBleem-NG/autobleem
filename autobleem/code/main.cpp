@@ -1,50 +1,37 @@
-/*
- * File:   main.cpp
- * Author: screemer
- *
- * Created on 11 Dec 2018, 20:37
- */
+// Original author: screemer
+#include "main.h"
+
+#include <unistd.h>
 
 #include <iostream>
-#include "log.h"
-#include "version.h"
-#include "engine/database.h"
-#include "engine/scanner.h"
-#include "gui/gui.h"
-#include "main.h"
-#include "ver_migration.h"
+#include <memory>
+
 #include "engine/cover_db.h"
-#include "system/process_utils.h"
-#include <unistd.h>
+#include "engine/database.h"
 #include "engine/get_game_dir_hierarchy.h"
 #include "engine/mem_card.h"
+#include "engine/scanner.h"
+#include "environment.h"
+#include "gui/abl.h"
+#include "gui/gui.h"
 #include "lang.h"
 #include "launcher/emu_interceptor.h"
-#include "launcher/pcsx_interceptor.h"
-#include "launcher/retboot_interceptor.h"
-#include "engine/get_game_dir_hierarchy.h"
-#include "environment.h"
-#include "launcher/ra_integrator.h"
-#include "launcher/launch_interceptor.h"
 #include "launcher/gui_app_start.h"
-#include "gui/abl.h"
+#include "launcher/launch_interceptor.h"
+#include "launcher/pcsx_interceptor.h"
+#include "launcher/ra_integrator.h"
+#include "launcher/retboot_interceptor.h"
+#include "log.h"
+#include "system/process_utils.h"
+#include "ver_migration.h"
+#include "version.h"
 
 using namespace std;
 
-Database *db;
+Database *db = nullptr;
 
-// these are defined in environment.h and are meant to not be modified once they are initialized here.
-extern bool private_singleArgPassed;
-extern string private_pathToUSBDrive;
-extern string private_pathToGamesDir;
-extern string private_pathToRegionalDBFile;
-extern string private_pathToInternalDBFile;
-
-//*******************************
-// copyGameFilesInGamesDirToSubDirs
-//*******************************
-// Search for games with supported extension and move to sub-dir
-// returns true is any files moved into sub-dirs
+// Search for games with supported extension and move to sub-dir.
+// Returns true if any files moved into sub-dirs.
 bool copyGameFilesInGamesDirToSubDirs(const string &path) {
     bool ret = false;
     string fileExt;
@@ -106,12 +93,9 @@ bool copyGameFilesInGamesDirToSubDirs(const string &path) {
             ret = true;
         }
     }
-    return ret; // true if any game files moved into a sub-dir
+    return ret;
 }
 
-//*******************************
-// scanGames
-//*******************************
 int scanGames(GamesHierarchy &gamesHierarchy) {
     shared_ptr<Gui> gui(Gui::getInstance());
     shared_ptr<Scanner> scanner(Scanner::getInstance());
@@ -156,13 +140,10 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
     gui->drawText(_("Total") + ": " + to_string(scanner->gamesToAddToDB.size()) + " " + _("games scanned") + ".");
     sleep(1);
     scanner->gamesToAddToDB.clear();
-    return (EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }
 
-//*******************************
-// rewriteGamelistXmlFile
-// the /Games/gamelist.xml is for Emulation Station to find the PS1 cover files
-//*******************************
+// Rewrite the gamelist.xml file for Emulation Station to find PS1 cover files
 void rewriteGamelistXml() {
     // this file was used during 0.9.0 testing.  it must be removed or ES will use it by mistake.
     FileUtils::removeFile(Env::getPathToGamesDir() + sep + "gamelist.xml");
@@ -208,37 +189,14 @@ void rewriteGamelistXml() {
     xml.close();
 }
 
-//*******************************
-// main
-//*******************************
 int main(int argc, char *argv[]) {
     // Set up environment paths FIRST (needed for log file location)
-    if (argc == 1 + 1) {
-        // the single arg is the path to the usb drive
-        private_singleArgPassed = true;
-        private_pathToUSBDrive = argv[1];
-        private_pathToRegionalDBFile = private_pathToUSBDrive + sep + "System/Databases/regional.db";
-        private_pathToInternalDBFile = private_pathToUSBDrive + sep + "System/Databases/internal.db";
-        private_pathToGamesDir = private_pathToUSBDrive + sep + "Games";
-    } else if (argc == 1 + 2) {
-        // the two args are the path to the regional.db file and the path to the /Games dir on the usb drive
-        private_singleArgPassed = false;
-        private_pathToRegionalDBFile = argv[1];
-#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
-        private_pathToInternalDBFile = "internal.db"; // it's in the same dir as the autobleem-gui app you are debugging
-#else
-        private_pathToInternalDBFile = "/media/System/Databases/internal.db";
-#endif
-        private_pathToGamesDir = argv[2];
-        private_pathToUSBDrive = FileUtils::getDirNameFromPath(private_pathToGamesDir);
-    } else {
-        // Can't use PLOG_ERROR yet - logger not initialized
-        std::cerr << "ERROR: USAGE: autobleem-gui /path/dbfilename.db /path/to/games" << std::endl;
+    if (!Env::parseCommandLineArguments(argc, argv)) {
         return EXIT_FAILURE;
     }
 
     // Initialize logger - Log::init creates parent directories if needed
-    string logPath = private_pathToUSBDrive + sep + "System" + sep + "Logs" + sep + "autobleem-ng.log";
+    string logPath = Env::getPathToUSBRoot() + sep + "System" + sep + "Logs" + sep + "autobleem-ng.log";
     Log::init(logPath);
 
     // Log version and build information
@@ -265,12 +223,13 @@ int main(int argc, char *argv[]) {
     PLOG_DEBUG << "Path to Games: " << Env::getPathToGamesDir();
     PLOG_DEBUG << "Path to Regional DB: " << Env::getPathToRegionalDBFile();
 
-    Coverdb *coverdb = new Coverdb();
-    gui->coverdb = coverdb;
+    unique_ptr<Coverdb> coverdb(new Coverdb());
+    gui->coverdb = coverdb.get();
 
     db = new Database();
     if (!db->connect(Env::getPathToRegionalDBFile())) {
         delete db;
+        db = nullptr;
         return EXIT_FAILURE;
     }
     gui->db = db;
@@ -281,23 +240,22 @@ int main(int argc, char *argv[]) {
     System::executeCommand("/media/Autobleem/rc/backup_internal.sh");
 
     // add favorites and history columns to internal.db if the column doesn't exist
-    Database *internalDB = new Database();
+    unique_ptr<Database> internalDB(new Database());
     if (!internalDB->connect(Env::getPathToInternalDBFile())) {
-        delete internalDB;
+        delete db;
+        db = nullptr;
         return EXIT_FAILURE;
     }
-    gui->internalDB = internalDB;
-    gui->internalDB->addFavoriteColumn();    // add the favorites column if it doesn't exist
-    gui->internalDB->addHistoryColumn();     // add the history column if it doesn't exist
-    gui->internalDB->addLastPlayedColumn();  // add the last played column if it doesn't exist
-    gui->internalDB->addPlayUsingRAColumn(); // add the favorites column if it doesn't exist
+    gui->internalDB = internalDB.get();
+    gui->internalDB->addFavoriteColumn();
+    gui->internalDB->addHistoryColumn();
+    gui->internalDB->addLastPlayedColumn();
+    gui->internalDB->addPlayUsingRAColumn();
 
-    string dbpath = Env::getPathToRegionalDBFile();
     string pathToGamesDir = Env::getPathToGamesDir();
 
-    Memcard *memcardOperation = new Memcard(pathToGamesDir);
-    memcardOperation->restoreAll(Env::getPathToSaveStatesDir());
-    delete memcardOperation;
+    Memcard memcardOperation(pathToGamesDir);
+    memcardOperation.restoreAll(Env::getPathToSaveStatesDir());
 
     string prevPath = Env::getWorkingPath() + sep + "autobleem.prev";
     bool prevFileExists = FileUtils::exists(prevPath);
@@ -334,11 +292,7 @@ int main(int argc, char *argv[]) {
             scanGames(gamesHierarchy);
             rewriteGamelistXml();
 
-            if (gui->forceScan) {
-                gui->forceScan = false;
-            } else {
-                // break;
-            }
+            gui->forceScan = false;
         }
 
         if (gui->menuOption == MENU_OPTION_START) {
@@ -358,18 +312,18 @@ int main(int argc, char *argv[]) {
             gui->mapper.flushPads();
 
             gui->saveSelection();
-            EmuInterceptor *interceptor;
+            unique_ptr<EmuInterceptor> interceptor;
             if (gui->runningGame->foreign) {
                 if (!gui->runningGame->app) {
-                    interceptor = new RetroArchInterceptor();
+                    interceptor.reset(new RetroArchInterceptor());
                 } else {
-                    interceptor = new LaunchInterceptor();
+                    interceptor.reset(new LaunchInterceptor());
                 }
             } else {
                 if (gui->emuMode == EMU_PCSX) {
-                    interceptor = new PcsxInterceptor();
+                    interceptor.reset(new PcsxInterceptor());
                 } else {
-                    interceptor = new RetroArchInterceptor();
+                    interceptor.reset(new RetroArchInterceptor());
                 }
             }
 
@@ -377,14 +331,8 @@ int main(int argc, char *argv[]) {
             interceptor->prepareResumePoint(gui->runningGame, gui->resumepoint);
             interceptor->execute(gui->runningGame, gui->resumepoint);
             interceptor->memcardOut(gui->runningGame);
-            delete (interceptor);
 
-            bool reloadFavHist{false};
-            if (gui->runningGame->foreign)
-                reloadFavHist = true;
-            else if (gui->emuMode != EMU_PCSX)
-                reloadFavHist = true;
-
+            bool reloadFavHist = gui->runningGame->foreign || (gui->emuMode != EMU_PCSX);
             if (reloadFavHist) {
                 auto ra = RAIntegrator::getInstance();
                 ra->reloadFavorites(); // they could have changed
@@ -408,14 +356,11 @@ int main(int argc, char *argv[]) {
     db = nullptr;
 
     internalDB->disconnect();
-    delete internalDB;
-    internalDB = nullptr;
 
     PLOG_INFO << "AutoBleem shutting down";
     Gui::splash(_("Loading... Please Wait..."));
     gui->finish();
     SDL_Quit();
-    delete coverdb;
 
-    exit(0);
+    return EXIT_SUCCESS;
 }

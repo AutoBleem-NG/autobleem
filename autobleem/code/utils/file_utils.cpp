@@ -13,12 +13,8 @@
 
 using namespace std;
 
-// 0.5MB buffer for file copy operations
+// 512KB buffer balances I/O efficiency vs memory usage on PSC's limited RAM
 #define FILE_BUFFER_SIZE 524288
-
-// ========================================
-// Separator Helper Implementation
-// ========================================
 
 const Sep sep;
 
@@ -38,17 +34,9 @@ void operator+=(string &leftside, Sep) {
 
 namespace FileUtils {
 
-// ========================================
-// Directory Entry Methods
-// ========================================
-
 void DirEntry::print() const { PLOG_DEBUG << (isDir ? "Dir: " : "File: ") << name << endl; }
 
 bool DirEntry::sortByName(const DirEntry &i, const DirEntry &j) { return SortByCaseInsensitive(i.name, j.name); }
-
-// ========================================
-// Text File I/O (existing)
-// ========================================
 
 vector<string> readTextFile(const string &filePath, bool removeCRLF) {
     ifstream file;
@@ -104,10 +92,6 @@ istream &getlineRemoveCR(istream &is, string &str) {
     return is;
 }
 
-// ========================================
-// File Operations
-// ========================================
-
 bool exists(const string &_name) {
     auto name = fixPath(_name);
     struct stat buffer;
@@ -123,33 +107,26 @@ bool isDirectory(const string &path) {
 }
 
 bool copy(const string &source, const string &dest) {
-    ifstream infile;
-    ofstream outfile;
-
-    char *buffer = new char[FILE_BUFFER_SIZE];
-
-    infile.open(source, ios::binary);
-    outfile.open(dest, ios::binary);
-
+    ifstream infile(source, ios::binary);
     if (!infile.good()) {
-        delete[] buffer;
         return false;
     }
+
+    ofstream outfile(dest, ios::binary);
     if (!outfile.good()) {
-        delete[] buffer;
         return false;
     }
+
+    // Use vector for automatic memory management
+    vector<char> buffer(FILE_BUFFER_SIZE);
 
     while (true) {
-        int read = infile.readsome(buffer, FILE_BUFFER_SIZE);
-        if (read == 0)
+        streamsize bytesRead = infile.readsome(buffer.data(), FILE_BUFFER_SIZE);
+        if (bytesRead == 0)
             break;
-        outfile.write(buffer, read);
+        outfile.write(buffer.data(), bytesRead);
     }
-    infile.close();
     outfile.flush();
-    outfile.close();
-    delete[] buffer;
 
     return true;
 }
@@ -159,10 +136,6 @@ bool copyFile(const string &pathFrom, const string &pathTo) { return copy(pathFr
 bool removeFile(const string &path) { return remove(path.c_str()) == 0; }
 
 bool renameFile(const string &pathFrom, const string &pathTo) { return rename(pathFrom.c_str(), pathTo.c_str()) == 0; }
-
-// ========================================
-// Directory Operations
-// ========================================
 
 bool createDir(const string &_name) {
     auto name = fixPath(_name);
@@ -225,44 +198,34 @@ bool ensureParentDirExists(const string &filePath) {
 int rmDir(string path) {
     path = fixPath(path);
     DIR *d = opendir(path.c_str());
-    size_t path_len = path.size();
     int r = -1;
 
-    if (d) {
-        struct dirent *p;
-        r = 0;
-
-        while (!r && (p = readdir(d))) {
-            int r2 = -1;
-            char *buf;
-            size_t len;
-
-            if (!strcmp(p->d_name, ".") || !strcmp(p->d_name, "..")) {
-                continue;
-            }
-
-            len = path_len + strlen(p->d_name) + 2;
-            buf = new char[len];
-
-            if (buf) {
-                struct stat statbuf;
-                snprintf(buf, len, "%s/%s", path.c_str(), p->d_name);
-
-                if (!stat(buf, &statbuf)) {
-                    if (S_ISDIR(statbuf.st_mode)) {
-                        r2 = rmDir(buf);
-                    } else {
-                        r2 = unlink(buf);
-                    }
-                }
-                delete[] buf;
-            }
-            r = r2;
-        }
-        closedir(d);
+    if (d == nullptr) {
+        return r;
     }
 
-    if (!r) {
+    r = 0;
+    struct dirent *p;
+
+    while (!r && (p = readdir(d))) {
+        if (strcmp(p->d_name, ".") == 0 || strcmp(p->d_name, "..") == 0) {
+            continue;
+        }
+
+        string fullPath = path + "/" + p->d_name;
+        struct stat statbuf;
+
+        if (stat(fullPath.c_str(), &statbuf) == 0) {
+            if (S_ISDIR(statbuf.st_mode)) {
+                r = rmDir(fullPath);
+            } else {
+                r = unlink(fullPath.c_str());
+            }
+        }
+    }
+    closedir(d);
+
+    if (r == 0) {
         r = rmdir(path.c_str());
     }
     return r;
@@ -281,10 +244,6 @@ bool removeDirAndContents(const string &path) {
 
     return (rmdir(path.c_str()) == 0);
 }
-
-// ========================================
-// Directory Listing
-// ========================================
 
 DirEntries dir(string path) {
     path = fixPath(removeSeparatorFromEndOfPath(path));
@@ -336,10 +295,6 @@ DirEntries diru_FilesOnly(string path) {
     return ret;
 }
 
-// ========================================
-// Path Manipulation (delegates to PathUtils)
-// ========================================
-
 string fixPath(string path) { return PathUtils::fixPath(path); }
 
 string removeSeparatorFromEndOfPath(const string &path) { return PathUtils::removeSeparatorFromEndOfPath(path); }
@@ -360,10 +315,6 @@ string removeGamesPathFromFrontOfPath(const string &path) {
     return path;
 }
 
-// ========================================
-// Extension Handling
-// ========================================
-
 string removeDotFromExtension(const string &ext) {
     if (!ext.empty() && ext[0] == '.')
         return ext.substr(1);
@@ -378,15 +329,13 @@ string addDotToExtension(const string &ext) {
 
 bool matchExtension(string path, string ext) {
     path = fixPath(path);
-    if (path.length() < 4) {
+    string fileExt = getFileExtension(path);
+    if (fileExt.empty()) {
         return false;
     }
-    string fileExt = path.substr(path.length() - 4, path.length());
-    if (fileExt[0] != '.') {
-        return false;
-    }
-    auto temp = addDotToExtension(ext);
-    return lcase(fileExt) == lcase(temp);
+    // getFileExtension returns without dot, so ensure both are compared without dots
+    string targetExt = removeDotFromExtension(ext);
+    return ReturnLowerCase(fileExt) == ReturnLowerCase(targetExt);
 }
 
 DirEntries getFilesWithExtension(const string &path, const DirEntries &entries, const vector<string> &extensions) {
@@ -413,10 +362,6 @@ string findFirstFile(string ext, string path) {
     }
     return "";
 }
-
-// ========================================
-// File Content Operations
-// ========================================
 
 vector<string> cueToBinList(string cueFile) {
     vector<string> binList;
@@ -449,10 +394,6 @@ vector<string> cueToBinList(string cueFile) {
     return binList;
 }
 
-// ========================================
-// Utility Functions
-// ========================================
-
 string replaceTheseCharsWithThisChar(string str, const string &charsToReplace, char replacementChar) {
     auto isBadChar = [&](char c) { return charsToReplace.find(c) != string::npos; };
     replace_if(begin(str), end(str), isBadChar, replacementChar);
@@ -470,21 +411,11 @@ bool fixCommaInDirOrFileName(const string &path, DirEntry *entry) {
     return false;
 }
 
-// ========================================
-// Game-Specific Operations (PS1)
-// ========================================
+bool isPBPFile(const string &path) { return matchExtension(path, "pbp"); }
 
-bool isPBPFile(string path) {
-    if (path.length() < 4)
-        return false;
-    string last_four = path.substr(path.length() - 4);
-    lcase(last_four);
-    return last_four == ".pbp";
-}
-
-void generateM3UForDirectory(string path, string basename) {
+void generateM3UForDirectory(const string &path, string basename) {
     if (isPBPFile(basename)) {
-        basename = basename.substr(0, basename.length() - 4);
+        basename = getFileNameWithoutExtension(basename);
     }
     vector<string> files;
     DirEntries filesInPath = diru_FilesOnly(path);
@@ -493,13 +424,12 @@ void generateM3UForDirectory(string path, string basename) {
         if (StringUtils::compareCaseInsensitive(ext, "pbp") || StringUtils::compareCaseInsensitive(ext, "cue"))
             files.push_back(entry.name);
     }
-    string m3uName = fixPath(path) + sep + basename + ".m3u";
     if (files.size() > 1) {
+        string m3uName = fixPath(path) + sep + basename + ".m3u";
         ofstream os(m3uName);
         for (const string &file : files) {
             os << file << endl;
         }
-        os.close();
     }
 }
 

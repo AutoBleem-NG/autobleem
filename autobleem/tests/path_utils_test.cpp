@@ -1,12 +1,7 @@
-//
-// PathUtils Unit Tests
-// Tests for path utility functions
-//
-
 #include <gtest/gtest.h>
+
 #include "../code/utils/path_utils.h"
 
-// Tests for getFileExtension
 class GetFileExtensionTest : public ::testing::Test {};
 
 TEST_F(GetFileExtensionTest, ExtractsSimpleExtension) {
@@ -228,4 +223,96 @@ TEST_F(FixPathTest, HandlesMultipleTrailingSeparators) {
     std::string result = PathUtils::fixPath("/path/to/file///");
     // Only removes trailing, not all trailing separators
     EXPECT_EQ(result, "/path/to/file//");
+}
+
+class SeparatorConstantTest : public ::testing::Test {};
+
+TEST_F(SeparatorConstantTest, SeparatorIsForwardSlashOnUnix) {
+#ifndef _WIN32
+    EXPECT_EQ(PathUtils::separator, '/');
+#endif
+}
+
+TEST_F(SeparatorConstantTest, SeparatorIsBackslashOnWindows) {
+#ifdef _WIN32
+    EXPECT_EQ(PathUtils::separator, '\\');
+#endif
+}
+
+class PathUtilsEdgeCasesTest : public ::testing::Test {};
+
+TEST_F(PathUtilsEdgeCasesTest, GetFileExtensionWithOnlyDot) {
+    EXPECT_EQ(PathUtils::getFileExtension("file."), "");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, GetFileExtensionWithDotsInPath) {
+    EXPECT_EQ(PathUtils::getFileExtension("/path.with.dots/file.txt"), "txt");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, GetFileNameWithoutExtensionOnlyDot) {
+    EXPECT_EQ(PathUtils::getFileNameWithoutExtension("file."), "file");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, JoinPathWithLeadingSlashInFile) {
+    std::string result = PathUtils::joinPath("/path/to", "/file.txt");
+    // File has leading separator - joins directly
+    EXPECT_EQ(result, "/path/to//file.txt");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, FixPathRemovesTabs) {
+    std::string result = PathUtils::fixPath("\t/path/to/file\t");
+    EXPECT_EQ(result, "/path/to/file");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, FixPathRemovesCarriageReturn) {
+    std::string result = PathUtils::fixPath("\r/path/to/file\r");
+    EXPECT_EQ(result, "/path/to/file");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, GetDirNameFromPathWithMultipleLevels) {
+    std::string result = PathUtils::getDirNameFromPath("/a/b/c/d/file.txt");
+    EXPECT_EQ(result, "/a/b/c/d");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, GetFileNameFromPathWithDots) {
+    std::string result = PathUtils::getFileNameFromPath("/path/to/file.tar.gz");
+    EXPECT_EQ(result, "file.tar.gz");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, GetFileExtensionDirWithDotNoFileExtension) {
+    // Known limitation: getFileExtension operates on the full path string,
+    // not just the filename component. When a directory has a dot and the
+    // file has no extension, it returns everything after the last dot.
+    std::string result = PathUtils::getFileExtension("/path.dir/to/README");
+    EXPECT_EQ(result, "dir/to/README");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, GetFileExtensionDirWithDotFileHasExtension) {
+    std::string result = PathUtils::getFileExtension("/path.dir/to/file.txt");
+    EXPECT_EQ(result, "txt");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, GetFileNameFromPathEmptyString) {
+    std::string result = PathUtils::getFileNameFromPath("");
+    EXPECT_FALSE(result.empty());  // basename("") returns "."
+}
+
+TEST_F(PathUtilsEdgeCasesTest, GetDirNameFromPathEmptyString) {
+    std::string result = PathUtils::getDirNameFromPath("");
+    EXPECT_FALSE(result.empty());  // dirname("") returns "."
+}
+
+TEST_F(PathUtilsEdgeCasesTest, JoinPathMultipleSeparatorsInFile) {
+    std::string result = PathUtils::joinPath("/path", "subdir/file.txt");
+    EXPECT_EQ(result, "/path/subdir/file.txt");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, FixPathOnlySeparator) {
+    std::string result = PathUtils::fixPath("/");
+    EXPECT_EQ(result, "");
+}
+
+TEST_F(PathUtilsEdgeCasesTest, FixPathMixedWhitespace) {
+    std::string result = PathUtils::fixPath(" \t\n/path/to/file\r\n ");
+    EXPECT_EQ(result, "/path/to/file");
 }
