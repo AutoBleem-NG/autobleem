@@ -262,21 +262,6 @@ target_include_directories(autobleem-gui PUBLIC
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs>
 		)
 
-add_executable(starter
-		autobleem/code/starter.cpp
-        autobleem/code/engine/ini_file.cpp
-        autobleem/code/engine/mem_card.cpp autobleem/code/engine/mem_card.h
-		autobleem/code/environment.h
-		autobleem/code/environment.cpp
-		autobleem/code/utils/file_utils.cpp
-		autobleem/code/utils/path_utils.cpp
-		autobleem/code/utils/string_utils.cpp
-		)
-
-target_include_directories(starter PUBLIC
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/autobleem/libs>
-		)
-
 # Link libraries for autobleem-gui
 #
 # libchdr provides CHD (Compressed Hunks of Data) disc image support.

@@ -70,7 +70,6 @@ make sys
 
 Output binaries are placed in `build_sys/`:
 - `autobleem-gui` - Main application
-- `starter` - Game launcher wrapper
 
 ## Building for PlayStation Classic
 
@@ -96,7 +95,6 @@ make build extract
 
 Output binaries are placed in `build_arm/`:
 - `autobleem-gui` - Main UI application
-- `starter` - PCSX launcher wrapper
 - UI assets (fonts, images, configs) and language files
 
 **Prerequisites:**
@@ -119,7 +117,6 @@ Requires the PSC ARM toolchain installed at `/opt/toolchain/armv8-sony-linux-gnu
 ```
 build_sys/              # Local x86_64 build
 ├── autobleem-gui       # Main application binary
-├── starter             # Launcher binary
 ├── default.png         # Default cover image
 ├── default.lic         # Default license file
 └── pcsx.cfg            # PCSX configuration template
