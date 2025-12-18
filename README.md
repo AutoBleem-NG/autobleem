@@ -43,6 +43,7 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 ## Documentation
 
 - [Building](docs/building.md) - Build instructions and prerequisites
+- [Boot Process](docs/boot-process.md) - How AutoBleem boots on the PSC
 - [Testing](docs/testing.md) - Running unit tests
 - [Translation](docs/translation.md) - Localization guide
 

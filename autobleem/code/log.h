@@ -75,7 +75,7 @@ inline void init(const std::string &logPath = "autobleem-ng.log", plog::Severity
 }
 
 // Initialize file-only logging for utilities (no console output)
-// Useful for background processes like starter that don't have a terminal
+// Useful for background processes that don't have a terminal
 inline void initFileOnly(const std::string &logPath, size_t maxFileSize = 100 * 1024, int maxFiles = 2,
                          plog::Severity maxSeverity = LOG_LEVEL) {
     FileUtils::ensureParentDirExists(logPath);

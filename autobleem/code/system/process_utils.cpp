@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -18,6 +19,11 @@ using namespace std;
 namespace System {
 
 void shutdown() {
+    // Signal boot.sh loop to exit (in case shutdown command fails or on dev machine)
+    FILE *f = fopen("/tmp/.autobleem_exit", "w");
+    if (f)
+        fclose(f);
+
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
     exit(0);
 #else
