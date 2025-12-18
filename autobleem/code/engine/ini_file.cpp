@@ -87,9 +87,6 @@ void Inifile::save(const string &_path) {
     os.close();
 }
 
-//*******************************
-// Inifile::print
-//*******************************
 void Inifile::print() {
     PLOG_DEBUG << "section = " << section << '\n';
     PLOG_DEBUG << "path = " << path << '\n';
@@ -98,4 +95,14 @@ void Inifile::print() {
     for (auto &item : values)
         PLOG_DEBUG << item.first << " = " << item.second << '\n';
     PLOG_DEBUG << flush;
+}
+
+string Inifile::get(const string &key, const string &defaultValue) const {
+    auto it = values.find(key);
+    if (it == values.end()) {
+        return defaultValue;
+    }
+    string value = it->second;
+    trim(value);
+    return value.empty() ? defaultValue : value;
 }

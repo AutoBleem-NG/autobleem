@@ -11,7 +11,7 @@
 #include <cstdlib>
 
 // Helper function to create a temporary file path
-std::string getTempFilePath(const std::string& suffix) {
+std::string getTempFilePath(const std::string &suffix) {
     // Use /tmp for Linux/Mac, adjust if needed
     static int counter = 0;
     return "/tmp/fileutils_test_" + std::to_string(++counter) + suffix;
@@ -19,7 +19,7 @@ std::string getTempFilePath(const std::string& suffix) {
 
 // Tests for readTextFile
 class ReadTextFileTest : public ::testing::Test {
-protected:
+  protected:
     std::string tempFile;
 
     void TearDown() override {
@@ -131,12 +131,10 @@ TEST_F(ReadTextFileTest, HandlesEmptyLines) {
 
 // Tests for writeTextFile
 class WriteTextFileTest : public ::testing::Test {
-protected:
+  protected:
     std::string tempFile;
 
-    void TearDown() override {
-        std::remove(tempFile.c_str());
-    }
+    void TearDown() override { std::remove(tempFile.c_str()); }
 };
 
 TEST_F(WriteTextFileTest, WritesSimpleTextFile) {
@@ -162,8 +160,7 @@ TEST_F(WriteTextFileTest, WritesWithLineEndings) {
 
     // Check that file has newlines
     std::ifstream in(tempFile);
-    std::string content((std::istreambuf_iterator<char>(in)),
-                        std::istreambuf_iterator<char>());
+    std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
 
     // Should have newlines
     EXPECT_NE(content.find('\n'), std::string::npos);
@@ -213,11 +210,8 @@ TEST_F(WriteTextFileTest, WritesEmptyVector) {
 TEST_F(WriteTextFileTest, WritesWithSpecialCharacters) {
     tempFile = getTempFilePath(".txt");
 
-    std::vector<std::string> lines = {
-        "Line with \"quotes\"",
-        "Line with 'apostrophes'",
-        "Line with special chars: !@#$%^&*()"
-    };
+    std::vector<std::string> lines = {"Line with \"quotes\"", "Line with 'apostrophes'",
+                                      "Line with special chars: !@#$%^&*()"};
     bool success = FileUtils::writeTextFile(tempFile, lines);
 
     EXPECT_TRUE(success);
@@ -228,12 +222,10 @@ TEST_F(WriteTextFileTest, WritesWithSpecialCharacters) {
 
 // Tests for getlineRemoveCR
 class GetlineRemoveCRTest : public ::testing::Test {
-protected:
+  protected:
     std::string tempFile;
 
-    void TearDown() override {
-        std::remove(tempFile.c_str());
-    }
+    void TearDown() override { std::remove(tempFile.c_str()); }
 };
 
 TEST_F(GetlineRemoveCRTest, RemovesCR) {
@@ -251,7 +243,7 @@ TEST_F(GetlineRemoveCRTest, RemovesCR) {
 
     FileUtils::getlineRemoveCR(in, line);
     EXPECT_EQ(line, "Line with CR");
-    EXPECT_EQ(line.back(), 'R');  // Should not have CR
+    EXPECT_EQ(line.back(), 'R'); // Should not have CR
 
     FileUtils::getlineRemoveCR(in, line);
     EXPECT_EQ(line, "Another line");
@@ -325,28 +317,22 @@ TEST_F(GetlineRemoveCRTest, ReturnsReferenceCorrectly) {
     std::ifstream in(tempFile);
     std::string line;
 
-    std::istream& result = FileUtils::getlineRemoveCR(in, line);
-    EXPECT_TRUE(&result == &in);  // Should return the input stream reference
+    std::istream &result = FileUtils::getlineRemoveCR(in, line);
+    EXPECT_TRUE(&result == &in); // Should return the input stream reference
 }
 
 // Integration tests
 class FileUtilsIntegrationTest : public ::testing::Test {
-protected:
+  protected:
     std::string tempFile;
 
-    void TearDown() override {
-        std::remove(tempFile.c_str());
-    }
+    void TearDown() override { std::remove(tempFile.c_str()); }
 };
 
 TEST_F(FileUtilsIntegrationTest, WriteAndReadRoundTrip) {
     tempFile = getTempFilePath(".txt");
 
-    std::vector<std::string> originalLines = {
-        "First line",
-        "Second line",
-        "Third line with special chars: @#$%"
-    };
+    std::vector<std::string> originalLines = {"First line", "Second line", "Third line with special chars: @#$%"};
 
     // Write
     bool writeSuccess = FileUtils::writeTextFile(tempFile, originalLines, true);
@@ -377,4 +363,665 @@ TEST_F(FileUtilsIntegrationTest, LargeFileHandling) {
     EXPECT_EQ(readLines.size(), 1000);
     EXPECT_EQ(readLines[0], "Line 0");
     EXPECT_EQ(readLines[999], "Line 999");
+}
+
+// Tests for createDirRecursive
+class CreateDirRecursiveTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override { tempBase = "/tmp/fileutils_test_dir_" + std::to_string(rand()); }
+
+    void TearDown() override {
+        // Clean up created directories
+        FileUtils::removeDirAndContents(tempBase);
+    }
+};
+
+TEST_F(CreateDirRecursiveTest, CreatesSingleDirectory) {
+    std::string dir = tempBase;
+
+    bool success = FileUtils::createDirRecursive(dir);
+    EXPECT_TRUE(success);
+    EXPECT_TRUE(FileUtils::exists(dir));
+    EXPECT_TRUE(FileUtils::isDirectory(dir));
+}
+
+TEST_F(CreateDirRecursiveTest, CreatesNestedDirectories) {
+    std::string dir = tempBase + "/level1/level2/level3";
+
+    bool success = FileUtils::createDirRecursive(dir);
+    EXPECT_TRUE(success);
+    EXPECT_TRUE(FileUtils::exists(dir));
+    EXPECT_TRUE(FileUtils::isDirectory(dir));
+    EXPECT_TRUE(FileUtils::isDirectory(tempBase + "/level1"));
+    EXPECT_TRUE(FileUtils::isDirectory(tempBase + "/level1/level2"));
+}
+
+TEST_F(CreateDirRecursiveTest, SucceedsIfAlreadyExists) {
+    std::string dir = tempBase;
+
+    // Create it first
+    bool success1 = FileUtils::createDirRecursive(dir);
+    EXPECT_TRUE(success1);
+
+    // Should succeed again (idempotent)
+    bool success2 = FileUtils::createDirRecursive(dir);
+    EXPECT_TRUE(success2);
+}
+
+TEST_F(CreateDirRecursiveTest, HandlesEmptyPath) {
+    bool success = FileUtils::createDirRecursive("");
+    EXPECT_FALSE(success);
+}
+
+// Tests for ensureParentDirExists
+class EnsureParentDirExistsTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override { tempBase = "/tmp/fileutils_test_parent_" + std::to_string(rand()); }
+
+    void TearDown() override { FileUtils::removeDirAndContents(tempBase); }
+};
+
+TEST_F(EnsureParentDirExistsTest, CreatesParentDirectoryForFile) {
+    std::string filePath = tempBase + "/subdir/myfile.txt";
+
+    bool success = FileUtils::ensureParentDirExists(filePath);
+    EXPECT_TRUE(success);
+
+    // Parent directory should exist
+    EXPECT_TRUE(FileUtils::exists(tempBase + "/subdir"));
+    EXPECT_TRUE(FileUtils::isDirectory(tempBase + "/subdir"));
+}
+
+TEST_F(EnsureParentDirExistsTest, CreatesNestedParentDirectories) {
+    std::string filePath = tempBase + "/a/b/c/myfile.log";
+
+    bool success = FileUtils::ensureParentDirExists(filePath);
+    EXPECT_TRUE(success);
+
+    EXPECT_TRUE(FileUtils::isDirectory(tempBase + "/a"));
+    EXPECT_TRUE(FileUtils::isDirectory(tempBase + "/a/b"));
+    EXPECT_TRUE(FileUtils::isDirectory(tempBase + "/a/b/c"));
+}
+
+TEST_F(EnsureParentDirExistsTest, SucceedsForFileInCurrentDir) {
+    // File in current directory - no parent to create
+    bool success = FileUtils::ensureParentDirExists("myfile.txt");
+    EXPECT_TRUE(success);
+}
+
+TEST_F(EnsureParentDirExistsTest, SucceedsIfParentAlreadyExists) {
+    // Create parent first
+    FileUtils::createDirRecursive(tempBase);
+
+    std::string filePath = tempBase + "/myfile.txt";
+    bool success = FileUtils::ensureParentDirExists(filePath);
+    EXPECT_TRUE(success);
+}
+
+// ========================================
+// Tests for File Operations
+// ========================================
+
+class FileOperationsTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override { tempBase = "/tmp/fileops_test_" + std::to_string(rand()); }
+
+    void TearDown() override { FileUtils::removeDirAndContents(tempBase); }
+};
+
+TEST_F(FileOperationsTest, CreateDirCreatesDirectory) {
+    std::string dir = tempBase;
+    bool success = FileUtils::createDir(dir);
+    EXPECT_TRUE(success);
+    EXPECT_TRUE(FileUtils::exists(dir));
+    EXPECT_TRUE(FileUtils::isDirectory(dir));
+}
+
+TEST_F(FileOperationsTest, CreateDirFailsIfAlreadyExists) {
+    std::string dir = tempBase;
+    FileUtils::createDir(dir);
+    // Creating same directory again should fail
+    bool success = FileUtils::createDir(dir);
+    EXPECT_FALSE(success);
+}
+
+TEST_F(FileOperationsTest, CopyFilesCopiesContent) {
+    FileUtils::createDir(tempBase);
+    std::string source = tempBase + "/source.txt";
+    std::string dest = tempBase + "/dest.txt";
+
+    // Create source file
+    std::vector<std::string> content = {"Line 1", "Line 2", "Line 3"};
+    FileUtils::writeTextFile(source, content, true);
+
+    // Copy file
+    bool success = FileUtils::copy(source, dest);
+    EXPECT_TRUE(success);
+    EXPECT_TRUE(FileUtils::exists(dest));
+
+    // Verify content
+    auto readContent = FileUtils::readTextFile(dest);
+    EXPECT_EQ(readContent.size(), 3);
+    EXPECT_EQ(readContent[0], "Line 1");
+}
+
+TEST_F(FileOperationsTest, CopyFileAliasWorks) {
+    FileUtils::createDir(tempBase);
+    std::string source = tempBase + "/source.txt";
+    std::string dest = tempBase + "/dest.txt";
+
+    std::vector<std::string> content = {"Test content"};
+    FileUtils::writeTextFile(source, content, true);
+
+    bool success = FileUtils::copyFile(source, dest);
+    EXPECT_TRUE(success);
+    EXPECT_TRUE(FileUtils::exists(dest));
+}
+
+TEST_F(FileOperationsTest, RemoveFileDeletesFile) {
+    FileUtils::createDir(tempBase);
+    std::string file = tempBase + "/to_delete.txt";
+
+    std::vector<std::string> content = {"Delete me"};
+    FileUtils::writeTextFile(file, content, true);
+    EXPECT_TRUE(FileUtils::exists(file));
+
+    bool success = FileUtils::removeFile(file);
+    EXPECT_TRUE(success);
+    EXPECT_FALSE(FileUtils::exists(file));
+}
+
+TEST_F(FileOperationsTest, RemoveFileReturnsFalseForNonexistent) {
+    std::string file = "/tmp/nonexistent_file_12345.txt";
+    bool success = FileUtils::removeFile(file);
+    EXPECT_FALSE(success);
+}
+
+TEST_F(FileOperationsTest, RenameFileMovesFile) {
+    FileUtils::createDir(tempBase);
+    std::string oldPath = tempBase + "/old_name.txt";
+    std::string newPath = tempBase + "/new_name.txt";
+
+    std::vector<std::string> content = {"Rename me"};
+    FileUtils::writeTextFile(oldPath, content, true);
+
+    bool success = FileUtils::renameFile(oldPath, newPath);
+    EXPECT_TRUE(success);
+    EXPECT_FALSE(FileUtils::exists(oldPath));
+    EXPECT_TRUE(FileUtils::exists(newPath));
+}
+
+TEST_F(FileOperationsTest, ExistsReturnsTrueForFile) {
+    FileUtils::createDir(tempBase);
+    std::string file = tempBase + "/exists.txt";
+    std::vector<std::string> content = {"I exist"};
+    FileUtils::writeTextFile(file, content, true);
+
+    EXPECT_TRUE(FileUtils::exists(file));
+}
+
+TEST_F(FileOperationsTest, ExistsReturnsTrueForDirectory) {
+    FileUtils::createDir(tempBase);
+    EXPECT_TRUE(FileUtils::exists(tempBase));
+}
+
+TEST_F(FileOperationsTest, ExistsReturnsFalseForNonexistent) {
+    EXPECT_FALSE(FileUtils::exists("/tmp/nonexistent_path_12345"));
+}
+
+TEST_F(FileOperationsTest, IsDirectoryReturnsTrueForDir) {
+    FileUtils::createDir(tempBase);
+    EXPECT_TRUE(FileUtils::isDirectory(tempBase));
+}
+
+TEST_F(FileOperationsTest, IsDirectoryReturnsFalseForFile) {
+    FileUtils::createDir(tempBase);
+    std::string file = tempBase + "/file.txt";
+    std::vector<std::string> content = {"Not a dir"};
+    FileUtils::writeTextFile(file, content, true);
+
+    EXPECT_FALSE(FileUtils::isDirectory(file));
+}
+
+TEST_F(FileOperationsTest, IsDirectoryReturnsFalseForNonexistent) {
+    EXPECT_FALSE(FileUtils::isDirectory("/tmp/nonexistent_12345"));
+}
+
+// ========================================
+// Tests for Directory Listing
+// ========================================
+
+class DirectoryListingTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override {
+        tempBase = "/tmp/dirlist_test_" + std::to_string(rand());
+        FileUtils::createDir(tempBase);
+    }
+
+    void TearDown() override { FileUtils::removeDirAndContents(tempBase); }
+};
+
+TEST_F(DirectoryListingTest, DiruListsFilesAndDirs) {
+    // Create files and directories
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file1.txt", content, true);
+    FileUtils::writeTextFile(tempBase + "/file2.txt", content, true);
+    FileUtils::createDir(tempBase + "/subdir1");
+    FileUtils::createDir(tempBase + "/subdir2");
+
+    auto entries = FileUtils::diru(tempBase);
+
+    EXPECT_EQ(entries.size(), 4);
+}
+
+TEST_F(DirectoryListingTest, DiruExcludesHiddenFiles) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/.hidden", content, true);
+    FileUtils::writeTextFile(tempBase + "/visible.txt", content, true);
+
+    auto entries = FileUtils::diru(tempBase);
+
+    EXPECT_EQ(entries.size(), 1);
+    EXPECT_EQ(entries[0].name, "visible.txt");
+}
+
+TEST_F(DirectoryListingTest, DiruDirsOnlyReturnsOnlyDirs) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file.txt", content, true);
+    FileUtils::createDir(tempBase + "/subdir1");
+    FileUtils::createDir(tempBase + "/subdir2");
+
+    auto entries = FileUtils::diru_DirsOnly(tempBase);
+
+    EXPECT_EQ(entries.size(), 2);
+    for (const auto &entry : entries) {
+        EXPECT_TRUE(entry.isDir);
+    }
+}
+
+TEST_F(DirectoryListingTest, DiruFilesOnlyReturnsOnlyFiles) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file1.txt", content, true);
+    FileUtils::writeTextFile(tempBase + "/file2.txt", content, true);
+    FileUtils::createDir(tempBase + "/subdir");
+
+    auto entries = FileUtils::diru_FilesOnly(tempBase);
+
+    EXPECT_EQ(entries.size(), 2);
+    for (const auto &entry : entries) {
+        EXPECT_FALSE(entry.isDir);
+    }
+}
+
+TEST_F(DirectoryListingTest, DiruSortsByName) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/zebra.txt", content, true);
+    FileUtils::writeTextFile(tempBase + "/apple.txt", content, true);
+    FileUtils::writeTextFile(tempBase + "/mango.txt", content, true);
+
+    auto entries = FileUtils::diru(tempBase);
+
+    EXPECT_EQ(entries.size(), 3);
+    EXPECT_EQ(entries[0].name, "apple.txt");
+    EXPECT_EQ(entries[1].name, "mango.txt");
+    EXPECT_EQ(entries[2].name, "zebra.txt");
+}
+
+TEST_F(DirectoryListingTest, DiruHandlesEmptyDirectory) {
+    auto entries = FileUtils::diru(tempBase);
+    EXPECT_EQ(entries.size(), 0);
+}
+
+TEST_F(DirectoryListingTest, DirIncludesDotEntries) {
+    auto entries = FileUtils::dir(tempBase);
+
+    // Should include . and ..
+    bool hasDot = false;
+    bool hasDotDot = false;
+    for (const auto &entry : entries) {
+        if (entry.name == ".")
+            hasDot = true;
+        if (entry.name == "..")
+            hasDotDot = true;
+    }
+    EXPECT_TRUE(hasDot);
+    EXPECT_TRUE(hasDotDot);
+}
+
+// ========================================
+// Tests for Extension Handling
+// ========================================
+
+class ExtensionHandlingTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override {
+        tempBase = "/tmp/ext_test_" + std::to_string(rand());
+        FileUtils::createDir(tempBase);
+    }
+
+    void TearDown() override { FileUtils::removeDirAndContents(tempBase); }
+};
+
+TEST_F(ExtensionHandlingTest, RemoveDotFromExtensionRemovesDot) {
+    EXPECT_EQ(FileUtils::removeDotFromExtension(".txt"), "txt");
+    EXPECT_EQ(FileUtils::removeDotFromExtension(".cpp"), "cpp");
+}
+
+TEST_F(ExtensionHandlingTest, RemoveDotFromExtensionHandlesNoDot) {
+    EXPECT_EQ(FileUtils::removeDotFromExtension("txt"), "txt");
+}
+
+TEST_F(ExtensionHandlingTest, RemoveDotFromExtensionHandlesEmpty) {
+    EXPECT_EQ(FileUtils::removeDotFromExtension(""), "");
+}
+
+TEST_F(ExtensionHandlingTest, AddDotToExtensionAddsDot) {
+    EXPECT_EQ(FileUtils::addDotToExtension("txt"), ".txt");
+    EXPECT_EQ(FileUtils::addDotToExtension("cpp"), ".cpp");
+}
+
+TEST_F(ExtensionHandlingTest, AddDotToExtensionPreservesDot) {
+    EXPECT_EQ(FileUtils::addDotToExtension(".txt"), ".txt");
+}
+
+TEST_F(ExtensionHandlingTest, AddDotToExtensionHandlesEmpty) {
+    EXPECT_EQ(FileUtils::addDotToExtension(""), "");
+}
+
+TEST_F(ExtensionHandlingTest, MatchExtensionMatchesExact) {
+    EXPECT_TRUE(FileUtils::matchExtension("file.txt", "txt"));
+    EXPECT_TRUE(FileUtils::matchExtension("file.txt", ".txt"));
+}
+
+TEST_F(ExtensionHandlingTest, MatchExtensionIsCaseInsensitive) {
+    EXPECT_TRUE(FileUtils::matchExtension("file.TXT", "txt"));
+    EXPECT_TRUE(FileUtils::matchExtension("file.txt", "TXT"));
+}
+
+TEST_F(ExtensionHandlingTest, MatchExtensionReturnsFalseForMismatch) {
+    EXPECT_FALSE(FileUtils::matchExtension("file.txt", "cpp"));
+}
+
+TEST_F(ExtensionHandlingTest, MatchExtensionReturnsFalseForShortPath) {
+    EXPECT_FALSE(FileUtils::matchExtension("abc", "txt"));
+}
+
+TEST_F(ExtensionHandlingTest, GetFilesWithExtensionFiltersCorrectly) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file1.txt", content, true);
+    FileUtils::writeTextFile(tempBase + "/file2.txt", content, true);
+    FileUtils::writeTextFile(tempBase + "/file3.cpp", content, true);
+    FileUtils::writeTextFile(tempBase + "/file4.bin", content, true);
+
+    auto allEntries = FileUtils::diru(tempBase);
+    std::vector<std::string> extensions = {"txt", "cpp"};
+
+    auto filtered = FileUtils::getFilesWithExtension(tempBase, allEntries, extensions);
+
+    EXPECT_EQ(filtered.size(), 3);
+}
+
+TEST_F(ExtensionHandlingTest, GetFilesWithExtensionExcludesDirectories) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file.txt", content, true);
+    FileUtils::createDir(tempBase + "/subdir.txt"); // Directory with extension-like name
+
+    auto allEntries = FileUtils::diru(tempBase);
+    std::vector<std::string> extensions = {"txt"};
+
+    auto filtered = FileUtils::getFilesWithExtension(tempBase, allEntries, extensions);
+
+    EXPECT_EQ(filtered.size(), 1);
+    EXPECT_EQ(filtered[0].name, "file.txt");
+}
+
+TEST_F(ExtensionHandlingTest, FindFirstFileFindsFile) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/other.cpp", content, true);
+    FileUtils::writeTextFile(tempBase + "/target.txt", content, true);
+
+    std::string found = FileUtils::findFirstFile("txt", tempBase);
+    EXPECT_EQ(found, "target.txt");
+}
+
+TEST_F(ExtensionHandlingTest, FindFirstFileReturnsEmptyIfNotFound) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file.cpp", content, true);
+
+    std::string found = FileUtils::findFirstFile("txt", tempBase);
+    EXPECT_EQ(found, "");
+}
+
+// ========================================
+// Tests for Game-Specific Functions
+// ========================================
+
+class GameSpecificTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override {
+        tempBase = "/tmp/game_test_" + std::to_string(rand());
+        FileUtils::createDir(tempBase);
+    }
+
+    void TearDown() override { FileUtils::removeDirAndContents(tempBase); }
+};
+
+TEST_F(GameSpecificTest, IsPBPFileRecognizesPBP) {
+    EXPECT_TRUE(FileUtils::isPBPFile("game.pbp"));
+    EXPECT_TRUE(FileUtils::isPBPFile("game.PBP"));
+    EXPECT_TRUE(FileUtils::isPBPFile("/path/to/game.pbp"));
+}
+
+TEST_F(GameSpecificTest, IsPBPFileRejectsNonPBP) {
+    EXPECT_FALSE(FileUtils::isPBPFile("game.bin"));
+    EXPECT_FALSE(FileUtils::isPBPFile("game.txt"));
+}
+
+TEST_F(GameSpecificTest, IsPBPFileRejectsShortPath) {
+    EXPECT_FALSE(FileUtils::isPBPFile("abc"));
+    EXPECT_FALSE(FileUtils::isPBPFile(""));
+}
+
+TEST_F(GameSpecificTest, IsAGameFileRecognizesBin) {
+    EXPECT_TRUE(FileUtils::isAGameFile("game.bin"));
+    EXPECT_TRUE(FileUtils::isAGameFile("game.BIN"));
+}
+
+TEST_F(GameSpecificTest, IsAGameFileRecognizesPBP) {
+    EXPECT_TRUE(FileUtils::isAGameFile("game.pbp"));
+    EXPECT_TRUE(FileUtils::isAGameFile("game.PBP"));
+}
+
+TEST_F(GameSpecificTest, IsAGameFileRecognizesIMG) {
+    EXPECT_TRUE(FileUtils::isAGameFile("game.img"));
+    EXPECT_TRUE(FileUtils::isAGameFile("game.IMG"));
+}
+
+TEST_F(GameSpecificTest, IsAGameFileRecognizesCHD) {
+    EXPECT_TRUE(FileUtils::isAGameFile("game.chd"));
+    EXPECT_TRUE(FileUtils::isAGameFile("game.CHD"));
+}
+
+TEST_F(GameSpecificTest, IsAGameFileRejectsNonGame) {
+    EXPECT_FALSE(FileUtils::isAGameFile("readme.txt"));
+    EXPECT_FALSE(FileUtils::isAGameFile("cover.png"));
+    EXPECT_FALSE(FileUtils::isAGameFile("game.cue"));
+}
+
+TEST_F(GameSpecificTest, GetGameFileImageTypeReturnsBin) {
+    EXPECT_EQ(FileUtils::getGameFileImageType("game.bin"), IMAGE_BIN);
+}
+
+TEST_F(GameSpecificTest, GetGameFileImageTypeReturnsPBP) {
+    EXPECT_EQ(FileUtils::getGameFileImageType("game.pbp"), IMAGE_PBP);
+}
+
+TEST_F(GameSpecificTest, GetGameFileImageTypeReturnsIMG) {
+    EXPECT_EQ(FileUtils::getGameFileImageType("game.img"), IMAGE_IMG);
+}
+
+TEST_F(GameSpecificTest, GetGameFileImageTypeReturnsCHD) {
+    EXPECT_EQ(FileUtils::getGameFileImageType("game.chd"), IMAGE_CHD);
+}
+
+TEST_F(GameSpecificTest, GetGameFileImageTypeReturnsNoGameFound) {
+    EXPECT_EQ(FileUtils::getGameFileImageType("readme.txt"), IMAGE_NO_GAME_FOUND);
+}
+
+TEST_F(GameSpecificTest, ImageTypeUsesACueFileReturnsTrueForBin) {
+    EXPECT_TRUE(FileUtils::imageTypeUsesACueFile(IMAGE_BIN));
+}
+
+TEST_F(GameSpecificTest, ImageTypeUsesACueFileReturnsTrueForIMG) {
+    EXPECT_TRUE(FileUtils::imageTypeUsesACueFile(IMAGE_IMG));
+}
+
+TEST_F(GameSpecificTest, ImageTypeUsesACueFileReturnsFalseForPBP) {
+    EXPECT_FALSE(FileUtils::imageTypeUsesACueFile(IMAGE_PBP));
+}
+
+TEST_F(GameSpecificTest, ImageTypeUsesACueFileReturnsFalseForCHD) {
+    EXPECT_FALSE(FileUtils::imageTypeUsesACueFile(IMAGE_CHD));
+}
+
+TEST_F(GameSpecificTest, ThereIsAGameFileReturnsTrueWithGameFile) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/game.bin", content, true);
+
+    EXPECT_TRUE(FileUtils::thereIsAGameFile(tempBase));
+}
+
+TEST_F(GameSpecificTest, ThereIsAGameFileReturnsFalseWithoutGameFile) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/readme.txt", content, true);
+
+    EXPECT_FALSE(FileUtils::thereIsAGameFile(tempBase));
+}
+
+TEST_F(GameSpecificTest, ThereIsASubDirReturnsTrueWithSubdir) {
+    FileUtils::createDir(tempBase + "/subdir");
+
+    EXPECT_TRUE(FileUtils::thereIsASubDir(tempBase));
+}
+
+TEST_F(GameSpecificTest, ThereIsASubDirReturnsFalseWithoutSubdir) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file.txt", content, true);
+
+    EXPECT_FALSE(FileUtils::thereIsASubDir(tempBase));
+}
+
+TEST_F(GameSpecificTest, GetGameFileReturnsGameFileInfo) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/game.pbp", content, true);
+    FileUtils::writeTextFile(tempBase + "/readme.txt", content, true);
+
+    auto result = FileUtils::getGameFile(tempBase);
+    EXPECT_EQ(std::get<0>(result), IMAGE_PBP);
+    EXPECT_EQ(std::get<1>(result), "game.pbp");
+}
+
+TEST_F(GameSpecificTest, GetGameFileReturnsNoGameFoundWhenEmpty) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/readme.txt", content, true);
+
+    auto result = FileUtils::getGameFile(tempBase);
+    EXPECT_EQ(std::get<0>(result), IMAGE_NO_GAME_FOUND);
+    EXPECT_EQ(std::get<1>(result), "");
+}
+
+// ========================================
+// Tests for Utility Functions
+// ========================================
+
+class UtilityFunctionsTest : public ::testing::Test {
+  protected:
+    std::string tempBase;
+
+    void SetUp() override {
+        tempBase = "/tmp/util_test_" + std::to_string(rand());
+        FileUtils::createDir(tempBase);
+    }
+
+    void TearDown() override { FileUtils::removeDirAndContents(tempBase); }
+};
+
+TEST_F(UtilityFunctionsTest, ReplaceTheseCharsWithThisCharReplacesMultiple) {
+    std::string result = FileUtils::replaceTheseCharsWithThisChar("a,b;c:d", ",;:", '_');
+    EXPECT_EQ(result, "a_b_c_d");
+}
+
+TEST_F(UtilityFunctionsTest, ReplaceTheseCharsWithThisCharHandlesNoMatch) {
+    std::string result = FileUtils::replaceTheseCharsWithThisChar("abcd", "xyz", '_');
+    EXPECT_EQ(result, "abcd");
+}
+
+TEST_F(UtilityFunctionsTest, ReplaceTheseCharsWithThisCharHandlesEmpty) {
+    std::string result = FileUtils::replaceTheseCharsWithThisChar("", ",;:", '_');
+    EXPECT_EQ(result, "");
+}
+
+TEST_F(UtilityFunctionsTest, FixCommaInDirOrFileNameReplacesComma) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/file,name.txt", content, true);
+
+    DirEntry entry("file,name.txt", false);
+    bool changed = FileUtils::fixCommaInDirOrFileName(tempBase, &entry);
+
+    EXPECT_TRUE(changed);
+    EXPECT_EQ(entry.name, "file-name.txt");
+    EXPECT_TRUE(FileUtils::exists(tempBase + "/file-name.txt"));
+    EXPECT_FALSE(FileUtils::exists(tempBase + "/file,name.txt"));
+}
+
+TEST_F(UtilityFunctionsTest, FixCommaInDirOrFileNameReturnsFalseNoComma) {
+    std::vector<std::string> content = {"test"};
+    FileUtils::writeTextFile(tempBase + "/filename.txt", content, true);
+
+    DirEntry entry("filename.txt", false);
+    bool changed = FileUtils::fixCommaInDirOrFileName(tempBase, &entry);
+
+    EXPECT_FALSE(changed);
+    EXPECT_EQ(entry.name, "filename.txt");
+}
+
+// ========================================
+// Tests for DirEntry
+// ========================================
+
+class DirEntryTest : public ::testing::Test {};
+
+TEST_F(DirEntryTest, ConstructorSetsFields) {
+    DirEntry entry("test.txt", false);
+    EXPECT_EQ(entry.name, "test.txt");
+    EXPECT_FALSE(entry.isDir);
+
+    DirEntry dirEntry("mydir", true);
+    EXPECT_EQ(dirEntry.name, "mydir");
+    EXPECT_TRUE(dirEntry.isDir);
+}
+
+TEST_F(DirEntryTest, SortByNameSortsCaseInsensitive) {
+    DirEntry a("Apple", false);
+    DirEntry b("banana", false);
+    DirEntry c("Cherry", false);
+
+    std::vector<DirEntry> entries = {c, a, b};
+    std::sort(entries.begin(), entries.end(), DirEntry::sortByName);
+
+    EXPECT_EQ(entries[0].name, "Apple");
+    EXPECT_EQ(entries[1].name, "banana");
+    EXPECT_EQ(entries[2].name, "Cherry");
 }

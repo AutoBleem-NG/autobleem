@@ -52,6 +52,8 @@ bool isDirectory(const std::string &path);
 // ========================================
 
 bool createDir(const std::string &name);
+bool createDirRecursive(const std::string &path);
+bool ensureParentDirExists(const std::string &filePath);
 int rmDir(std::string path);
 bool removeDirAndContents(const std::string &path);
 

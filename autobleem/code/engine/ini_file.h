@@ -36,4 +36,7 @@ class Inifile {
 
     void save(const std::string &path);
     void print();
+
+    // Get value by key, returns defaultValue if key not found or value is empty after trimming
+    std::string get(const std::string &key, const std::string &defaultValue = "") const;
 };

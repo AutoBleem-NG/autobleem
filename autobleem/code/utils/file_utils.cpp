@@ -170,6 +170,58 @@ bool createDir(const string &_name) {
     return (-1 != dir_err);
 }
 
+bool createDirRecursive(const string &path) {
+    string fixedPath = fixPath(path);
+    if (fixedPath.empty()) {
+        return false;
+    }
+
+    // Check if already exists
+    if (exists(fixedPath) && isDirectory(fixedPath)) {
+        return true;
+    }
+
+    // Build path incrementally and create each level
+    string current;
+    size_t pos = 0;
+
+    // Handle absolute paths
+    if (fixedPath[0] == '/') {
+        current = "/";
+        pos = 1;
+    }
+
+    while (pos < fixedPath.length()) {
+        size_t nextSlash = fixedPath.find('/', pos);
+        if (nextSlash == string::npos) {
+            nextSlash = fixedPath.length();
+        }
+
+        current += fixedPath.substr(pos, nextSlash - pos);
+
+        if (!current.empty() && !exists(current)) {
+            if (!createDir(current)) {
+                return false;
+            }
+        }
+
+        if (nextSlash < fixedPath.length()) {
+            current += "/";
+        }
+        pos = nextSlash + 1;
+    }
+
+    return true;
+}
+
+bool ensureParentDirExists(const string &filePath) {
+    string dirPath = getDirNameFromPath(filePath);
+    if (dirPath.empty() || dirPath == ".") {
+        return true; // Current directory, nothing to create
+    }
+    return createDirRecursive(dirPath);
+}
+
 int rmDir(string path) {
     path = fixPath(path);
     DIR *d = opendir(path.c_str());

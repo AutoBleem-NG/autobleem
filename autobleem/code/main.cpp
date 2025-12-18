@@ -237,10 +237,8 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    // NOW initialize logger - it will use USB:/System/Logs/autobleem-ng.log
-    string logDir = private_pathToUSBDrive + sep + "System" + sep + "Logs";
-    FileUtils::createDir(logDir);
-    string logPath = logDir + sep + "autobleem-ng.log";
+    // Initialize logger - Log::init creates parent directories if needed
+    string logPath = private_pathToUSBDrive + sep + "System" + sep + "Logs" + sep + "autobleem-ng.log";
     Log::init(logPath);
 
     // Log version and build information

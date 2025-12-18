@@ -63,6 +63,8 @@ class Formatter {
 // Initialize logging - call once at startup
 // logPath: optional path to log file (if not provided, uses "./autobleem-ng.log")
 inline void init(const std::string &logPath = "autobleem-ng.log", plog::Severity maxSeverity = LOG_LEVEL) {
+    FileUtils::ensureParentDirExists(logPath);
+
     static plog::RollingFileAppender<Formatter> fileAppender(logPath.c_str(), 1024 * 1024, 3);
     static plog::ColorConsoleAppender<Formatter> consoleAppender;
 
@@ -70,6 +72,16 @@ inline void init(const std::string &logPath = "autobleem-ng.log", plog::Severity
 
     PLOG_INFO << "=== AutoBleem started ===";
     PLOG_INFO << "Log file: " << logPath;
+}
+
+// Initialize file-only logging for utilities (no console output)
+// Useful for background processes like starter that don't have a terminal
+inline void initFileOnly(const std::string &logPath, size_t maxFileSize = 100 * 1024, int maxFiles = 2,
+                         plog::Severity maxSeverity = LOG_LEVEL) {
+    FileUtils::ensureParentDirExists(logPath);
+
+    static plog::RollingFileAppender<Formatter> fileAppender(logPath.c_str(), maxFileSize, maxFiles);
+    plog::init(maxSeverity, &fileAppender);
 }
 
 // Change log level at runtime
