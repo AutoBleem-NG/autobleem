@@ -14,6 +14,9 @@ ARG GIT_BRANCH=unknown
 ARG GIT_VERSION=1.1.0-dev
 ARG GIT_CHANGED=false
 
+# UPX version for binary compression
+ARG UPX_VERSION=5.0.2
+
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -22,29 +25,37 @@ RUN apt-get update && apt-get install -y \
     bash \
     git \
     cmake \
-    gcc-7 \
-    g++-7 \
-    gcc-7-arm-linux-gnueabihf \
-    g++-7-arm-linux-gnueabihf \
+    gcc-8 \
+    g++-8 \
+    gcc-8-arm-linux-gnueabihf \
+    g++-8-arm-linux-gnueabihf \
     make \
     wget \
+    xz-utils \
     pkg-config \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Download and install UPX for binary compression
+RUN wget -q https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-amd64_linux.tar.xz && \
+    tar -xf upx-${UPX_VERSION}-amd64_linux.tar.xz && \
+    cp upx-${UPX_VERSION}-amd64_linux/upx /usr/local/bin/ && \
+    chmod +x /usr/local/bin/upx && \
+    rm -rf upx-${UPX_VERSION}-amd64_linux upx-${UPX_VERSION}-amd64_linux.tar.xz
 
 # Create cross-compilation tools directory
 RUN mkdir -p /usr/local/cross-tools/arm-linux-gnueabihf/lib \
              /usr/local/cross-tools/arm-linux-gnueabihf/include
 
 # Create symlinks for ARM compilers
-RUN ln -sf /usr/bin/arm-linux-gnueabihf-g++-7 /usr/bin/arm-linux-gnueabihf-g++ \
-    && ln -sf /usr/bin/arm-linux-gnueabihf-gcc-7 /usr/bin/arm-linux-gnueabihf-gcc
+RUN ln -sf /usr/bin/arm-linux-gnueabihf-g++-8 /usr/bin/arm-linux-gnueabihf-g++ \
+    && ln -sf /usr/bin/arm-linux-gnueabihf-gcc-8 /usr/bin/arm-linux-gnueabihf-gcc
 
 # Create symlinks with the armv8-sony prefix used by PSCtoolchainV8.cmake
-RUN ln -sf /usr/bin/arm-linux-gnueabihf-gcc-7 /usr/bin/armv8-sony-linux-gnueabihf-gcc \
-    && ln -sf /usr/bin/arm-linux-gnueabihf-g++-7 /usr/bin/armv8-sony-linux-gnueabihf-g++ \
+RUN ln -sf /usr/bin/arm-linux-gnueabihf-gcc-8 /usr/bin/armv8-sony-linux-gnueabihf-gcc \
+    && ln -sf /usr/bin/arm-linux-gnueabihf-g++-8 /usr/bin/armv8-sony-linux-gnueabihf-g++ \
     && ln -sf /usr/bin/arm-linux-gnueabihf-ar /usr/bin/armv8-sony-linux-gnueabihf-ar \
-    && ln -sf /usr/bin/arm-linux-gnueabihf-gcc-ar-7 /usr/bin/armv8-sony-linux-gnueabihf-gcc-ar
+    && ln -sf /usr/bin/arm-linux-gnueabihf-gcc-ar-8 /usr/bin/armv8-sony-linux-gnueabihf-gcc-ar
 
 # Download and install SDL2 libraries for ARM
 WORKDIR /tmp
@@ -81,9 +92,10 @@ COPY . /build/
 RUN mkdir -p /build/autobleem/libs/libchdr/build && \
     cd /build/autobleem/libs/libchdr/build && \
     cmake .. \
-        -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-7 \
-        -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++-7 \
-        -DCMAKE_C_FLAGS="-mfloat-abi=hard -march=armv7ve -Os" \
+        -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-8 \
+        -DCMAKE_CXX_COMPILER=arm-linux-gnueabihf-g++-8 \
+        -DCMAKE_C_FLAGS="-march=armv8-a -mtune=cortex-a35 -mfpu=neon-vfpv4 -mfloat-abi=hard -O3 -fomit-frame-pointer -ffunction-sections -fdata-sections -funroll-loops -ftree-vectorize -fno-math-errno -fno-trapping-math -fno-signed-zeros -fprefetch-loop-arrays" \
+        -DCMAKE_EXE_LINKER_FLAGS="-Wl,--gc-sections -Wl,--as-needed -s" \
         -DCMAKE_INSTALL_PREFIX=/usr/local/cross-tools/arm-linux-gnueabihf \
         -DBUILD_SHARED_LIBS=OFF \
         -DWITH_SYSTEM_ZLIB=OFF \
@@ -107,6 +119,10 @@ ENV GIT_CHANGED=${GIT_CHANGED}
 
 # Build AutoBleem for ARM
 RUN make arm JOBS=$(nproc)
+
+# Compress binary with UPX for smaller size and faster loading
+# Note: Binary is already stripped by -s linker flag
+RUN upx -9 build_arm/autobleem-gui
 
 # Build outputs are in /build/build_arm/
 # Extract with: docker cp <container>:/build/build_arm ./

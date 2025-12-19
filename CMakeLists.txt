@@ -31,17 +31,33 @@ endif()
 
 message(STATUS "CMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR}")
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" )
-	message(STATUS "Building for ARM")
-	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 8.0)
-		message(STATUS "CXX Compiler Version > 8")
-		SET(CMAKE_C_FLAGS "-mfloat-abi=hard -march=armv8-a+simd -Os -s")
-		SET(CMAKE_CXX_FLAGS " -mfloat-abi=hard -march=armv8-a+simd  -Os -s")
-        message(STATUS "Newer GCC installed")
-	else()
-		message(STATUS "CXX Compiler Version <= 8")
-		SET(CMAKE_C_FLAGS "-mfloat-abi=hard -march=armv7ve -s -Os")
-		SET(CMAKE_CXX_FLAGS "-mfloat-abi=hard -march=armv7ve -s -Os")
-	endif()
+	message(STATUS "Building for ARM (PlayStation Classic - Cortex-A35)")
+	# PlayStation Classic has ARM Cortex-A35 (ARMv8-A in AArch32 mode)
+	#
+	# Architecture flags:
+	# - march=armv8-a: Target ARMv8-A instruction set
+	# - mtune=cortex-a35: Tune for PSC's specific CPU pipeline
+	# - mfpu=neon-vfpv4: NEON SIMD with VFPv4 (matches original pcsx-ab exactly)
+	# - mfloat-abi=hard: Use hardware FPU, pass floats in VFP registers
+	#
+	# Optimization flags:
+	# - O3: Aggressive optimization
+	# - fno-pie: Generate position-dependent code (faster, matches original pcsx-ab)
+	# - fomit-frame-pointer: Free up r11 register
+	# - ffunction-sections/fdata-sections: Enable dead code elimination
+	# - funroll-loops: Unroll loops for better pipelining
+	# - ftree-vectorize: Auto-vectorize loops using NEON
+	#
+	# Math optimizations (safe subset - don't trigger SQLite's __FAST_MATH__ check):
+	# - fno-math-errno: Skip errno setting for math functions
+	# - fno-trapping-math: Assume FP operations don't trap
+	# - fno-signed-zeros: Ignore sign of zero (faster comparisons)
+	# - fprefetch-loop-arrays: Prefetch loop data for better cache usage
+	#
+	SET(CMAKE_C_FLAGS "-march=armv8-a -mtune=cortex-a35 -mfpu=neon-vfpv4 -mfloat-abi=hard -O3 -fno-pie -fomit-frame-pointer -ffunction-sections -fdata-sections -funroll-loops -ftree-vectorize -fno-math-errno -fno-trapping-math -fno-signed-zeros -fprefetch-loop-arrays")
+	SET(CMAKE_CXX_FLAGS "-march=armv8-a -mtune=cortex-a35 -mfpu=neon-vfpv4 -mfloat-abi=hard -O3 -fno-pie -fomit-frame-pointer -ffunction-sections -fdata-sections -funroll-loops -ftree-vectorize -fno-math-errno -fno-trapping-math -fno-signed-zeros -fprefetch-loop-arrays")
+	SET(CMAKE_EXE_LINKER_FLAGS "-no-pie -Wl,--gc-sections -Wl,--as-needed -s")
+	message(STATUS "C_FLAGS: ${CMAKE_C_FLAGS}")
 
 	include_directories(autobleem/include
 		"/opt/toolchain/armv8-sony-linux-gnueabihf/sysroot/usr/include"

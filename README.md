@@ -19,6 +19,7 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 - RetroArch integration for multi-system emulation
 - Multi-disc game support
 - Docker-based ARM build (no toolchain installation required)
+- Optimized binary with ARMv8-A/NEON/VFPv4 and UPX compression
 - 17 languages supported with automated translation tooling
 - Structured logging for easier debugging (logs written to `USB:/System/Logs/autobleem-ng.log`)
 
