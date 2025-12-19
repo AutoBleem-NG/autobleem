@@ -306,3 +306,87 @@ target_link_libraries(
 )
 
 gtest_discover_tests(debug_timer_test)
+
+# INI file tests
+add_executable(
+    ini_file_test
+    ini_file_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/ini_file.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+)
+
+target_link_libraries(
+    ini_file_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(ini_file_test)
+
+# Serial scanner tests
+add_executable(
+    serial_scanner_test
+    serial_scanner_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/serial_scanner.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/iso_dir.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/io/binary_reader.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/system/process_utils.cpp
+)
+
+target_link_libraries(
+    serial_scanner_test
+    GTest::gtest_main
+    Threads::Threads
+    chdr-static
+    ${CMAKE_DL_LIBS}
+)
+
+gtest_discover_tests(serial_scanner_test)
+
+# ISO directory tests
+add_executable(
+    iso_dir_test
+    iso_dir_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/iso_dir.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+)
+
+target_link_libraries(
+    iso_dir_test
+    GTest::gtest_main
+    Threads::Threads
+    chdr-static
+    ${CMAKE_DL_LIBS}
+)
+
+gtest_discover_tests(iso_dir_test)
+
+# Memory card tests
+add_executable(
+    mem_card_test
+    mem_card_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/mem_card.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/ini_file.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+)
+
+target_link_libraries(
+    mem_card_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(mem_card_test)
