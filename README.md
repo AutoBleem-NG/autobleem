@@ -18,10 +18,16 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 - Shared memory cards across games
 - RetroArch integration for multi-system emulation
 - Multi-disc game support
-- Docker-based ARM build (no toolchain installation required)
-- Optimized binary with ARMv8-A/NEON/VFPv4 and UPX compression
-- 17 languages supported with automated translation tooling
-- Structured logging for easier debugging (logs written to `USB:/System/Logs/autobleem-ng.log`)
+
+### AutoBleem-NG Improvements
+
+- 17 languages fully translated with maintainable INI file format
+- Docker-based ARM cross-compilation (no toolchain installation required)
+- Optimized binary with ARMv8-A/NEON/VFPv4 tuning and UPX compression
+- Simplified boot scripts for easier maintenance
+- Structured logging (`USB:/System/Logs/autobleem-ng.log`)
+- Memory leak and bug fixes
+- Modernized codebase with improved safety and expanded test coverage
 
 ## Project Structure
 
