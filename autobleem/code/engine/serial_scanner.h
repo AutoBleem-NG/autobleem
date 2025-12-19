@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include "../main.h"
+
 //******************
 // SerialScanner
 //******************
