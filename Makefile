@@ -71,6 +71,8 @@ docker-extract:
 		echo "Run 'make build' first to create the image."; \
 		exit 1; \
 	fi
+	@echo "Cleaning up any stale containers..."
+	@docker rm -f autobleem-temp 2>/dev/null || true
 	@echo "Creating temporary container..."
 	docker create --name autobleem-temp $(DOCKER_IMAGE)
 	@echo "Copying build_arm/ directory..."
@@ -224,9 +226,9 @@ test:
 		echo "Build directory not found. Run 'make sys' first."; \
 		exit 1; \
 	fi
-	@if [ ! -f "build_sys/tests/chd_reader_test" ]; then \
-		echo "Tests not built. Building tests..."; \
-		cd build_sys && make chd_reader_test; \
+	@if [ ! -d "build_sys/autobleem/tests" ]; then \
+		echo "Tests not built. Building..."; \
+		cd build_sys && make -j $(JOBS); \
 	fi
 	@echo ""
 	@cd build_sys && ctest --output-on-failure
