@@ -84,5 +84,5 @@ CheckOptions:
     value:        'NULL'
 
 WarningsAsErrors: ''
-HeaderFilterRegex: 'src/.*\.(h|hpp)$'
+HeaderFilterRegex: 'autobleem/.*\.(h|hpp)$'
 FormatStyle: none

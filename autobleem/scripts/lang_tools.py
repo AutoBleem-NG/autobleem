@@ -360,10 +360,10 @@ def main():
 
     # extract command
     p_extract = subparsers.add_parser('extract', help='Extract strings from source code')
-    p_extract.add_argument('--src-dir', default='src/code',
-                          help='Source directory to scan (default: src/code)')
-    p_extract.add_argument('--output', '-o', default='src/resources/lang/English.txt',
-                          help='Output file (default: src/resources/lang/English.txt)')
+    p_extract.add_argument('--src-dir', default='autobleem/code',
+                          help='Source directory to scan (default: autobleem/code)')
+    p_extract.add_argument('--output', '-o', default='autobleem/resources/lang/English.txt',
+                          help='Output file (default: autobleem/resources/lang/English.txt)')
 
     # convert command
     p_convert = subparsers.add_parser('convert', help='Convert old format to key=value')
@@ -379,13 +379,13 @@ def main():
     # compare command
     p_compare = subparsers.add_parser('compare', help='Compare language file against English.txt')
     p_compare.add_argument('lang_file', help='Language file to compare')
-    p_compare.add_argument('--english-file', '-e', default='src/resources/lang/English.txt',
-                          help='English reference file (default: src/resources/lang/English.txt)')
+    p_compare.add_argument('--english-file', '-e', default='autobleem/resources/lang/English.txt',
+                          help='English reference file (default: autobleem/resources/lang/English.txt)')
 
     # update command
     p_update = subparsers.add_parser('update', help='Sync all language files with English.txt keys')
-    p_update.add_argument('--lang-dir', '-d', default='src/resources/lang',
-                          help='Language directory (default: src/resources/lang)')
+    p_update.add_argument('--lang-dir', '-d', default='autobleem/resources/lang',
+                          help='Language directory (default: autobleem/resources/lang)')
     p_update.add_argument('--remove-obsolete', '-r', action='store_true',
                           help='Remove keys not in English.txt (default: keep them)')
 
