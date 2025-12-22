@@ -32,7 +32,7 @@ void GuiManager::init() {
         // "title"                  "path"
         string path = FileUtils::removeSeparatorFromEndOfPath(psGame->folder);
         path = FileUtils::removeGamesPathFromFrontOfPath(path);
-        lines.emplace_back(TwoColumnsOfText(psGame->title, path));
+        lines.emplace_back(psGame->title, path);
     }
 }
 

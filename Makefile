@@ -198,7 +198,7 @@ format-check:
 	@find autobleem/code -type f \( -name "*.cpp" -o -name "*.h" \) -exec clang-format --dry-run --Werror {} +
 	@echo "Formatting check passed!"
 
-# Run clang-tidy static analysis on all source files
+# Run clang-tidy static analysis on source files
 lint:
 	@echo "Running clang-tidy static analysis..."
 	@if ! command -v clang-tidy >/dev/null 2>&1; then \
@@ -206,18 +206,17 @@ lint:
 		echo "Install with: sudo apt-get install clang-tidy"; \
 		exit 1; \
 	fi
-	@echo "Checking for build directory..."
-	@if [ ! -d "build_sys" ]; then \
-		echo "Build directory not found, creating..."; \
+	@if [ ! -f "build_sys/compile_commands.json" ]; then \
+		echo "Generating compile_commands.json..."; \
 		mkdir -p build_sys; \
 		cd build_sys && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..; \
 	fi
 	@echo "Running clang-tidy checks..."
-	@find autobleem/code -type f \( -name "*.cpp" -o -name "*.h" \) | while read file; do \
+	@find autobleem/code -type f -name "*.cpp" | while read file; do \
 		echo "Analyzing $$file..."; \
-		clang-tidy "$$file" -p build_sys -- -std=c++11 || true; \
+		clang-tidy "$$file" -p build_sys 2>&1 | grep -v -E "^(Suppressed|Use -header-filter)" || true; \
 	done
-	@echo "Linting complete! Check output above for warnings."
+	@echo "Linting complete!"
 
 # Run unit tests
 test:

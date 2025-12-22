@@ -395,9 +395,9 @@ void USBGame::updateObj() {
             s = StringUtils::decode(s);
             strings.push_back(s);
         }
-        for (int i = 0; i < strings.size(); i++) {
+        for (const auto &diskName : strings) {
             Disc disc;
-            disc.diskName = strings[i];
+            disc.diskName = diskName;
             if (FileUtils::imageTypeUsesACueFile(imageType)) {
                 string cueFile = fullPath + sep + disc.diskName + EXT_CUE;
                 bool discCueExists = FileUtils::exists(cueFile);

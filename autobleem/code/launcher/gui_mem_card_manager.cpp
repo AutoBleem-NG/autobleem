@@ -118,8 +118,8 @@ void GuiMcManager::renderStatic() {
 
     // Draw dot matrix image
     SDL_Rect input, output;
-    SDL_QueryTexture(mcGrid, NULL, NULL, &input.w, &input.h);
-    SDL_QueryTexture(mcGrid, NULL, NULL, &output.w, &output.h);
+    SDL_QueryTexture(mcGrid, nullptr, nullptr, &input.w, &input.h);
+    SDL_QueryTexture(mcGrid, nullptr, nullptr, &output.w, &output.h);
     input.x = 0, input.y = 0;
     output.x = 80;
     output.y = 80;
