@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [ main, develop ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main, develop ]
 
@@ -76,6 +77,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -96,3 +99,65 @@ jobs:
             echo "::error::Binary is not ARM architecture"
             exit 1
           }
+
+      - name: Upload ARM build artifact
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-arm
+          path: build_arm/
+          retention-days: 1
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-24.04
+    needs: [ format-check, language-check, build-x86, build-arm ]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download ARM build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-arm
+          path: build_arm/
+
+      - name: Assemble release payload
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          RELEASE_DIR="autobleem-ng-${TAG}"
+
+          # Merge build output (runtime files only) into Autobleem/ subdir
+          mkdir -p "${RELEASE_DIR}/Autobleem"
+          rsync -a \
+            --exclude='CMakeCache.txt' \
+            --exclude='CMakeFiles/' \
+            --exclude='cmake_install.cmake' \
+            --exclude='Makefile' \
+            --exclude='libsqlite3.a' \
+            --exclude='autobleem/' \
+            build_arm/ "${RELEASE_DIR}/Autobleem/"
+
+          # Merge payload (USB structure: Games/, Apps/, themes/, boot scripts)
+          rsync -a autobleem/payload/ "${RELEASE_DIR}/"
+
+          # Include changelog and readme
+          cp CHANGELOG.md README.md "${RELEASE_DIR}/"
+
+          # Zip preserving permissions
+          zip -r "${RELEASE_DIR}.zip" "${RELEASE_DIR}/"
+
+          echo "RELEASE_ZIP=${RELEASE_DIR}.zip" >> "$GITHUB_ENV"
+          echo "Release archive: $(du -sh ${RELEASE_DIR}.zip | cut -f1)"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          gh release create "${TAG}" \
+            --title "AutoBleem-NG ${TAG}" \
+            --notes-from-tag \
+            "${RELEASE_ZIP}"
