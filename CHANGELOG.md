@@ -4,7 +4,7 @@ All notable user-facing changes to AutoBleem-NG are documented here.
 
 This project continues development from [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem).
 
-## [Unreleased]
+## [v1.1.0]
 
 ### Added
 - CHD disc image format support - compressed game images that save USB space
