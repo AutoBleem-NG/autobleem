@@ -9,6 +9,8 @@ AutoBleem-NG (Next Generation) is a custom boot menu and game launcher for the P
 
 Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) with continued development, bug fixes, and new features.
 
+> **Scope note:** This project provides only the AutoBleem UI — the boot menu, game scanner, and launcher. It is not a full distribution and does not include the underlying system software, RetroArch binaries, or emulator cores needed to run on hardware.
+
 ## Features
 
 - EvolutionUI for browsing and managing games
