@@ -5,11 +5,14 @@
 ![C++](https://img.shields.io/badge/C%2B%2B-11-00599C?logo=cplusplus)
 ![Platform](https://img.shields.io/badge/Platform-PlayStation_Classic-003791?logo=playstation)
 
-AutoBleem-NG (Next Generation) is a custom boot menu and game launcher for the PlayStation Classic.
+AutoBleem-NG (Next Generation) is a maintained AutoBleem UI for the PlayStation
+Classic: a boot menu, game scanner, and launcher built around EvolutionUI.
 
 Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) with continued development, bug fixes, and new features.
 
-> **Scope note:** This project provides only the AutoBleem UI — the boot menu, game scanner, and launcher. It is not a full distribution and does not include the underlying system software, RetroArch binaries, or emulator cores needed to run on hardware.
+> **Scope note:** This project provides only the AutoBleem UI. It is not a full
+> distribution and does not include the underlying system software, RetroArch
+> binaries, or emulator cores needed to run on hardware.
 
 ## Features
 
@@ -21,14 +24,13 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 - RetroArch integration for multi-system emulation
 - Multi-disc game support
 
-### AutoBleem-NG Improvements
+## AutoBleem-NG Improvements
 
 - 17 languages fully translated with maintainable INI file format
-- Docker-based ARM cross-compilation (no toolchain installation required)
+- Reproducible Docker-based ARM builds with PSC-compatible SDL2 payload libraries
 - Optimized binary with ARMv8-A/NEON/VFPv4 tuning and UPX compression
 - Simplified boot scripts for easier maintenance
 - Structured logging (`USB:/System/Logs/autobleem-ng.log`)
-- Memory leak and bug fixes
 - Modernized codebase with improved safety and expanded test coverage
 
 ## Project Structure
@@ -51,10 +53,14 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 
 ## Documentation
 
-- [Building](docs/building.md) - Build instructions and prerequisites
 - [Boot Process](docs/boot-process.md) - How AutoBleem boots on the PSC
+- [Building](docs/building.md) - Build targets, reproducible ARM builds, and prerequisites
+- [Gamepad Compatibility](docs/gamepad-compatibility.md) - Controller support notes
+- [Kernel Installation](docs/kernel-installation.md) - Optional AutoBleem kernel setup
+- [RetroBoot](docs/retroboot.md) - RetroArch and EmulationStation integration
 - [Testing](docs/testing.md) - Running unit tests
 - [Translation](docs/translation.md) - Localization guide
+- [WiFi Setup](docs/wifi-setup.md) - Network setup on supported builds
 
 ## License
 

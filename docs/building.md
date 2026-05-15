@@ -21,7 +21,9 @@ brew install cmake sdl2 sdl2_image sdl2_mixer sdl2_ttf
 
 ### ARM Cross-Compilation (PlayStation Classic)
 
-Requires the PSC ARM toolchain installed at `/opt/toolchain/armv8-sony-linux-gnueabihf/`.
+The recommended ARM build uses Docker and does not require a host ARM toolchain.
+Native ARM cross-compilation still requires the PSC ARM toolchain installed at
+`/opt/toolchain/armv8-sony-linux-gnueabihf/`.
 
 ## Build Targets
 
@@ -29,8 +31,8 @@ Requires the PSC ARM toolchain installed at `/opt/toolchain/armv8-sony-linux-gnu
 
 | Target | Description |
 |--------|-------------|
-| `make` | Build for local system (x86_64) - recommended default |
-| `make full` | Build sys + Docker ARM image + extract binaries (recommended for releases) |
+| `make` | Build Docker image and extract ARM payload artifacts |
+| `make full` | Alias for `make build extract` |
 | `make test` | Run unit tests (requires `make sys` first) |
 | `make clean` | Remove all build directories and Docker image |
 | `make help` | Show all available targets |
@@ -73,21 +75,22 @@ Output binaries are placed in `build_sys/`:
 
 ## Building for PlayStation Classic
 
-### Option 1: Full Build (Recommended for Releases)
+### Option 1: Default Docker Build (Recommended for Releases)
 
-Build both local system and ARM binaries in one command:
+Build the ARM payload and matching runtime libraries:
 
 ```bash
-make full
+make
 ```
 
-This runs `make sys` + `make build` + `make extract`, producing:
-- `build_sys/` - Local x86_64 binaries (for testing)
-- `build_arm/` - ARM binaries (for PlayStation Classic)
+This runs `make build extract`, producing:
+- `build_arm/` - ARM binaries and payload assets for PlayStation Classic
+- `build_arm/libs.tar.gz` - Repacked SDL runtime archive
+- `autobleem/payload/Autobleem/lib/libs.tar.gz` - Updated payload archive
 
 ### Option 2: Docker Build Only
 
-Build ARM binaries without local build:
+Run the Docker steps explicitly:
 
 ```bash
 make build extract
@@ -96,6 +99,7 @@ make build extract
 Output binaries are placed in `build_arm/`:
 - `autobleem-gui` - Main UI application
 - UI assets (fonts, images, configs) and language files
+- `libs.tar.gz` - SDL payload runtime archive
 
 **Prerequisites:**
 - Docker installed ([docker.com](https://docs.docker.com/get-docker/))
@@ -112,6 +116,29 @@ Output binaries are placed in `build_arm/`.
 
 Requires the PSC ARM toolchain installed at `/opt/toolchain/armv8-sony-linux-gnueabihf/`. The toolchain file is located at `autobleem/cmake/PSCtoolchainV8.cmake`.
 
+## Reproducible ARM Builds
+
+The release build path uses Docker so ARM artifacts are built from pinned
+toolchain and library versions instead of host-installed packages. The container
+currently targets Ubuntu 16.04 with GCC 5 to stay compatible with the
+PlayStation Classic runtime.
+
+The Dockerfile builds the SDL runtime libraries from source for the USB payload:
+
+| Library | Version | Notes |
+|---------|---------|-------|
+| SDL2 | 2.0.12 | PSC-tested baseline; built with Wayland, dummy video, OpenGL ES, ALSA, and libudev |
+| SDL2_image | 2.6.3 | Built in the container |
+| SDL2_mixer | 2.6.3 | Provides exported `Mix_LoadWAV`; links Vorbis through `libvorbisfile` |
+| SDL2_ttf | 2.20.2 | Built in the container |
+
+When `libs.tar.gz` is repacked, SDL libraries are replaced with the container
+builds and the non-SDL payload libraries from the original archive are
+preserved (`libiconv`, `libmamecd`, `libogg`, and `libvorbis*`).
+
+Use `make sys` for local x86_64 development and tests. That path depends on host
+SDL2 development packages and is not the release build path.
+
 ## Build Output Structure
 
 ```
@@ -122,6 +149,8 @@ build_sys/              # Local x86_64 build
 └── pcsx.cfg            # PCSX configuration template
 
 build_arm/              # ARM build (same structure)
+├── autobleem-gui       # Main application binary
+├── libs.tar.gz         # PSC SDL runtime archive
 └── ...
 ```
 
