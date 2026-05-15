@@ -42,3 +42,12 @@ autobleem/db/
 
 # Payload structure (USB deployment files, not needed for build)
 autobleem/payload/
+
+# except libs.tar.gz: the Docker build re-packages it with new SDL2 libs while
+# preserving libogg/libvorbis*/libmamecd/libiconv from the original archive.
+# Without this re-inclusion the preservation step would silently produce a
+# tarball containing only the SDL2 family; see Dockerfile RUN that rebuilds
+# /build/build_arm/libs.tar.gz.
+!autobleem/payload/Autobleem/
+!autobleem/payload/Autobleem/lib/
+!autobleem/payload/Autobleem/lib/libs.tar.gz

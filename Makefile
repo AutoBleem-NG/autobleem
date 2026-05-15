@@ -1,20 +1,20 @@
 # AutoBleem Build System
 #
 # This Makefile provides targets for building AutoBleem:
-# - Docker builds (recommended for ARM - no toolchain installation required)
+# - Docker builds (default - no host toolchain or SDL2 dev libraries required)
 # - Native ARM cross-compilation (requires local toolchain)
-# - Native x86_64 builds for development/testing
+# - Native x86_64 builds for development/testing (requires host SDL2 dev libs)
 #
 # Usage:
-#   make              - Build for local system (x86_64) - recommended default
-#   make full         - Build sys + Docker ARM image + extract binaries (recommended for releases)
-#   make sys          - Build for local system (x86_64) - incremental
+#   make              - Build ARM payload via Docker (default - no host deps needed)
+#   make full         - Alias for `make build extract`
+#   make build        - Build Docker image with ARM binaries inside
+#   make extract      - Extract ARM binaries from Docker image to build_arm/
+#   make sys          - Build for local system (x86_64); needs libsdl2-dev et al.
 #   make sys-clean    - Clean rebuild for local system
-#   make build        - Build Docker image for ARM
-#   make extract      - Extract ARM binaries from Docker image
 #   make arm          - Build for ARM using local toolchain (requires PSCtoolchainV8)
 #   make arm-clean    - Clean rebuild for ARM
-#   make test         - Run unit tests
+#   make test         - Run unit tests (requires `make sys` first)
 #   make clean        - Remove all build artifacts
 #   make help         - Show this help
 
@@ -29,11 +29,12 @@ JOBS := 4
 # CMake build type
 BUILD_TYPE := Release
 
-# Default target: build for local system (no ARM toolchain required)
-all: sys
+# Default target: build ARM payload via Docker (no host deps required).
+# Use `make sys` explicitly if you want the x86_64 dev build (needs libsdl2-dev).
+all: build extract
 
-# Build for both local system and Docker ARM image, then extract binaries (recommended)
-full: sys build extract
+# Alias for the default Docker-based build pipeline
+full: build extract
 
 # Docker build targets for ARM (recommended - no toolchain installation required)
 
@@ -247,20 +248,20 @@ clean:
 help:
 	@echo "AutoBleem Build System"
 	@echo ""
-	@echo "Docker Build Targets (Recommended for ARM):"
+	@echo "Default (Docker-based ARM build - no host deps required):"
+	@echo "  make              Build Docker image + extract ARM binaries"
+	@echo "  make full         Alias for 'make build extract'"
+	@echo ""
+	@echo "Docker Build Targets:"
 	@echo "  make build        Build Docker image for ARM cross-compilation"
 	@echo "  make extract      Extract ARM binaries from Docker image"
 	@echo "  make shell        Open interactive shell in Docker container"
 	@echo "  make clean-build  Remove build artifacts (keeps Docker image)"
 	@echo ""
-	@echo "Native Build Targets (Incremental - reuses build directory):"
-	@echo "  make              Build for local system (x86_64)"
+	@echo "Native Build Targets (require host toolchain / SDL2 dev libs):"
 	@echo "  make sys          Build for local system (x86_64) - incremental"
 	@echo "  make arm          Build for ARM (requires PSCtoolchainV8 toolchain)"
 	@echo "  make mac          Build for ARM on macOS (requires MacToolchain)"
-	@echo ""
-	@echo "Combined Targets:"
-	@echo "  make full         Build sys + Docker image + extract (recommended for releases)"
 	@echo ""
 	@echo "Native Clean Build Targets (Remove build directory):"
 	@echo "  make sys-clean    Clean rebuild for local system"

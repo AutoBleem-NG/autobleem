@@ -99,6 +99,20 @@ jobs:
             echo "::error::Binary is not ARM architecture"
             exit 1
           }
+          if [ ! -s build_arm/libs.tar.gz ]; then
+            echo "::error::libs.tar.gz missing or empty"
+            exit 1
+          fi
+          tar -tzf build_arm/libs.tar.gz >/dev/null || {
+            echo "::error::libs.tar.gz is not a valid gzip tarball"
+            exit 1
+          }
+          for lib in libSDL2-2.0.so libSDL2_image-2.0.so libSDL2_mixer-2.0.so libSDL2_ttf-2.0.so; do
+            tar -tzf build_arm/libs.tar.gz | grep -q "${lib}" || {
+              echo "::error::libs.tar.gz missing ${lib}"
+              exit 1
+            }
+          done
 
       - name: Upload ARM build artifact
         if: startsWith(github.ref, 'refs/tags/v')
@@ -129,7 +143,9 @@ jobs:
           TAG="${GITHUB_REF_NAME}"
           RELEASE_DIR="autobleem-ng-${TAG}"
 
-          # Merge build output (runtime files only) into Autobleem/ subdir
+          # Merge build output (runtime files only) into Autobleem/ subdir.
+          # libs.tar.gz is excluded here — it belongs under Autobleem/lib/, not
+          # at Autobleem/ top level — and is dropped into the right place below.
           mkdir -p "${RELEASE_DIR}/Autobleem"
           rsync -a \
             --exclude='CMakeCache.txt' \
@@ -137,11 +153,15 @@ jobs:
             --exclude='cmake_install.cmake' \
             --exclude='Makefile' \
             --exclude='libsqlite3.a' \
+            --exclude='libs.tar.gz' \
             --exclude='autobleem/' \
             build_arm/ "${RELEASE_DIR}/Autobleem/"
 
-          # Merge payload (USB structure: Games/, Apps/, themes/, boot scripts)
+          # Merge payload (USB structure: Games/, Apps/, themes/, boot scripts).
+          # This brings in the in-tree baseline Autobleem/lib/libs.tar.gz, which
+          # we then overwrite with the freshly-built one from the build-arm artifact.
           rsync -a autobleem/payload/ "${RELEASE_DIR}/"
+          cp build_arm/libs.tar.gz "${RELEASE_DIR}/Autobleem/lib/libs.tar.gz"
 
           # Include changelog and readme
           cp CHANGELOG.md README.md "${RELEASE_DIR}/"
