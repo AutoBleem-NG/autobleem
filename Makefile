@@ -26,6 +26,9 @@ DOCKER_IMAGE := autobleem-builder
 # Number of parallel jobs for make
 JOBS := 4
 
+# Set ENABLE_UPX=false to leave autobleem-gui uncompressed in Docker builds.
+ENABLE_UPX ?= true
+
 # CMake build type
 BUILD_TYPE := Release
 
@@ -55,6 +58,7 @@ docker-build:
 	$(eval GIT_CHANGED := $(shell git diff-index --quiet HEAD -- 2>/dev/null && echo "false" || echo "true"))
 	@echo "  Version: $(GIT_VERSION) ($(GIT_BRANCH)@$(GIT_HASH))"
 	docker build -t $(DOCKER_IMAGE) \
+		--build-arg ENABLE_UPX=$(ENABLE_UPX) \
 		--build-arg GIT_COMMIT_HASH=$(GIT_HASH) \
 		--build-arg GIT_BRANCH=$(GIT_BRANCH) \
 		--build-arg GIT_VERSION=$(GIT_VERSION) \
@@ -257,6 +261,9 @@ help:
 	@echo "  make extract      Extract ARM binaries from Docker image"
 	@echo "  make shell        Open interactive shell in Docker container"
 	@echo "  make clean-build  Remove build artifacts (keeps Docker image)"
+	@echo ""
+	@echo "Docker Options:"
+	@echo "  ENABLE_UPX=false disables Docker UPX compression"
 	@echo ""
 	@echo "Native Build Targets (require host toolchain / SDL2 dev libs):"
 	@echo "  make sys          Build for local system (x86_64) - incremental"

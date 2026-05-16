@@ -20,6 +20,7 @@ ARG GIT_CHANGED=false
 
 # UPX version for binary compression
 ARG UPX_VERSION=5.0.2
+ARG ENABLE_UPX=true
 
 # Xenial's CMake 3.5 lacks `cmake -S/-B` (3.13+) and `cmake --install` (3.15+)
 # used by the SDL2 family builds below.
@@ -58,12 +59,16 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install UPX for binary compression
-RUN wget -q https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-amd64_linux.tar.xz && \
-    tar -xf upx-${UPX_VERSION}-amd64_linux.tar.xz && \
-    cp upx-${UPX_VERSION}-amd64_linux/upx /usr/local/bin/ && \
-    chmod +x /usr/local/bin/upx && \
-    rm -rf upx-${UPX_VERSION}-amd64_linux upx-${UPX_VERSION}-amd64_linux.tar.xz
+# Download and install UPX only when binary compression is enabled.
+RUN if [ "${ENABLE_UPX}" = "true" ]; then \
+        wget -q https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-amd64_linux.tar.xz && \
+        tar -xf upx-${UPX_VERSION}-amd64_linux.tar.xz && \
+        cp upx-${UPX_VERSION}-amd64_linux/upx /usr/local/bin/ && \
+        chmod +x /usr/local/bin/upx && \
+        rm -rf upx-${UPX_VERSION}-amd64_linux upx-${UPX_VERSION}-amd64_linux.tar.xz; \
+    else \
+        echo "UPX disabled"; \
+    fi
 
 # Modern CMake into /usr/local — takes precedence over apt's 3.5.
 RUN wget -q https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.sh && \
@@ -310,7 +315,11 @@ RUN mkdir -p /tmp/newlibs && \
 
 # Compress binary with UPX for smaller size and faster loading
 # Note: Binary is already stripped by -s linker flag
-RUN upx -9 build_arm/autobleem-gui
+RUN if [ "${ENABLE_UPX}" = "true" ]; then \
+        upx -9 build_arm/autobleem-gui; \
+    else \
+        echo "Skipping UPX compression"; \
+    fi
 
 # Build outputs are in /build/build_arm/
 # Extract with: docker cp <container>:/build/build_arm ./
