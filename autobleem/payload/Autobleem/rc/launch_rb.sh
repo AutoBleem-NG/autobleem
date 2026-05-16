@@ -11,11 +11,6 @@
 #   $2 - RetroArch core to use
 #
 
-# Skip if RetroArch is being patched/updated
-if [ -f /tmp/.rbpatching ]; then
-	exit 0
-fi
-
 # Kill Sony processes and disable power management
 killall -s KILL showLogo sonyapp ui_menu auto_dimmer pcsx dimmer
 echo 2 > /data/power/disable
