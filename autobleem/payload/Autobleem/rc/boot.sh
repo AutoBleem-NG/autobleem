@@ -21,8 +21,11 @@ udevadm trigger
 ./backup.sh
 ./autobleem.sh
 
-# Check if user selected RetroArch (MENU_OPTION_RETRO = 4)
-. ./autobleem_cfg.sh
+# Check if user selected RetroArch (MENU_OPTION_RETRO = 4).
+# autobleem_cfg.sh is written by the GUI on exit (Gui::saveSelection).
+# If the GUI crashed or never ran, the file is absent - default to reboot.
+AB_SELECTION=0
+[ -f ./autobleem_cfg.sh ] && . ./autobleem_cfg.sh
 if [ "$AB_SELECTION" = "4" ]; then
 	./retroarch.sh
 else
