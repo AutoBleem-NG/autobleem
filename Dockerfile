@@ -19,7 +19,7 @@ ARG GIT_VERSION=1.1.0-dev
 ARG GIT_CHANGED=false
 
 # UPX version for binary compression
-ARG UPX_VERSION=5.0.2
+ARG UPX_VERSION=5.1.1
 ARG ENABLE_UPX=true
 
 # Xenial's CMake 3.5 lacks `cmake -S/-B` (3.13+) and `cmake --install` (3.15+)
