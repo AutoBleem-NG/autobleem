@@ -15,6 +15,8 @@
 killall -s KILL showLogo sonyapp ui_menu auto_dimmer pcsx dimmer
 echo 2 > /data/power/disable
 
+/media/Autobleem/bin/autobleem/log_elf.sh /media/retroarch/bin/retroarch
+
 echo "Image: $1"
 echo "Core: $2"
 

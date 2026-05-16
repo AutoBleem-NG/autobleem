@@ -22,6 +22,9 @@ ARG GIT_CHANGED=false
 ARG UPX_VERSION=5.1.1
 ARG ENABLE_UPX=true
 
+# Binutils version for ARM-native readelf build
+ARG BINUTILS_VERSION=2.42
+
 # Xenial's CMake 3.5 lacks `cmake -S/-B` (3.13+) and `cmake --install` (3.15+)
 # used by the SDL2 family builds below.
 ARG CMAKE_VERSION=3.28.6
@@ -312,6 +315,29 @@ RUN mkdir -p /tmp/newlibs && \
     cd /tmp/newlibs && \
     tar -czf /build/build_arm/libs.tar.gz . && \
     rm -rf /tmp/newlibs
+
+# Build ARM-native readelf from binutils so it can be deployed onto the PSC.
+# Statically linked to avoid library dependencies on the PSC filesystem.
+# Only the readelf sub-program is built to keep compile time short.
+RUN cd /tmp && \
+    wget -q https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VERSION}.tar.xz && \
+    tar -xf binutils-${BINUTILS_VERSION}.tar.xz && \
+    mkdir binutils-build && \
+    cd binutils-build && \
+    ../binutils-${BINUTILS_VERSION}/configure \
+        --host=arm-linux-gnueabihf \
+        --target=arm-linux-gnueabihf \
+        --disable-shared \
+        --enable-static \
+        --disable-nls \
+        --disable-werror \
+        CC=arm-linux-gnueabihf-gcc-5 \
+        CFLAGS="-march=armv8-a -mfpu=neon-vfpv4 -mfloat-abi=hard -O2" \
+        LDFLAGS="-static" && \
+    make all-binutils -j$(nproc) MAKEINFO=true && \
+    arm-linux-gnueabihf-strip binutils/readelf && \
+    cp binutils/readelf /build/build_arm/readelf && \
+    cd /tmp && rm -rf binutils-${BINUTILS_VERSION} binutils-${BINUTILS_VERSION}.tar.xz binutils-build
 
 # Compress binary with UPX for smaller size and faster loading
 # Note: Binary is already stripped by -s linker flag

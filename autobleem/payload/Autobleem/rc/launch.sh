@@ -26,6 +26,8 @@ LOGFILE="$LOGDIR/launch.log"
 PCSX_LOG="$LOGDIR/pcsx.log"
 mkdir -p "$LOGDIR"
 
+/media/Autobleem/bin/autobleem/log_elf.sh /media/Autobleem/bin/emu/pcsx-ab
+
 echo "=== launch.sh started at $(date) ===" >> "$LOGFILE"
 echo "Arguments: $@" >> "$LOGFILE"
 

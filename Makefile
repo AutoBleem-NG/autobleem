@@ -87,7 +87,7 @@ docker-extract:
 	@echo "Extraction complete: build_arm/"
 	@echo ""
 	@echo "Binaries:"
-	@ls -lh build_arm/autobleem-gui 2>/dev/null || echo "  (binary not found)"
+	@ls -lh build_arm/autobleem-gui build_arm/readelf 2>/dev/null || echo "  (binaries not found)"
 
 # Open interactive shell in Docker container
 shell: docker-shell
