@@ -21,7 +21,7 @@ constexpr const char* BUILD_TIMESTAMP = "@BUILD_TIMESTAMP@";
 // Is working directory changed? (uncommitted changes)
 constexpr bool GIT_CHANGED = @GIT_CHANGED@;
 
-// Changed flag string (e.g., " (changed)" or "")
+// Changed flag string (e.g., "*" if dirty, otherwise "")
 constexpr const char* GIT_CHANGED_FLAG = "@GIT_CHANGED_FLAG@";
 
 // Full version string (e.g., "AutoBleem-NG 0.1.0-dev (main@e6bf7be)")

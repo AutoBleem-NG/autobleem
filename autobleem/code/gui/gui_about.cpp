@@ -12,6 +12,7 @@
 #include "../lang.h"
 #include "../engine/scanner.h"
 #include "../environment.h"
+#include "version.h"
 
 void GuiAbout::init() {
     std::shared_ptr<Gui> gui(Gui::getInstance());
@@ -25,8 +26,10 @@ void GuiAbout::init() {
 //*******************************
 void GuiAbout::render() {
     std::shared_ptr<Gui> gui(Gui::getInstance());
+    string versionLine = string(Version::VERSION) + " (" + Version::GIT_BRANCH + "@" + Version::GIT_HASH +
+                         Version::GIT_CHANGED_FLAG + ") - " + Version::BUILD_TIMESTAMP + " UTC";
     vector<string> credits = {
-        gui->cfg.inifile.values["version"],
+        versionLine,
         " ",
         ".-= " + _("Code C++ and shell scripts") + " =-.",
         "screemer, Axanar, mGGk, nex, genderbent, cornelk",

@@ -8,6 +8,7 @@
 #include "../lang.h"
 #include "../engine/scanner.h"
 #include "../system/process_utils.h"
+#include "version.h"
 using namespace std;
 
 //*******************************
@@ -43,7 +44,7 @@ void GuiSplash::render() {
     SDL_RenderFillRect(renderer, &rect);
 
     int y = atoi(gui->themeData.values["ttop"].c_str());
-    string splashText = _("AutoBleem") + " " + gui->cfg.inifile.values["version"];
+    string splashText = _("AutoBleem") + " " + Version::VERSION + Version::GIT_CHANGED_FLAG;
     gui->renderText(gui->themeFont, splashText, 0, y, XALIGN_CENTER);
 
     SDL_RenderPresent(renderer);
