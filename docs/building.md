@@ -119,9 +119,16 @@ Requires the PSC ARM toolchain installed at `/opt/toolchain/armv8-sony-linux-gnu
 ## Reproducible ARM Builds
 
 The release build path uses Docker so ARM artifacts are built from pinned
-toolchain and library versions instead of host-installed packages. The container
-currently targets Ubuntu 16.04 with GCC 5 to stay compatible with the
-PlayStation Classic runtime.
+toolchain and library versions instead of host-installed packages.
+
+The container runs on Ubuntu 24.04 but cross-compiles against a Debian 9
+"Stretch" armhf sysroot at `/opt/psc-sysroot` (glibc 2.24 / libstdc++ 6.0.22),
+which matches the PlayStation Classic firmware. The cross compiler is Stretch's
+gcc-6 extracted to `/opt/gcc-6` — the newest gcc whose libstdc++ ABI is
+compatible with glibc 2.24. The SDL2 family, libchdr, and `autobleem-gui` are
+all built with `--sysroot=/opt/psc-sysroot`, and the resulting `autobleem-gui`
+is checked at image-build time to fail if any referenced GLIBC symbol is newer
+than 2.24.
 
 The Dockerfile builds the SDL runtime libraries from source for the USB payload:
 
@@ -169,10 +176,10 @@ Located in `autobleem/cmake/`:
 
 | File | Description |
 |------|-------------|
-| `PSCtoolchainV8.cmake` | Primary ARM toolchain for PSC (v8) |
 | `MacToolchain.cmake` | ARM cross-compilation on macOS |
-| `PSCtoolchainV7.cmake` | Legacy v7 toolchain |
 | `PS1Ctoolchain.cmake` | Alternative toolchain |
+| `PSCtoolchainV7.cmake` | Legacy v7 toolchain |
+| `PSCtoolchainV8.cmake` | Primary ARM toolchain for PSC (v8) |
 | `ToolchainServer.cmake` | Server-based toolchain |
 
 ## Troubleshooting

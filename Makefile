@@ -78,6 +78,7 @@ docker-extract:
 	fi
 	@echo "Cleaning up any stale containers..."
 	@docker rm -f autobleem-temp 2>/dev/null || true
+	@rm -rf build_arm
 	@echo "Creating temporary container..."
 	docker create --name autobleem-temp $(DOCKER_IMAGE)
 	@echo "Copying build_arm/ directory..."
