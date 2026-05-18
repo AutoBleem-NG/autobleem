@@ -17,7 +17,8 @@ std::vector<std::string> LightgunGames::lightgunGamePaths;
 
 LightgunGames::LightgunGames() {
     filename = Environment::getWorkingPath() + sep + string("lightguns.txt");
-    lightgunGamePaths = FileUtils::readTextFile(filename, true);
+    if (FileUtils::exists(filename))
+        lightgunGamePaths = FileUtils::readTextFile(filename, true);
 
     // there shouldn't be any blank lines unless someone hand edited it.  but just to be sure.
     lightgunGamePaths.erase(
