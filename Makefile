@@ -26,8 +26,8 @@ DOCKER_IMAGE := autobleem-builder
 # Number of parallel jobs for make
 JOBS := 4
 
-# Set ENABLE_UPX=false to leave autobleem-gui uncompressed in Docker builds.
-ENABLE_UPX ?= true
+# Set ENABLE_UPX=true to compress autobleem-gui in Docker builds.
+ENABLE_UPX ?= false
 
 # CMake build type
 BUILD_TYPE := Release
@@ -264,7 +264,7 @@ help:
 	@echo "  make clean-build  Remove build artifacts (keeps Docker image)"
 	@echo ""
 	@echo "Docker Options:"
-	@echo "  ENABLE_UPX=false disables Docker UPX compression"
+	@echo "  ENABLE_UPX=true enables Docker UPX compression"
 	@echo ""
 	@echo "Native Build Targets (require host toolchain / SDL2 dev libs):"
 	@echo "  make sys          Build for local system (x86_64) - incremental"

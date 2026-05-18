@@ -20,7 +20,7 @@ ARG GIT_COMMIT_HASH=unknown
 ARG GIT_VERSION=1.1.0-dev
 
 ARG BINUTILS_VERSION=2.42
-ARG ENABLE_UPX=true
+ARG ENABLE_UPX=false
 ARG UPX_VERSION=5.1.1
 
 # SDL2 2.0.12 matches libSDL2-2.0.so.0.12.0 from the original PSC payload.
