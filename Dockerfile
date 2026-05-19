@@ -411,6 +411,11 @@ RUN make arm JOBS=$(nproc)
 # GLIBC symbol above 2.24.
 RUN docker-validate glibc-symbols build_arm/autobleem-gui
 
+# Runtime libraries are unpacked into /tmp/lib and selected with
+# LD_LIBRARY_PATH; build-container RPATH/RUNPATH entries must not leak into
+# the shipped binary.
+RUN docker-validate no-rpath build_arm/autobleem-gui
+
 # Repackage libs.tar.gz with the SDL2 family (core/image/mixer/ttf) replaced
 # by the builds above. Other libs (libiconv, libmamecd, libogg, libvorbis*)
 # are preserved from the original archive so pscbios/ABFlashKit keep working.

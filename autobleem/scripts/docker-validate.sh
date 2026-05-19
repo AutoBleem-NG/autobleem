@@ -5,6 +5,7 @@
 #   docker-validate gcc                    Confirm gcc-6 cross-compiler runs
 #   docker-validate sysroot                Confirm sysroot is complete + glibc 2.24
 #   docker-validate glibc-symbols <bin>    Assert no GLIBC ref above 2.24
+#   docker-validate no-rpath <bin>         Assert no embedded RPATH/RUNPATH
 #
 # Each subcommand exits non-zero on failure so a `RUN` step aborts the build
 # at the point of detection, not 200 lines later in some downstream configure.
@@ -63,8 +64,27 @@ case "$cmd" in
         }'
         ;;
 
+    no-rpath)
+        binary=${1:-}
+        if [ -z "$binary" ]; then
+            echo "usage: $0 no-rpath <binary>" >&2
+            exit 2
+        fi
+        if command -v arm-linux-gnueabihf-readelf >/dev/null 2>&1; then
+            readelf_bin=arm-linux-gnueabihf-readelf
+        else
+            readelf_bin=readelf
+        fi
+        if "$readelf_bin" -d "$binary" | grep -Eq '\((RPATH|RUNPATH)\)'; then
+            echo "FAIL: $binary contains embedded RPATH/RUNPATH" >&2
+            "$readelf_bin" -d "$binary" | grep -E '\((RPATH|RUNPATH)\)' >&2
+            exit 1
+        fi
+        echo "OK: $binary has no RPATH/RUNPATH"
+        ;;
+
     *)
-        echo "usage: $0 {gcc|sysroot|glibc-symbols <binary>}" >&2
+        echo "usage: $0 {gcc|sysroot|glibc-symbols <binary>|no-rpath <binary>}" >&2
         exit 2
         ;;
 esac

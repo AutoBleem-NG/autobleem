@@ -57,6 +57,7 @@ if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" )
 	SET(CMAKE_C_FLAGS "-march=armv8-a -mtune=cortex-a35 -mfpu=neon-vfpv4 -mfloat-abi=hard -O3 -fno-pie -fomit-frame-pointer -ffunction-sections -fdata-sections -funroll-loops -ftree-vectorize -fno-math-errno -fno-trapping-math -fno-signed-zeros -fprefetch-loop-arrays")
 	SET(CMAKE_CXX_FLAGS "-march=armv8-a -mtune=cortex-a35 -mfpu=neon-vfpv4 -mfloat-abi=hard -O3 -fno-pie -fomit-frame-pointer -ffunction-sections -fdata-sections -funroll-loops -ftree-vectorize -fno-math-errno -fno-trapping-math -fno-signed-zeros -fprefetch-loop-arrays")
 	SET(CMAKE_EXE_LINKER_FLAGS "-no-pie -Wl,--gc-sections -Wl,--as-needed -s")
+	SET(CMAKE_SKIP_RPATH TRUE)
 	message(STATUS "C_FLAGS: ${CMAKE_C_FLAGS}")
 
 	include_directories(autobleem/include
@@ -328,4 +329,3 @@ add_custom_command(TARGET autobleem-gui PRE_BUILD
 configure_file(autobleem/resources/default.lic default.lic COPYONLY)
 configure_file(autobleem/resources/default.png default.png COPYONLY)
 configure_file(autobleem/resources/pcsx.cfg pcsx.cfg COPYONLY)
-
