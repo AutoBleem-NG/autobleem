@@ -1,6 +1,6 @@
 # AutoBleem French Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=Fichier .lic introuvable
 About=À propos
@@ -129,6 +129,7 @@ Quick scroll to next letter=Déroulement rapide jusqu'à la prochaine lettre
 Quit emulation - back to AutoBleem=Quitter l'émulation - Retour à AutoBleem
 RESET=RÉINITIALISER
 RESUME=Retour au jeu
+Random=Aléatoire
 Random Game=Jeu aléatoire
 Re/Scan=Relancer le scan
 ReadMe file not found=Fichier ReadMe introuvable

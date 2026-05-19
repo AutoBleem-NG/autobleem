@@ -1,6 +1,6 @@
 # AutoBleem Danish Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=.lic-fil ikke fundet
 About=Om
@@ -129,6 +129,7 @@ Quick scroll to next letter=Hurtig rul til næste bogstav
 Quit emulation - back to AutoBleem=Afslut emulering - tilbage til AutoBleem
 RESET=NULSTIL
 RESUME=FORTSÆT
+Random=Tilfældigt
 Random Game=Tilfældigt spil
 Re/Scan=Gen/Scan
 ReadMe file not found=ReadMe-fil ikke fundet

@@ -1,6 +1,6 @@
 # AutoBleem German Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=.lic-Datei nicht gefunden
 About=Über
@@ -129,6 +129,7 @@ Quick scroll to next letter=Zum nächsten Buchstaben springen
 Quit emulation - back to AutoBleem=Emulation beenden - Zurück zu AutoBleem
 RESET=ZURÜCKSETZEN
 RESUME=FORTSETZEN
+Random=Zufällig
 Random Game=Zufälliges Spiel
 Re/Scan=Neu/Scannen
 ReadMe file not found=ReadMe-Datei nicht gefunden

@@ -1,6 +1,6 @@
 # AutoBleem Italian Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=file .lic non trovato
 About=Informazioni su
@@ -129,6 +129,7 @@ Quick scroll to next letter=Scorri rapidamente alla lettera successiva
 Quit emulation - back to AutoBleem=Esci dall'emulazione - torna ad AutoBleem
 RESET=RESETTA
 RESUME=RIPRENDI
+Random=Casuale
 Random Game=Gioco Casuale
 Re/Scan=Ri/Cerca
 ReadMe file not found=File ReadMe non trovato

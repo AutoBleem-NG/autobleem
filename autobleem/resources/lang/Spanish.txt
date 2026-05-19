@@ -1,6 +1,6 @@
 # AutoBleem Spanish Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=Archivo .lic no encontrado
 About=Sobre
@@ -129,6 +129,7 @@ Quick scroll to next letter=Desplazamiento rapido a la siguiente letra
 Quit emulation - back to AutoBleem=Quitar emulacion - volver a AutoBleem
 RESET=REINICIAR
 RESUME=REANUDAR
+Random=Aleatorio
 Random Game=Juego Aleatorio
 Re/Scan=Re/Escanear
 ReadMe file not found=Archivo ReadMe no encontrado

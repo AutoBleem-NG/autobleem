@@ -1,6 +1,6 @@
 # AutoBleem Polish Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=Nie znaleziono pliku .lic
 About=O programie
@@ -129,6 +129,7 @@ Quick scroll to next letter=Szybki przeskok do następnej litery
 Quit emulation - back to AutoBleem=Zakończ emulację - powrót do AutoBleem
 RESET=RESET
 RESUME=WZNÓW
+Random=Losowo
 Random Game=Losowa Gra
 Re/Scan=Skanuj
 ReadMe file not found=Nie znaleziono pliku ReadMe

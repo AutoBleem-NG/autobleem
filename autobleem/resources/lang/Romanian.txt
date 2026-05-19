@@ -1,6 +1,6 @@
 # AutoBleem Romanian Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=Fișierul .lic nu a fost găsit
 About=Despre
@@ -129,6 +129,7 @@ Quick scroll to next letter=Navigare rapida la urmatoarea litera
 Quit emulation - back to AutoBleem=Inchide simulare - inapoi la AutoBleem
 RESET=RESETARE
 RESUME=Continua
+Random=Aleatoriu
 Random Game=Joc aleatoriu
 Re/Scan=Re/Scanare
 ReadMe file not found=Fișierul ReadMe nu a fost găsit

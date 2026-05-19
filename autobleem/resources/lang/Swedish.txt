@@ -1,6 +1,6 @@
 # AutoBleem Swedish Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=.lic-filen hittades inte
 About=Om
@@ -129,6 +129,7 @@ Quick scroll to next letter=Snabbscrolla till nästa bokstav
 Quit emulation - back to AutoBleem=Avsluta emulation - tillbaka till AutoBleem
 RESET=ÅTERSTÄLL
 RESUME=FORTSÄTT
+Random=Slumpmässigt
 Random Game=Slumpmässigt spel
 Re/Scan=Om/Skanna
 ReadMe file not found=ReadMe-fil hittades inte

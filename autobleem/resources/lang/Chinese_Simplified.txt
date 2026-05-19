@@ -1,6 +1,6 @@
 # AutoBleem Chinese_Simplified Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=未找到.lic文件
 About=关于
@@ -129,6 +129,7 @@ Quick scroll to next letter=快速滚动到下一个字母
 Quit emulation - back to AutoBleem=退出模拟 - 返回AutoBleem
 RESET=重置
 RESUME=继续
+Random=随机
 Random Game=随机游戏
 Re/Scan=重新扫描
 ReadMe file not found=未找到ReadMe文件

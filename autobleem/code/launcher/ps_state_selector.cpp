@@ -81,7 +81,7 @@ void PsStateSelector::render() {
         SDL_Shared<SDL_Texture> infoText;
         SDL_Rect infoRect, infoDest;
 
-        gui->renderText_WithColor(font30, _(text), 0, 110, brightWhite, XALIGN_CENTER);
+        gui->renderText_WithColor(font30, text, 0, 110, brightWhite, XALIGN_CENTER);
 
         if (operation == OP_LOAD) {
             gui->renderText(font24,

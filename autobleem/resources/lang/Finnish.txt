@@ -1,6 +1,6 @@
 # AutoBleem Finnish Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=.lic tiedostoa ei löytynyt
 About=Tietoja
@@ -129,6 +129,7 @@ Quick scroll to next letter=Selaa nopeasti seuraavaan kirjaimeen
 Quit emulation - back to AutoBleem=Poistu emulaatiosta - takaisin AutoBleem:iin
 RESET=PALAUTA
 RESUME=JATKA
+Random=Satunnainen
 Random Game=Satunnainen peli
 Re/Scan=Uudelleen skannaa/Skannaa
 ReadMe file not found=ReadMe tiedosto ei löytynyt

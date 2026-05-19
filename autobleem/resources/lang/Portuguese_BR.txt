@@ -1,6 +1,6 @@
 # AutoBleem Portuguese_BR Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=Arquivo .lic não encontrado
 About=Sobre o AutoBleem
@@ -129,6 +129,7 @@ Quick scroll to next letter=Rolagem rápida para próxima letra
 Quit emulation - back to AutoBleem=Emulação rápida - voltar ao AutoBleem
 RESET=REINICIAR
 RESUME=CONTINUAR
+Random=Aleatório
 Random Game=Jogo aleatório
 Re/Scan=Re/Escanear
 ReadMe file not found=Arquivo ReadMe não encontrado

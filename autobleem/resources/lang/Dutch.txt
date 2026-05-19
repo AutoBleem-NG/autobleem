@@ -1,6 +1,6 @@
 # AutoBleem Dutch Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=.lic-bestand niet gevonden
 About=Over
@@ -129,6 +129,7 @@ Quick scroll to next letter=Snel scrollen naar volgende letter
 Quit emulation - back to AutoBleem=Emulatie afsluiten - terug naar AutoBleem
 RESET=RESET
 RESUME=HERVATTEN
+Random=Willekeurig
 Random Game=Willekeurig spel
 Re/Scan=Her/Scannen
 ReadMe file not found=ReadMe-bestand niet gevonden

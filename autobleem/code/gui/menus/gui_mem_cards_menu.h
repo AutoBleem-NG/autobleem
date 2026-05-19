@@ -14,7 +14,7 @@ class GuiMemcards : public GuiStringMenu {
 
     void init() override;
 
-    std::string getTitle() override { return "-=" + _("-=" + _("Custom Memory Cards") + "=-") + "=-"; }
+    std::string getTitle() override { return "-=" + _("Custom Memory Cards") + "=-"; }
     std::string getStatusLine() override; // returns the status line at the bottom
 
     void doCircle_Pressed() override;

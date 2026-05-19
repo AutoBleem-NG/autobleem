@@ -1,6 +1,6 @@
 # AutoBleem English Strings
 # Extracted from source code
-# Total: 180 strings
+# Total: 181 strings
 
 .lic file not found=.lic file not found
 About=About
@@ -129,6 +129,7 @@ Quick scroll to next letter=Quick scroll to next letter
 Quit emulation - back to AutoBleem=Quit emulation - back to AutoBleem
 RESET=RESET
 RESUME=RESUME
+Random=Random
 Random Game=Random Game
 Re/Scan=Re/Scan
 ReadMe file not found=ReadMe file not found

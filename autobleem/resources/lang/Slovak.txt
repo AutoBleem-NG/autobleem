@@ -1,6 +1,6 @@
 # AutoBleem Slovak Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=.lic súbor sa nepodarilo nájsť
 About=O programe
@@ -129,6 +129,7 @@ Quick scroll to next letter=Rýchlo prejsť na nasledujúci znak
 Quit emulation - back to AutoBleem=Ukončiť emuláciu - návrat do AutoBleemu
 RESET=RESETOVAŤ
 RESUME=OBNOVA
+Random=Náhodne
 Random Game=Náhodná hra
 Re/Scan=Pre/Hľadať
 ReadMe file not found=Súbor ReadMe sa nenašiel

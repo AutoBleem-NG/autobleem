@@ -1,6 +1,6 @@
 # AutoBleem Turkish Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=.lic dosyası bulunamadı
 About=Hakkında
@@ -129,6 +129,7 @@ Quick scroll to next letter=Sonraki harfe hızlı kaydır
 Quit emulation - back to AutoBleem=Emülasyondan çık - AutoBleem'e dön
 RESET=SIFIRLA
 RESUME=DEVAM ET
+Random=Rastgele
 Random Game=Rastgele Oyun
 Re/Scan=Yeniden/Tara
 ReadMe file not found=ReadMe dosyası bulunamadı

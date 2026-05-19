@@ -4,6 +4,7 @@
 
 #include "lang.h"
 
+#include <algorithm>
 #include <fstream>
 
 #include "utils/file_utils.h"
@@ -110,6 +111,7 @@ void Lang::dump(const string &fileName) {
 vector<string> Lang::getListOfLanguages() {
     vector<string> languages;
     languages.push_back(DEFAULT_LANG);
+    vector<string> translatedLanguages;
 
     string langDir = Env::getWorkingPath() + sep + "lang";
     string defaultFile = DEFAULT_LANG + ".txt";
@@ -117,8 +119,10 @@ vector<string> Lang::getListOfLanguages() {
         if (FileUtils::matchExtension(entry.name, ".txt") &&
             !StringUtils::compareCaseInsensitive(entry.name, defaultFile)) {
             // Strip .txt extension
-            languages.push_back(entry.name.substr(0, entry.name.size() - 4));
+            translatedLanguages.push_back(entry.name.substr(0, entry.name.size() - 4));
         }
     }
+    std::sort(translatedLanguages.begin(), translatedLanguages.end());
+    languages.insert(languages.end(), translatedLanguages.begin(), translatedLanguages.end());
     return languages;
 }

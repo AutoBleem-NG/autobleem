@@ -1,6 +1,6 @@
 # AutoBleem Occitan Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 180
+# Untranslated: 0 / Total: 181
 
 .lic file not found=Fichièr .lic pas trobat
 About=A prepaus
@@ -129,6 +129,7 @@ Quick scroll to next letter=Davalada rapida fins a la letra seguenta
 Quit emulation - back to AutoBleem=Quitar l'emulation - tornar a AutoBleem
 RESET=REÏNICIALIZAR
 RESUME=REPRENDRE
+Random=Aleatòri
 Random Game=Jòc alòc
 Re/Scan=Re/Explorar
 ReadMe file not found=Fichièr ReadMe pas trobat
