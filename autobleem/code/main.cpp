@@ -9,6 +9,7 @@
 #include "engine/cover_db.h"
 #include "engine/database.h"
 #include "engine/get_game_dir_hierarchy.h"
+#include "engine/ini_file.h"
 #include "engine/mem_card.h"
 #include "engine/scanner.h"
 #include "environment.h"
@@ -259,8 +260,18 @@ int main(int argc, char *argv[]) {
 
     string prevPath = Env::getWorkingPath() + sep + "autobleem.prev";
     bool prevFileExists = FileUtils::exists(prevPath);
-    bool gamelistXmlExists = FileUtils::exists(
-        Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx/gamelist.xml");
+
+    bool useEmulationStation = false;
+    string rbCfgPath = Env::getPathToRetroarchDir() + sep + "retroboot/retroboot.cfg";
+    if (FileUtils::exists(rbCfgPath)) {
+        Inifile rbCfg;
+        rbCfg.load(rbCfgPath);
+        useEmulationStation = (rbCfg.values["use_emulationstation"] == "1");
+    }
+    bool gamelistXmlExists =
+        !useEmulationStation ||
+        FileUtils::exists(Env::getPathToRetroarchDir() + sep +
+                          "retroboot/emulationstation/.emulationstation/gamelists/psx/gamelist.xml");
 
     GamesHierarchy gamesHierarchy;
     gamesHierarchy.getHierarchy(pathToGamesDir);
