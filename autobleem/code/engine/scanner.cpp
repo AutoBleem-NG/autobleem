@@ -182,6 +182,62 @@ void repairMissingCue(const string &path, const string &folderName) {
     }
 }
 
+static string coverImagePath(const USBGamePtr &game) {
+    string baseName = game->discs[0].cueName;
+    if (baseName.empty())
+        baseName = game->discs[0].diskName;
+
+    return game->fullPath + sep + baseName + EXT_PNG;
+}
+
+static bool writeCoverImageFromMetadata(const USBGamePtr &game, Metadata *md) {
+    if (game->discs.empty() || md == nullptr || md->bytes == nullptr || md->dataSize <= 0)
+        return false;
+
+    string newFilename = coverImagePath(game);
+    PLOG_DEBUG << "Updating cover: " << newFilename;
+
+    ofstream pngFile;
+    pngFile.open(newFilename, std::ios::out | std::ios::binary);
+    if (!pngFile.is_open()) {
+        PLOG_ERROR << "Failed to open cover for writing: " << newFilename;
+        return false;
+    }
+
+    pngFile.write(md->bytes, md->dataSize);
+    pngFile.flush();
+    pngFile.close();
+    game->coverImageFound = true;
+    return true;
+}
+
+static bool recreateCoverImage(const USBGamePtr &game) {
+    if (game->discs.empty())
+        return false;
+
+    string serial = game->serial;
+    if (serial.empty()) {
+        serial = SerialScanner::scanSerial(game->imageType, game->fullPath + sep, game->firstBinPath);
+        if (!serial.empty()) {
+            game->serial = serial;
+            game->region = SerialScanner::serialToRegion(serial);
+        }
+    }
+
+    if (serial.empty())
+        return false;
+
+    Metadata md;
+    bool result = false;
+    if (md.lookupBySerial(serial)) {
+        result = writeCoverImageFromMetadata(game, &md);
+        if (result)
+            game->automationUsed = false;
+    }
+    md.clean();
+    return result;
+}
+
 //*******************************
 // Scanner
 // *******************************
@@ -400,6 +456,8 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
             if (game->gameIniFound)
                 game->readIni(gameIniPath); // read it in now in case we need to create or update the serial/region
 
+            bool coverImageRecreated = false;
+
             // if there was no ini file before, get the values for the ini, create the cover file if needed, and
             // create/update the game.ini file
             if (!game->gameIniFound || game->automationUsed || (game->discs.size() == 0)) {
@@ -431,15 +489,10 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                         if (game->discs.size() > 0) {
                             // all recovered :)
                             if (!game->coverImageFound) {
-                                string newFilename = game->fullPath + sep + game->discs[0].cueName + EXT_PNG;
-                                PLOG_DEBUG << "Updating cover: " << newFilename;
-                                ofstream pngFile;
-                                pngFile.open(newFilename, std::ios::out | std::ios::binary);
-                                pngFile.write(md.bytes, md.dataSize);
-                                pngFile.flush();
-                                pngFile.close();
-                                game->automationUsed = false;
-                                game->coverImageFound = true;
+                                if (writeCoverImageFromMetadata(game, &md)) {
+                                    game->automationUsed = false;
+                                    coverImageRecreated = true;
+                                }
                             }
                         }
 
@@ -450,6 +503,8 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                     }
                 }
             }
+            if (!coverImageRecreated)
+                recreateCoverImage(game);
             game->saveIni(gameIniPath);
             game->readIni(gameIniPath); // the updated iniValues are needed for updateObj
                                         // game->print();
