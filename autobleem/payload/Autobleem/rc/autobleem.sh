@@ -13,6 +13,7 @@ mkdir -p /tmp/lib
 cp /media/Autobleem/lib/libs.tar.gz /tmp/lib
 cd /tmp/lib
 tar xvzf libs.tar.gz
+/media/Autobleem/bin/autobleem/log_elf.sh /tmp/lib
 
 # Initialize RetroArch/RetroBoot in background (if installed)
 [ -f /media/retroarch/retroboot/bin/init.sh ] && sh /media/retroarch/retroboot/bin/init.sh &
