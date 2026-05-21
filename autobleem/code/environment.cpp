@@ -51,6 +51,10 @@ string Environment::getPathToRetroarchCoreFile() {
     return getPathToRetroarchDir() + sep + "cores/km_pcsx_rearmed_neon_libretro.so";
 }
 
+string Environment::getPathToRetroarchRdbDir() { return getPathToRetroarchDir() + sep + "database" + sep + "rdb"; }
+
+string Environment::getPathToRetroarchThumbnailsDir() { return getPathToRetroarchDir() + sep + "thumbnails"; }
+
 string Environment::getPathToRomsDir() { return private_pathToUSBDrive + sep + "roms"; }
 
 // includes the "regional.db" filename
@@ -101,20 +105,6 @@ string Environment::getPathToThemesDir() {
     return getWorkingPath() + sep + "themes";
 #else
     return "/media/themes";
-#endif
-}
-
-// 1 arg: "usb:/Autobleem/bin/db"
-// 2 arg: "../db"
-// PSC: "../db"
-string Environment::getPathToCoversDBDir() {
-#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
-    if (private_singleArgPassed) {
-        return private_pathToUSBDrive + sep + "Autobleem/bin/db";
-    }
-    return "../db";
-#else
-    return "../db";
 #endif
 }
 

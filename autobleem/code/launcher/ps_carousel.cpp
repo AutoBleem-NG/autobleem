@@ -4,6 +4,7 @@
 
 #include "ps_carousel.h"
 #include "../gui/gui.h"
+#include "../engine/metadata.h"
 #include "../engine/scanner.h"
 #include "ra_integrator.h"
 #include <SDL2/SDL_image.h>
@@ -48,10 +49,14 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                     if (md.lookupBySerial((*this)->serial) && md.bytes && md.dataSize) {
                         char fname[] = "/tmp/AutoBleem_XXXXXX.png";
                         int pngFile = mkstemps(fname, 4);
-                        write(pngFile, md.bytes, md.dataSize);
-                        close(pngFile);
-                        coverPng = IMG_LoadTexture(renderer, fname);
-                        remove(fname);
+                        if (pngFile >= 0) {
+                            ssize_t written = write(pngFile, md.bytes, md.dataSize);
+                            close(pngFile);
+                            if (written == md.dataSize) {
+                                coverPng = IMG_LoadTexture(renderer, fname);
+                            }
+                            remove(fname);
+                        }
                     }
                 }
 #endif

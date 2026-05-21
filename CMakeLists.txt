@@ -159,6 +159,8 @@ add_executable(
         autobleem/code/engine/metadata.h
         autobleem/code/engine/pad_mapper.cpp
         autobleem/code/engine/pad_mapper.h
+        autobleem/code/engine/rdb_reader.cpp
+        autobleem/code/engine/rdb_reader.h
         autobleem/code/engine/scanner.cpp
         autobleem/code/engine/scanner.h
         autobleem/code/engine/serial_scanner.cpp

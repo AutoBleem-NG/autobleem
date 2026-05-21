@@ -15,22 +15,6 @@ using namespace std;
 //*******************************
 
 //*******************************
-// covers?.db
-//*******************************
-
-// used by: querySerial
-static const char SELECT_META[] = "SELECT SERIAL,TITLE, PUBLISHER, \
-                                RELEASE,PLAYERS,  COVER FROM SERIALS s \
-                                JOIN GAME g on s.GAME=g.id \
-                                WHERE SERIAL=? OR SERIAL LIKE ?";
-
-// used by: queryTitle
-static const char SELECT_TITLE[] = "SELECT SERIAL,TITLE, PUBLISHER, \
-                                RELEASE,PLAYERS, COVER FROM SERIALS s \
-                                JOIN GAME g on s.GAME=g.id \
-                                WHERE TITLE=?";
-
-//*******************************
 // RELEASE_YEAR is found in both internal.db and regional.db
 // used by Database::updateYear() which is only called by VerMigration::migrate04_05()
 // VerMigration appears to be no longer used
@@ -330,40 +314,6 @@ bool Database::updateDatePlayed(int id, int date_in_seconds) {
     return true;
 }
 
-bool Database::queryTitle(string title, Metadata *md) {
-    sqlite3_stmt *res = nullptr;
-    int rc = sqlite3_prepare_v2(db, SELECT_TITLE, -1, &res, nullptr);
-    if (rc != SQLITE_OK) {
-        PLOG_ERROR << "Failed: db::queryTitle - " << sqlite3_errmsg(db);
-        return false;
-    }
-
-    sqlite3_bind_text(res, 1, title.c_str(), -1, nullptr);
-    bool found = false;
-    if (sqlite3_step(res) == SQLITE_ROW) {
-        const unsigned char *titleCol = sqlite3_column_text(res, 1);
-        const unsigned char *publisher = sqlite3_column_text(res, 2);
-        const int year = sqlite3_column_int(res, 3);
-        const int players = sqlite3_column_int(res, 4);
-        const void *bytes = sqlite3_column_blob(res, 5);
-        size_t size = sqlite3_column_bytes(res, 5);
-        if (size != 0) {
-            md->dataSize = size;
-            md->bytes = new char[size];
-            memcpy(md->bytes, bytes, size);
-        }
-        md->title = string(reinterpret_cast<const char *>(titleCol));
-        md->publisher = string(reinterpret_cast<const char *>(publisher));
-        StringUtils::cleanPublisherString(md->publisher);
-        md->year = year;
-        md->players = players;
-        md->valid = true;
-        found = true;
-    }
-    sqlite3_finalize(res);
-    return found;
-}
-
 bool Database::getInternalGames(PsGames *result) {
     result->clear();
     sqlite3_stmt *res = nullptr;
@@ -635,45 +585,6 @@ bool Database::getGameIdsInRow(vector<int> *gameIdsInRow, int row) {
     }
     sqlite3_finalize(res);
     return true;
-}
-
-bool Database::querySerial(string serial, Metadata *md) {
-    string serialLike = serial + "-%";
-    sqlite3_stmt *res = nullptr;
-    int rc = sqlite3_prepare_v2(db, SELECT_META, -1, &res, nullptr);
-    if (rc != SQLITE_OK) {
-        PLOG_ERROR << "Failed: db::querySerial - " << sqlite3_errmsg(db);
-        return false;
-    }
-
-    sqlite3_bind_text(res, 1, serial.c_str(), -1, nullptr);
-    sqlite3_bind_text(res, 2, serialLike.c_str(), -1, nullptr);
-    bool found = false;
-    if (sqlite3_step(res) == SQLITE_ROW) {
-        const unsigned char *title = sqlite3_column_text(res, 1);
-        const unsigned char *publisher = sqlite3_column_text(res, 2);
-        const int year = sqlite3_column_int(res, 3);
-        const int players = sqlite3_column_int(res, 4);
-        const void *bytes = sqlite3_column_blob(res, 5);
-        size_t size = sqlite3_column_bytes(res, 5);
-        if (size != 0) {
-            md->dataSize = size;
-            md->bytes = new char[size];
-            memcpy(md->bytes, bytes, size);
-        }
-
-        md->title = string(reinterpret_cast<const char *>(title));
-        md->publisher = string(reinterpret_cast<const char *>(publisher));
-        StringUtils::cleanPublisherString(md->publisher);
-        md->year = year;
-        md->serial = serial;
-        md->region = SerialScanner::serialToRegion(md->serial);
-        md->players = players;
-        md->valid = true;
-        found = true;
-    }
-    sqlite3_finalize(res);
-    return found;
 }
 
 bool Database::insertDisc(int id, int discNum, string discName) {

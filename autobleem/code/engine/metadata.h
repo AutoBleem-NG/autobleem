@@ -28,5 +28,6 @@ class Metadata {
             delete[] bytes;
             bytes = NULL;
         }
+        dataSize = 0;
     }
 };

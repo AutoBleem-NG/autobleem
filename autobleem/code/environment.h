@@ -14,6 +14,8 @@ struct Environment {
     static std::string getPathToRetroarchDir();
     static std::string getPathToRetroarchPlaylistsDir();
     static std::string getPathToRetroarchCoreFile();
+    static std::string getPathToRetroarchRdbDir();        // <RA>/database/rdb
+    static std::string getPathToRetroarchThumbnailsDir(); // <RA>/thumbnails
     static std::string getPathToRomsDir();
     static std::string getPathToRegionalDBFile(); // includes the "regional.db" filename
     static std::string getPathToInternalDBFile(); // includes the "internal.db" filename
@@ -23,10 +25,9 @@ struct Environment {
     // - 2 arg: returns autobleem-gui executable dir
     // - PSC: returns autobleem-gui executable dir
     static std::string getWorkingPath();
-    static std::string getSonyPath();          // getWorkingPath() + "/sony"
-    static std::string getSonyFontPath();      // getSonyPath() + "/font"
-    static std::string getPathToThemesDir();   // 1 arg: usb:/themes, 2 arg: ./themes, PSC: /media/themes
-    static std::string getPathToCoversDBDir(); // 1 arg: usb:/Autobleem/bin/db, else: ../db
+    static std::string getSonyPath();        // getWorkingPath() + "/sony"
+    static std::string getSonyFontPath();    // getSonyPath() + "/font"
+    static std::string getPathToThemesDir(); // 1 arg: usb:/themes, 2 arg: ./themes, PSC: /media/themes
 
     static bool autobleemKernel; // true if the kernel is the AutoBleem Kernel
     static bool hiddenMenuEnabled;

@@ -5,6 +5,7 @@
 #include "scanner.h"
 #include "ecm_helper.h"
 #include "cfg_processor.h"
+#include "metadata.h"
 #include "serial_scanner.h"
 #include "../lang.h"
 #include "../log.h"

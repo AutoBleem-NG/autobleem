@@ -43,7 +43,6 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
     │   ├── engine/     # Game scanning, database, metadata
     │   ├── gui/        # GUI framework and screens
     │   └── launcher/   # Game launcher and emulator integration
-    ├── db/             # Cover art databases
     ├── libs/           # Bundled libraries (sqlite, nlohmann/json, libchdr, plog)
     ├── payload/        # PSC payload scripts and structure
     ├── resources/      # Assets (images, fonts, language files)

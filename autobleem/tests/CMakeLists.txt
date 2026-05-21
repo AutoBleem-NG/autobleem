@@ -77,6 +77,21 @@ target_link_libraries(
 
 gtest_discover_tests(database_test)
 
+# RDB reader tests
+add_executable(
+    rdb_reader_test
+    rdb_reader_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/rdb_reader.cpp
+)
+
+target_link_libraries(
+    rdb_reader_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(rdb_reader_test)
+
 # Log tests
 add_executable(
     log_test

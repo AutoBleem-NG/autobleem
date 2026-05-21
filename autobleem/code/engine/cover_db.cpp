@@ -3,56 +3,18 @@
 //
 
 #include "cover_db.h"
-#include <iostream>
+
+#include "../environment.h"
 #include "../log.h"
 #include "../utils/file_utils.h"
-#include "../environment.h"
 
-using namespace std;
-
-//*******************************
-// Coverdb::Coverdb()
-//*******************************
 Coverdb::Coverdb() {
-    regionStr[0] = "U";
-    regionStr[1] = "P";
-    regionStr[2] = "J";
-
-    for (int i = 0; i < 3; i++) {
-        covers[i] = nullptr;
-        auto filename = Env::getPathToCoversDBDir() + sep + "covers" + regionStr[i] + ".db";
-        if (FileUtils::exists(filename)) {
-            covers[i] = new Database();
-            bool success = covers[i]->connect(filename);
-            if (!success) {
-                PLOG_ERROR << "failed to open database " << filename;
-            }
-        } else {
-            PLOG_DEBUG << "database file " << filename << " not found";
-        }
+    const std::string path = Env::getPathToRetroarchRdbDir() + sep + "Sony - PlayStation.rdb";
+    if (!FileUtils::exists(path)) {
+        PLOG_DEBUG << "rdb file " << path << " not found";
+        return;
     }
-}
-
-//*******************************
-// Coverdb::~Coverdb()
-//*******************************
-Coverdb::~Coverdb() {
-    for (auto &cover : covers) {
-        if (cover != nullptr) {
-            cover->disconnect();
-            delete cover;
-        }
+    if (!reader.open(path)) {
+        PLOG_ERROR << "failed to open rdb " << path;
     }
-}
-
-//*******************************
-// Coverdb::isValid
-//*******************************
-bool Coverdb::isValid() {
-    bool valid = false;
-    for (Database *db : covers) {
-        if (db != nullptr)
-            valid = true;
-    }
-    return valid;
 }

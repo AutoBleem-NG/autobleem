@@ -3,17 +3,21 @@
 //
 #pragma once
 
-#include "database.h"
+#include "rdb_reader.h"
 
 //******************
 // Coverdb
+//
+// Wraps the RetroArch libretrodb (.rdb) for Sony - PlayStation. Replaces the
+// previous SQLite-backed regional cover databases — metadata is now read from
+// the RetroArch DB and cover art from the matching boxart JPG.
 //******************
 class Coverdb {
   public:
-    Database *covers[3];
-    std::string regionStr[3];
+    RdbReader reader;
 
-    bool isValid();
     Coverdb();
-    ~Coverdb();
+    ~Coverdb() = default;
+
+    bool isValid() const { return reader.isValid(); }
 };

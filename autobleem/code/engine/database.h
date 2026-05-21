@@ -6,7 +6,6 @@
  */
 #pragma once
 
-#include "metadata.h"
 #include <sqlite3ab.h>
 #include "../launcher/ps_game.h"
 
@@ -63,8 +62,6 @@ class Database {
     bool insertSubDirRow(int rowIndex, std::string rowName, int indentLevel, int numGames);
     bool insertSubDirGames(int rowIndex, int gameId);
 
-    bool querySerial(std::string serial, Metadata *md);
-    bool queryTitle(std::string title, Metadata *md);
     int getNumGames();
     bool updateYear(int id, int year);
     bool updateMemcard(int id, std::string memcard);
