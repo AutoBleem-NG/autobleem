@@ -3,6 +3,7 @@
 //
 
 #include "scanner.h"
+#include "disc_suffix.h"
 #include "ecm_helper.h"
 #include "cfg_processor.h"
 #include "metadata.h"
@@ -10,6 +11,8 @@
 #include "../lang.h"
 #include "../log.h"
 #include "../utils/string_utils.h"
+#include <algorithm>
+#include <map>
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -544,6 +547,8 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
 
     badGameFile.close();
 
+    mergeMultiDiscGames(gamesToAddToDB);
+
     USBGame::sortByTitle(gamesToAddToDB);
     gamesHierarchy.makeGamesToDisplayWhileRemovingChildDuplicates();
 
@@ -560,6 +565,130 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
     noGamesFoundDuringScan = (gamesToAddToDB.size() == 0);
     complete = true;
     PLOG_INFO << "Scan complete: " << gamesToAddToDB.size() << " games found";
+}
+
+namespace {
+
+bool isDiscImageExt(const string &ext) {
+    return StringUtils::compareCaseInsensitive(ext, "chd") || StringUtils::compareCaseInsensitive(ext, "pbp") ||
+           StringUtils::compareCaseInsensitive(ext, "cue") || StringUtils::compareCaseInsensitive(ext, "bin") ||
+           StringUtils::compareCaseInsensitive(ext, "img");
+}
+
+} // namespace
+
+//*******************************
+// Scanner::mergeMultiDiscGames
+//*******************************
+// Detects games whose directory name ends with a disc marker (see
+// parseDiscSuffix) and merges siblings sharing the same base name into one
+// directory. After merging the canonical (lowest-numbered) disc's directory
+// contains all disc images plus an .m3u playlist; the redundant disc
+// directories are removed and the redundant USBGame entries are dropped
+// from `games`.
+//
+// Skips a group when:
+//   - only one disc directory exists for a base name,
+//   - the target merged directory exists and isn't the canonical disc,
+//   - moving a disc image would overwrite an existing file or a rename fails
+//     (the partial state is left intact so the user can recover).
+void Scanner::mergeMultiDiscGames(USBGames &games) {
+    // Use 0x1f (ASCII unit separator) as an unambiguous key delimiter so two
+    // games with identical base names in different parent directories don't
+    // collide on the group key.
+    static const char kGroupKeySep = '\x1f';
+
+    std::map<string, USBGames> groups;
+    for (const USBGamePtr &g : games) {
+        const DiscSuffix parsed = parseDiscSuffix(g->gameDirName);
+        if (!parsed.matched())
+            continue;
+        const string parent = FileUtils::getDirNameFromPath(FileUtils::removeSeparatorFromEndOfPath(g->fullPath));
+        groups[parent + kGroupKeySep + parsed.base].push_back(g);
+    }
+
+    std::vector<USBGamePtr> toRemove;
+    for (auto &kv : groups) {
+        USBGames &group = kv.second;
+        if (group.size() < 2)
+            continue;
+
+        std::sort(group.begin(), group.end(), [](const USBGamePtr &a, const USBGamePtr &b) {
+            return parseDiscSuffix(a->gameDirName).disc < parseDiscSuffix(b->gameDirName).disc;
+        });
+
+        USBGamePtr canonical = group.front();
+        const string baseName = parseDiscSuffix(canonical->gameDirName).base;
+        const string parentPath =
+            FileUtils::getDirNameFromPath(FileUtils::removeSeparatorFromEndOfPath(canonical->fullPath));
+        const string targetDir = parentPath + sep + baseName;
+
+        const string canonicalNorm = FileUtils::removeSeparatorFromEndOfPath(canonical->fullPath);
+        const string targetNorm = FileUtils::removeSeparatorFromEndOfPath(targetDir);
+        if (targetNorm != canonicalNorm && FileUtils::exists(targetDir)) {
+            PLOG_WARNING << "multi-disc merge: target '" << targetDir << "' already exists, skipping group for '"
+                         << baseName << "'";
+            continue;
+        }
+
+        if (targetNorm != canonicalNorm) {
+            if (!FileUtils::renameFile(canonical->fullPath, targetDir)) {
+                PLOG_WARNING << "multi-disc merge: failed to rename '" << canonical->fullPath << "' -> '" << targetDir
+                             << "', skipping group";
+                continue;
+            }
+            canonical->fullPath = targetDir;
+            canonical->gameDirName = baseName;
+            canonical->title = baseName;
+        }
+
+        bool mergedAny = false;
+        for (size_t i = 1; i < group.size(); i++) {
+            USBGamePtr other = group[i];
+            bool failed = false;
+            for (const DirEntry &e : FileUtils::diru_FilesOnly(other->fullPath)) {
+                if (!isDiscImageExt(FileUtils::getFileExtension(e.name)))
+                    continue;
+                const string from = FileUtils::fixPath(other->fullPath) + sep + e.name;
+                const string to = FileUtils::fixPath(targetDir) + sep + e.name;
+                if (FileUtils::exists(to)) {
+                    PLOG_WARNING << "multi-disc merge: '" << to << "' already exists, skipping move";
+                    failed = true;
+                    break;
+                }
+                if (!FileUtils::renameFile(from, to)) {
+                    PLOG_WARNING << "multi-disc merge: failed to move '" << from << "' -> '" << to << "'";
+                    failed = true;
+                    break;
+                }
+            }
+            if (failed)
+                continue;
+            FileUtils::removeDirAndContents(other->fullPath);
+            toRemove.push_back(other);
+            mergedAny = true;
+        }
+
+        if (mergedAny) {
+            // Drop any stale .m3u files (e.g. from a previous per-disc scan)
+            // so we end with exactly one playlist named after the merged dir.
+            for (const DirEntry &e : FileUtils::diru_FilesOnly(canonical->fullPath)) {
+                if (FileUtils::matchExtension(e.name, ".m3u"))
+                    FileUtils::removeFile(FileUtils::fixPath(canonical->fullPath) + sep + e.name);
+            }
+            FileUtils::generateM3UForDirectory(canonical->fullPath, baseName);
+            PLOG_INFO << "multi-disc merge: '" << baseName << "' -> " << group.size() << " disc(s) in "
+                      << canonical->fullPath;
+        }
+    }
+
+    if (!toRemove.empty()) {
+        games.erase(std::remove_if(games.begin(), games.end(),
+                                   [&](const USBGamePtr &g) {
+                                       return std::find(toRemove.begin(), toRemove.end(), g) != toRemove.end();
+                                   }),
+                    games.end());
+    }
 }
 
 //*******************************

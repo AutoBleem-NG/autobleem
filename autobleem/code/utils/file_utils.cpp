@@ -414,17 +414,29 @@ bool fixCommaInDirOrFileName(const string &path, DirEntry *entry) {
 bool isPBPFile(const string &path) { return matchExtension(path, "pbp"); }
 
 void generateM3UForDirectory(const string &path, string basename) {
-    if (isPBPFile(basename)) {
+    // Strip image extensions so we don't end up with "<name>.chd.m3u".
+    if (isPBPFile(basename) || StringUtils::compareCaseInsensitive(getFileExtension(basename), "chd") ||
+        StringUtils::compareCaseInsensitive(getFileExtension(basename), "cue") ||
+        StringUtils::compareCaseInsensitive(getFileExtension(basename), "bin") ||
+        StringUtils::compareCaseInsensitive(getFileExtension(basename), "img")) {
         basename = getFileNameWithoutExtension(basename);
     }
     vector<string> files;
     DirEntries filesInPath = diru_FilesOnly(path);
     for (const DirEntry &entry : filesInPath) {
         string ext = getFileExtension(entry.name);
-        if (StringUtils::compareCaseInsensitive(ext, "pbp") || StringUtils::compareCaseInsensitive(ext, "cue"))
+        if (StringUtils::compareCaseInsensitive(ext, "pbp") || StringUtils::compareCaseInsensitive(ext, "cue") ||
+            StringUtils::compareCaseInsensitive(ext, "chd"))
             files.push_back(entry.name);
     }
+    std::sort(files.begin(), files.end());
     if (files.size() > 1) {
+        // Remove any stale .m3u files first so re-scans don't accumulate
+        // playlists with different basenames pointing at the same discs.
+        for (const DirEntry &entry : filesInPath) {
+            if (StringUtils::compareCaseInsensitive(getFileExtension(entry.name), "m3u"))
+                removeFile(fixPath(path) + sep + entry.name);
+        }
         string m3uName = fixPath(path) + sep + basename + ".m3u";
         ofstream os(m3uName);
         for (const string &file : files) {

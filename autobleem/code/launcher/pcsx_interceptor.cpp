@@ -96,6 +96,17 @@ bool PcsxInterceptor::execute(PsGamePtr &game, int resumepoint) {
         if (!(FileUtils::matchExtension(game->base, ".pbp") || FileUtils::matchExtension(game->base, ".chd"))) {
             gameFile += ".cue";
         }
+
+        // If the scanner produced an .m3u playlist (e.g. after merging
+        // multi-disc games into one folder), prefer it so pcsx-ab sees
+        // all discs and the eject button can swap between them.
+        for (const DirEntry &e : FileUtils::diru_FilesOnly(game->folder)) {
+            if (FileUtils::matchExtension(e.name, ".m3u")) {
+                gameFile = game->folder + sep + e.name;
+                PLOG_INFO << "PcsxInterceptor: using m3u playlist: " << gameFile;
+                break;
+            }
+        }
     }
 
     gameFile += "";

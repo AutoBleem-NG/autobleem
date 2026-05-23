@@ -92,6 +92,21 @@ target_link_libraries(
 
 gtest_discover_tests(rdb_reader_test)
 
+# Disc-suffix parser tests
+add_executable(
+    disc_suffix_test
+    disc_suffix_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/engine/disc_suffix.cpp
+)
+
+target_link_libraries(
+    disc_suffix_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(disc_suffix_test)
+
 # Log tests
 add_executable(
     log_test

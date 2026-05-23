@@ -143,6 +143,8 @@ add_executable(
         autobleem/code/engine/cover_db.h
         autobleem/code/engine/database.cpp
         autobleem/code/engine/database.h
+        autobleem/code/engine/disc_suffix.cpp
+        autobleem/code/engine/disc_suffix.h
         autobleem/code/engine/ecm_helper.cpp
         autobleem/code/engine/ecm_helper.h
         autobleem/code/engine/game.cpp
