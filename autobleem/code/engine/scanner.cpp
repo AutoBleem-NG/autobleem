@@ -186,62 +186,6 @@ void repairMissingCue(const string &path, const string &folderName) {
     }
 }
 
-static string coverImagePath(const USBGamePtr &game) {
-    string baseName = game->discs[0].cueName;
-    if (baseName.empty())
-        baseName = game->discs[0].diskName;
-
-    return game->fullPath + sep + baseName + EXT_PNG;
-}
-
-static bool writeCoverImageFromMetadata(const USBGamePtr &game, Metadata *md) {
-    if (game->discs.empty() || md == nullptr || md->bytes == nullptr || md->dataSize <= 0)
-        return false;
-
-    string newFilename = coverImagePath(game);
-    PLOG_DEBUG << "Updating cover: " << newFilename;
-
-    ofstream pngFile;
-    pngFile.open(newFilename, std::ios::out | std::ios::binary);
-    if (!pngFile.is_open()) {
-        PLOG_ERROR << "Failed to open cover for writing: " << newFilename;
-        return false;
-    }
-
-    pngFile.write(md->bytes, md->dataSize);
-    pngFile.flush();
-    pngFile.close();
-    game->coverImageFound = true;
-    return true;
-}
-
-static bool recreateCoverImage(const USBGamePtr &game) {
-    if (game->discs.empty())
-        return false;
-
-    string serial = game->serial;
-    if (serial.empty()) {
-        serial = SerialScanner::scanSerial(game->imageType, game->fullPath + sep, game->firstBinPath);
-        if (!serial.empty()) {
-            game->serial = serial;
-            game->region = SerialScanner::serialToRegion(serial);
-        }
-    }
-
-    if (serial.empty())
-        return false;
-
-    Metadata md;
-    bool result = false;
-    if (md.lookupBySerial(serial)) {
-        result = writeCoverImageFromMetadata(game, &md);
-        if (result)
-            game->automationUsed = false;
-    }
-    md.clean();
-    return result;
-}
-
 //*******************************
 // Scanner
 // *******************************
@@ -444,10 +388,6 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                     game->pcsxCfgFound = true;
                 }
 
-                if (FileUtils::matchExtension(file.name, EXT_PNG)) {
-                    game->coverImageFound = true;
-                }
-
                 if (FileUtils::matchExtension(file.name, EXT_LIC)) {
                     game->licFound = true;
                 }
@@ -460,10 +400,10 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
             if (game->gameIniFound)
                 game->readIni(gameIniPath); // read it in now in case we need to create or update the serial/region
 
-            bool coverImageRecreated = false;
-
-            // if there was no ini file before, get the values for the ini, create the cover file if needed, and
-            // create/update the game.ini file
+            // If there was no ini file before, fill in the values from RDB
+            // metadata and write Game.ini. Cover art is no longer written to
+            // disk — RAIntegrator::findBoxArtPath resolves it from
+            // libretro-thumbnails at render time.
             if (!game->gameIniFound || game->automationUsed || (game->discs.size() == 0)) {
 
                 if (game->discs.size() == 0)
@@ -472,15 +412,11 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                 if (game->automationUsed) {
                     game->serial = SerialScanner::scanSerial(game->imageType, game->fullPath + sep, game->firstBinPath);
                     game->region = SerialScanner::serialToRegion(game->serial);
-                    // PLOG_DEBUG << "serial: " << game->serial << ", region: " << game->region << ", " << game->title
-                    // <<endl; PLOG_DEBUG << "Last Played: " << Util::timeToDisplayTimeString(game->last_played) ;
                 }
 
                 if (!game->serial.empty()) {
-                    // PLOG_DEBUG << "Accessing metadata for serial: " << game->serial ;
                     Metadata md;
                     if (md.lookupBySerial(game->serial)) {
-                        // at this stage we have more data;
                         if (game->title == "")
                             game->title = md.title;
                         if (game->publisher == "")
@@ -491,13 +427,7 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                             game->year = md.year;
 
                         if (game->discs.size() > 0) {
-                            // all recovered :)
-                            if (!game->coverImageFound) {
-                                if (writeCoverImageFromMetadata(game, &md)) {
-                                    game->automationUsed = false;
-                                    coverImageRecreated = true;
-                                }
-                            }
+                            game->automationUsed = false;
                         }
 
                         md.clean();
@@ -507,8 +437,6 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                     }
                 }
             }
-            if (!coverImageRecreated)
-                recreateCoverImage(game);
             game->saveIni(gameIniPath);
             game->readIni(gameIniPath); // the updated iniValues are needed for updateObj
                                         // game->print();

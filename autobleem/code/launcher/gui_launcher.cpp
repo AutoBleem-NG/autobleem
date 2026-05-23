@@ -17,6 +17,42 @@ using namespace std;
 
 const SDL_Color brightWhite = {255, 255, 255, SDL_ALPHA_OPAQUE};
 
+namespace {
+void renderTextureFit(SDL_Shared<SDL_Renderer> renderer, SDL_Shared<SDL_Texture> texture, const SDL_Rect &bounds) {
+    if (texture == nullptr) {
+        return;
+    }
+
+    Uint32 format;
+    int access;
+    int textureWidth;
+    int textureHeight;
+    SDL_QueryTexture(texture, &format, &access, &textureWidth, &textureHeight);
+    if (textureWidth <= 0 || textureHeight <= 0) {
+        return;
+    }
+
+    SDL_Rect input;
+    input.x = 0;
+    input.y = 0;
+    input.w = textureWidth;
+    input.h = textureHeight;
+
+    SDL_Rect output = bounds;
+    const float textureAspect = static_cast<float>(textureWidth) / static_cast<float>(textureHeight);
+    const float boundsAspect = static_cast<float>(bounds.w) / static_cast<float>(bounds.h);
+    if (textureAspect > boundsAspect) {
+        output.h = static_cast<int>(bounds.w / textureAspect);
+        output.y = bounds.y + (bounds.h - output.h) / 2;
+    } else {
+        output.w = static_cast<int>(bounds.h * textureAspect);
+        output.x = bounds.x + (bounds.w - output.w) / 2;
+    }
+
+    SDL_RenderCopy(renderer, texture, &input, &output);
+}
+} // namespace
+
 //*******************************
 // GuiLauncher::updateMeta
 //*******************************
@@ -735,6 +771,15 @@ void GuiLauncher::render() {
                 SDL_RenderCopy(renderer, currentGameTex, &fullRect, &coverRect);
             }
         }
+    }
+
+    if (state == STATE_GAMES && selGameIndexInCarouselGamesIsValid()) {
+        SDL_Rect snapRect;
+        snapRect.x = 260;
+        snapRect.y = 225;
+        snapRect.w = 240;
+        snapRect.h = 180;
+        renderTextureFit(renderer, carouselGames[selGameIndex].snapPng, snapRect);
     }
 
     psOptionsMenu->render();

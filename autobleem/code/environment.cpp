@@ -55,6 +55,10 @@ string Environment::getPathToRetroarchRdbDir() { return getPathToRetroarchDir() 
 
 string Environment::getPathToRetroarchThumbnailsDir() { return getPathToRetroarchDir() + sep + "thumbnails"; }
 
+string Environment::getPathToRetroarchScreenshotsDir() { return getPathToRetroarchDir() + sep + "screenshots"; }
+
+string Environment::getPathToRetroarchStatesDir() { return getPathToRetroarchDir() + sep + "states"; }
+
 string Environment::getPathToRomsDir() { return private_pathToUSBDrive + sep + "roms"; }
 
 // includes the "regional.db" filename

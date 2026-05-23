@@ -119,3 +119,12 @@ TEST_F(EnvironmentTest, RetroarchCoreFilePathIsCorrect) {
 
     EXPECT_EQ(Env::getPathToRetroarchCoreFile(), "/media/usb0/retroarch/cores/km_pcsx_rearmed_neon_libretro.so");
 }
+
+TEST_F(EnvironmentTest, RetroarchThumbnailScreenshotStatePaths) {
+    const char *argv[] = {"autobleem-gui", "/media/usb0"};
+    Env::parseCommandLineArguments(2, const_cast<char **>(argv));
+
+    EXPECT_EQ(Env::getPathToRetroarchThumbnailsDir(), "/media/usb0/retroarch/thumbnails");
+    EXPECT_EQ(Env::getPathToRetroarchScreenshotsDir(), "/media/usb0/retroarch/screenshots");
+    EXPECT_EQ(Env::getPathToRetroarchStatesDir(), "/media/usb0/retroarch/states");
+}

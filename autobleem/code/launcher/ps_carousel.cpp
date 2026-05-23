@@ -4,11 +4,9 @@
 
 #include "ps_carousel.h"
 #include "../gui/gui.h"
-#include "../engine/metadata.h"
-#include "../engine/scanner.h"
 #include "ra_integrator.h"
+#include "thumbnail_lookup.h"
 #include <SDL2/SDL_image.h>
-#include <unistd.h>
 #include <iostream>
 #include "../log.h"
 #include "../environment.h"
@@ -40,26 +38,15 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             string imagePath = (*this)->folder + sep + (*this)->base + ".png";
             SDL_SetRenderTarget(renderer, nullptr);
             if (FileUtils::exists(imagePath)) {
+                // User-supplied cover dropped next to the game takes priority.
                 coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
             } else {
-                coverPng = nullptr;
-#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
-                if ((*this)->internal) {
-                    Metadata md;
-                    if (md.lookupBySerial((*this)->serial) && md.bytes && md.dataSize) {
-                        char fname[] = "/tmp/AutoBleem_XXXXXX.png";
-                        int pngFile = mkstemps(fname, 4);
-                        if (pngFile >= 0) {
-                            ssize_t written = write(pngFile, md.bytes, md.dataSize);
-                            close(pngFile);
-                            if (written == md.dataSize) {
-                                coverPng = IMG_LoadTexture(renderer, fname);
-                            }
-                            remove(fname);
-                        }
-                    }
+                const string raBoxArt = ThumbnailLookup::findBoxArtPath("Sony - PlayStation", (*this)->title);
+                if (!raBoxArt.empty()) {
+                    coverPng = IMG_LoadTexture(renderer, raBoxArt.c_str());
+                } else {
+                    coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "default.png").c_str());
                 }
-#endif
             }
 
             if (coverPng != nullptr) {
@@ -119,27 +106,20 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             SDL_SetRenderTarget(renderer, nullptr);
             string imagePath;
             if (!(*this)->app) { // RA Game
-                auto makeBoxArtPath = [&](const string &boxartDir) -> string {
-                    return Env::getPathToRetroarchDir() + sep + "thumbnails" + sep +
-                           FileUtils::getFileNameWithoutExtension((*this)->db_name) + sep + boxartDir + sep +
-                           RAIntegrator::escapeName((*this)->title) + ".png";
-                };
-
-                imagePath = makeBoxArtPath("Named_Boxarts");
-                string imagePath2 = makeBoxArtPath("Named_Titles");
-                string imagePath3 = makeBoxArtPath("Named_Snaps");
-                if (FileUtils::exists(imagePath)) {
-                    coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-                } else if (FileUtils::exists(imagePath2)) {
-                    imagePath = imagePath2;
-                    coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-                } else if (FileUtils::exists(imagePath3)) {
-                    imagePath = imagePath3;
+                imagePath = ThumbnailLookup::findBoxArtPath((*this)->db_name, (*this)->title);
+                if (!imagePath.empty()) {
                     coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
                 } else {
-                    // use default
-                    PLOG_DEBUG << "boxart image NOT found for " << imagePath;
+                    PLOG_DEBUG << "boxart image NOT found for " << (*this)->title;
                     coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/ra-cover.png").c_str());
+                }
+
+                const string snapPath =
+                    ThumbnailLookup::findSnapPath((*this)->db_name, (*this)->title, (*this)->image_path);
+                if (!snapPath.empty()) {
+                    snapPng = IMG_LoadTexture(renderer, snapPath.c_str());
+                } else {
+                    snapPng = nullptr;
                 }
             } else // App
             {
@@ -198,7 +178,10 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 //*******************************
 // PsCarouselGame::freeTex
 //*******************************
-void PsCarouselGame::freeTex() { coverPng = nullptr; }
+void PsCarouselGame::freeTex() {
+    coverPng = nullptr;
+    snapPng = nullptr;
+}
 
 //*******************************
 // PsCarousel::createCoverPoint

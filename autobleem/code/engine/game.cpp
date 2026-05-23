@@ -123,11 +123,6 @@ bool USBGame::verify(std::vector<std::string> *failureReasons) {
             failureReasons->emplace_back(_("Game.ini file not valid"));
         result = false;
     }
-    if (!coverImageFound) {
-        if (failureReasons)
-            failureReasons->emplace_back(_("Cover image file not found"));
-        result = false;
-    }
     if (!licFound) {
         if (failureReasons)
             failureReasons->emplace_back(_(".lic file not found"));
@@ -164,7 +159,6 @@ bool USBGame::print() {
     PLOG_DEBUG << "GameData found: " << gameDataFound;
     PLOG_DEBUG << "Game.ini found: " << gameIniFound;
     PLOG_DEBUG << "Game.ini valid: " << gameIniValid;
-    PLOG_DEBUG << "PNG found:" << coverImageFound;
     PLOG_DEBUG << "LIC found:" << licFound;
     PLOG_DEBUG << "pcsx.cfg found: " << pcsxCfgFound;
     PLOG_DEBUG << "TotalDiscs: " << discs.size();
@@ -277,34 +271,6 @@ void USBGame::recoverMissingFiles() {
             PLOG_DEBUG << "Copy: " << source << " -> " << destination;
             FileUtils::copy(source, destination);
             licFound = true;
-        }
-        if (!coverImageFound) {
-            automationUsed = true;
-            PLOG_DEBUG << "Switching automation no image";
-            string source = workingPath + sep + "default.png";
-            string destination = fullPath + sep + discs[0].diskName + ".png";
-            PLOG_DEBUG << "Copy: " << source << " -> " << destination;
-            FileUtils::copy(source, destination);
-            // maybe we can do better ?
-            PLOG_DEBUG << "getting serial from Image File";
-
-            string serial = SerialScanner::scanSerial(imageType, fullPath, firstBinPath);
-            if (serial != "") {
-
-                if (md.lookupBySerial(serial)) {
-                    metadataLoaded = true;
-                    PLOG_DEBUG << "Updating cover in recoverMissingFiles()" << destination;
-                    ofstream pngFile;
-                    pngFile.open(destination, std::ios::out | std::ios::binary);
-                    pngFile.write(md.bytes, md.dataSize);
-                    pngFile.flush();
-                    pngFile.close();
-                    automationUsed = false;
-                    coverImageFound = true;
-                };
-                md.clean();
-            }
-            coverImageFound = true;
         }
     }
 

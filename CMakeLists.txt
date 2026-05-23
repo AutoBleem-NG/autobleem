@@ -254,6 +254,8 @@ add_executable(
         autobleem/code/launcher/ps_zoom_button.h
         autobleem/code/launcher/ra_integrator.cpp
         autobleem/code/launcher/ra_integrator.h
+        autobleem/code/launcher/thumbnail_lookup.cpp
+        autobleem/code/launcher/thumbnail_lookup.h
         autobleem/code/launcher/retboot_interceptor.cpp
         autobleem/code/launcher/retboot_interceptor.h
         autobleem/code/main.cpp

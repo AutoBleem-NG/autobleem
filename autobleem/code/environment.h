@@ -14,8 +14,10 @@ struct Environment {
     static std::string getPathToRetroarchDir();
     static std::string getPathToRetroarchPlaylistsDir();
     static std::string getPathToRetroarchCoreFile();
-    static std::string getPathToRetroarchRdbDir();        // <RA>/database/rdb
-    static std::string getPathToRetroarchThumbnailsDir(); // <RA>/thumbnails
+    static std::string getPathToRetroarchRdbDir();         // <RA>/database/rdb
+    static std::string getPathToRetroarchThumbnailsDir();  // <RA>/thumbnails
+    static std::string getPathToRetroarchScreenshotsDir(); // <RA>/screenshots
+    static std::string getPathToRetroarchStatesDir();      // <RA>/states
     static std::string getPathToRomsDir();
     static std::string getPathToRegionalDBFile(); // includes the "regional.db" filename
     static std::string getPathToInternalDBFile(); // includes the "internal.db" filename

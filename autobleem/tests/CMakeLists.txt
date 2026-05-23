@@ -107,6 +107,25 @@ target_link_libraries(
 
 gtest_discover_tests(disc_suffix_test)
 
+# Thumbnail-lookup tests (libretro-thumbnails / screenshots / states)
+add_executable(
+    thumbnail_lookup_test
+    thumbnail_lookup_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/launcher/thumbnail_lookup.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+)
+
+target_link_libraries(
+    thumbnail_lookup_test
+    GTest::gtest_main
+    Threads::Threads
+)
+
+gtest_discover_tests(thumbnail_lookup_test)
+
 # Log tests
 add_executable(
     log_test

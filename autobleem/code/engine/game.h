@@ -53,7 +53,6 @@ class USBGame {
     bool pcsxCfgFound = false;
     bool gameIniFound = false;
     bool gameIniValid = false;
-    bool coverImageFound = false;
     bool licFound = false;
     bool automationUsed = false;
     ImageType imageType = IMAGE_BIN;
