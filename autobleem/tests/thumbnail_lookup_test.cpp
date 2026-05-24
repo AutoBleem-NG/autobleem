@@ -65,10 +65,12 @@ class ThumbnailLookupTest : public ::testing::Test {
 
         const char *argv[] = {"thumbnail_lookup_test", usbRoot.c_str()};
         ASSERT_TRUE(Env::parseCommandLineArguments(2, const_cast<char **>(argv)));
+        ThumbnailLookup::clearCaches();
     }
 
     void TearDown() override {
         Env::resetPaths();
+        ThumbnailLookup::clearCaches();
         std::string cmd = "rm -rf '" + usbRoot + "'";
         std::system(cmd.c_str());
     }
@@ -182,4 +184,112 @@ TEST_F(ThumbnailLookupTest, FindSnapPrefersLocalScreenshotOverNamedSnap) {
 TEST_F(ThumbnailLookupTest, FindSnapFallsBackToNamedSnap) {
     touch(snapsDir + "/Game.png");
     EXPECT_EQ(snapsDir + "/Game.png", ThumbnailLookup::findSnapPath(kSystem, "Game", ""));
+}
+
+// --- Tag-stripping and recordName preference (Branch C additions) ---
+
+TEST_F(ThumbnailLookupTest, FindThumbnailStripsRegionTag) {
+    // libretro-thumbnails ships "Persona.jpg" rather than "Persona (USA).jpg"
+    // when only one regional release exists.
+    touch(boxartsDir + "/Persona.jpg");
+    EXPECT_EQ(boxartsDir + "/Persona.jpg",
+              ThumbnailLookup::findThumbnailPath(kSystem, "Persona (USA)", "Named_Boxarts"));
+}
+
+TEST_F(ThumbnailLookupTest, FindThumbnailStripsMultipleTags) {
+    // Two trailing tags peeled off one at a time.
+    touch(boxartsDir + "/Castlevania - Symphony of the Night.jpg");
+    EXPECT_EQ(boxartsDir + "/Castlevania - Symphony of the Night.jpg",
+              ThumbnailLookup::findThumbnailPath(
+                  kSystem, "Castlevania - Symphony of the Night (USA) (Greatest Hits)", "Named_Boxarts"));
+}
+
+TEST_F(ThumbnailLookupTest, FindThumbnailDoesNotStripBaseName) {
+    // Strip stops once parens are gone; the bare name still misses cleanly.
+    EXPECT_EQ("", ThumbnailLookup::findThumbnailPath(kSystem, "Persona (USA)", "Named_Boxarts"));
+}
+
+TEST_F(ThumbnailLookupTest, RecordNamePreferredOverTitle) {
+    // Both exist on disk; recordName should be tried first.
+    touch(boxartsDir + "/Metal Gear Solid (USA) (Disc 1).png");
+    touch(boxartsDir + "/Metal Gear Solid.png");
+    EXPECT_EQ(boxartsDir + "/Metal Gear Solid (USA) (Disc 1).png",
+              ThumbnailLookup::findThumbnailPath(kSystem, "Metal Gear Solid", "Named_Boxarts",
+                                                 "Metal Gear Solid (USA) (Disc 1)"));
+}
+
+TEST_F(ThumbnailLookupTest, RecordNameWithStrippingThenFallsBackToTitle) {
+    // RecordName "Persona (USA)" misses, but stripped form "Persona" hits.
+    touch(boxartsDir + "/Persona.jpg");
+    EXPECT_EQ(boxartsDir + "/Persona.jpg",
+              ThumbnailLookup::findThumbnailPath(kSystem, "Revelations - Persona", "Named_Boxarts", "Persona (USA)"));
+}
+
+TEST_F(ThumbnailLookupTest, RecordNameMissesAndTitleMissesReturnsEmpty) {
+    EXPECT_EQ("", ThumbnailLookup::findThumbnailPath(kSystem, "Some Title", "Named_Boxarts", "Some Record (USA)"));
+}
+
+TEST_F(ThumbnailLookupTest, EmptyRecordNameFallsThroughToTitle) {
+    touch(boxartsDir + "/Game.png");
+    EXPECT_EQ(boxartsDir + "/Game.png",
+              ThumbnailLookup::findThumbnailPath(kSystem, "Game", "Named_Boxarts", ""));
+}
+
+TEST_F(ThumbnailLookupTest, FindBoxArtForwardsRecordName) {
+    touch(boxartsDir + "/Persona.jpg");
+    EXPECT_EQ(boxartsDir + "/Persona.jpg", ThumbnailLookup::findBoxArtPath(kSystem, "Wrong Title", "Persona (USA)"));
+}
+
+TEST_F(ThumbnailLookupTest, FindSnapForwardsRecordName) {
+    touch(snapsDir + "/Persona.jpg");
+    EXPECT_EQ(snapsDir + "/Persona.jpg",
+              ThumbnailLookup::findSnapPath(kSystem, "Wrong Title", "", "Persona (USA)"));
+}
+
+// --- Fuzzy fallback: tag substitution rather than just stripping ---
+
+TEST_F(ThumbnailLookupTest, FuzzyFallbackPicksRegionVariant) {
+    // User has "Doom (USA).chd"; libretro only ships the Europe boxart.
+    touch(boxartsDir + "/Doom (Europe) (EDC).jpg");
+    EXPECT_EQ(boxartsDir + "/Doom (Europe) (EDC).jpg",
+              ThumbnailLookup::findThumbnailPath(kSystem, "Doom (USA)", "Named_Boxarts"));
+}
+
+TEST_F(ThumbnailLookupTest, FuzzyFallbackPrefersMatchingTag) {
+    // Both variants present — the candidate sharing "(USA)" with the query wins.
+    touch(boxartsDir + "/Suikoden (USA) (Rev 1).jpg");
+    touch(boxartsDir + "/Suikoden (Europe).jpg");
+    EXPECT_EQ(boxartsDir + "/Suikoden (USA) (Rev 1).jpg",
+              ThumbnailLookup::findThumbnailPath(kSystem, "Suikoden (USA)", "Named_Boxarts"));
+}
+
+TEST_F(ThumbnailLookupTest, FuzzyFallbackRequiresWordBoundary) {
+    // "Doom" must NOT match "Doom 2 - Hell on Earth (USA).jpg" — the trailing
+    // " (" in the prefix is what enforces the word boundary.
+    touch(boxartsDir + "/Doom 2 - Hell on Earth (USA).jpg");
+    EXPECT_EQ("", ThumbnailLookup::findThumbnailPath(kSystem, "Doom (USA)", "Named_Boxarts"));
+}
+
+TEST_F(ThumbnailLookupTest, FuzzyFallbackRegionTiebreak) {
+    // No tag overlap with caller — USA wins over Europe wins over Japan.
+    touch(boxartsDir + "/Foo (Japan).jpg");
+    touch(boxartsDir + "/Foo (Europe).jpg");
+    touch(boxartsDir + "/Foo (USA).jpg");
+    EXPECT_EQ(boxartsDir + "/Foo (USA).jpg",
+              ThumbnailLookup::findThumbnailPath(kSystem, "Foo (Asia)", "Named_Boxarts"));
+}
+
+TEST_F(ThumbnailLookupTest, FuzzyFallbackEscapesUnsafeChars) {
+    // Colon in the title must be escaped before the dir scan.
+    touch(boxartsDir + "/Foo_ Bar (USA) (Rev 1).png");
+    EXPECT_EQ(boxartsDir + "/Foo_ Bar (USA) (Rev 1).png",
+              ThumbnailLookup::findThumbnailPath(kSystem, "Foo: Bar (USA)", "Named_Boxarts"));
+}
+
+TEST_F(ThumbnailLookupTest, ExactHitStillBeatsFuzzy) {
+    // Make sure the fuzzy fallback never overrides an exact match.
+    touch(boxartsDir + "/Foo (USA).jpg");
+    touch(boxartsDir + "/Foo (Europe).jpg");
+    EXPECT_EQ(boxartsDir + "/Foo (USA).jpg",
+              ThumbnailLookup::findThumbnailPath(kSystem, "Foo (USA)", "Named_Boxarts"));
 }

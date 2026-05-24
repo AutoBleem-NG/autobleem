@@ -16,7 +16,9 @@
 #include "../../lightgun_games.h"
 #include "../../system/process_utils.h"
 #include <iostream>
+#include "../../engine/cover_db.h"
 #include "../../launcher/ra_integrator.h"
+#include "../../launcher/thumbnail_lookup.h"
 
 using namespace std;
 
@@ -62,30 +64,23 @@ void GuiEditor_RA::refreshData() { shared_ptr<Gui> gui(Gui::getInstance()); }
 // GuiEditor_RA::GetBoxArtTexture
 //*******************************
 SDL_Shared<SDL_Texture> GuiEditor_RA::GetBoxArtTexture() {
-    auto makeBoxArtPath = [&](const string &boxartDir) -> string {
-        return Env::getPathToRetroarchDir() + sep + "thumbnails" + sep +
-               FileUtils::getFileNameWithoutExtension(gameData->db_name) + sep + boxartDir + sep +
-               RAIntegrator::escapeName(gameData->title) + ".png";
-    };
-
-    SDL_Shared<SDL_Texture> coverPng;
-    string imagePath = makeBoxArtPath("Named_Boxarts");
-    string imagePath2 = makeBoxArtPath("Named_Titles");
-    string imagePath3 = makeBoxArtPath("Named_Snaps");
-    if (FileUtils::exists(imagePath)) {
-        coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-    } else if (FileUtils::exists(imagePath2)) {
-        imagePath = imagePath2;
-        coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-    } else if (FileUtils::exists(imagePath3)) {
-        imagePath = imagePath3;
-        coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-    } else {
-        // use default
-        PLOG_DEBUG << "boxart image NOT found for " << imagePath;
-        coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/ra-cover.png").c_str());
+    string recordName;
+    if (!gameData->serial.empty()) {
+        auto gui = Gui::getInstance();
+        if (gui && gui->coverdb && gui->coverdb->isValid()) {
+            if (const auto *rec = gui->coverdb->reader.findBySerial(gameData->serial))
+                recordName = rec->name;
+        }
     }
 
+    SDL_Shared<SDL_Texture> coverPng;
+    const string imagePath = ThumbnailLookup::findBoxArtPath(gameData->db_name, gameData->title, recordName);
+    if (!imagePath.empty()) {
+        coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
+    } else {
+        PLOG_DEBUG << "boxart image NOT found for " << gameData->title;
+        coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/ra-cover.png").c_str());
+    }
     return coverPng;
 }
 

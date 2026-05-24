@@ -6,8 +6,10 @@
 #include "../gui.h"
 #include "../gui_keyboard.h"
 #include "../gui_select_mem_card.h"
-#include "../../engine/mem_card.h"
 #include "../../engine/cfg_processor.h"
+#include "../../engine/cover_db.h"
+#include "../../engine/mem_card.h"
+#include "../../launcher/thumbnail_lookup.h"
 #include <SDL2/SDL_image.h>
 #include "../../lang.h"
 #include <sstream>
@@ -16,6 +18,38 @@
 #include "../../system/process_utils.h"
 
 using namespace std;
+
+namespace {
+
+// Resolves the libretro-database canonical name for a serial, or "" if the
+// cover DB has no matching record. Used to pick the correct thumbnail file
+// for region-tagged libretro-thumbnails entries.
+string resolveRecordName(const string &serial) {
+    if (serial.empty())
+        return "";
+    auto gui = Gui::getInstance();
+    if (!gui || !gui->coverdb || !gui->coverdb->isValid())
+        return "";
+    const auto *rec = gui->coverdb->reader.findBySerial(serial);
+    return rec ? rec->name : "";
+}
+
+// Cover-art resolution for the editor menu: a PNG dropped in the game's
+// own folder wins (user override), then libretro-thumbnails Named_Boxarts
+// (resolved through serial + title), then the bundled default cover.
+SDL_Shared<SDL_Texture> loadCoverTexture(SDL_Shared<SDL_Renderer> renderer, const string &gameFolder,
+                                         const string &title, const string &serial) {
+    for (const DirEntry &entry : FileUtils::diru(gameFolder)) {
+        if (FileUtils::matchExtension(entry.name, EXT_PNG))
+            return IMG_LoadTexture(renderer, (gameFolder + sep + entry.name).c_str());
+    }
+    const string raBoxArt = ThumbnailLookup::findBoxArtPath("Sony - PlayStation", title, resolveRecordName(serial));
+    if (!raBoxArt.empty())
+        return IMG_LoadTexture(renderer, raBoxArt.c_str());
+    return IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "default.png").c_str());
+}
+
+} // namespace
 
 #define OPT_FIRST 5
 #define OPT_FAVORITE 5
@@ -340,16 +374,7 @@ void GuiEditor::init() {
             }
         }
 
-        bool pngLoaded = false;
-        for (const DirEntry &entry : FileUtils::diru(gameFolder)) {
-            if (FileUtils::matchExtension(entry.name, EXT_PNG)) {
-                cover = IMG_LoadTexture(renderer, (gameFolder + sep + entry.name).c_str());
-                pngLoaded = true;
-            }
-        }
-        if (!pngLoaded) {
-            cover = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "default.png").c_str());
-        }
+        cover = loadCoverTexture(renderer, gameFolder, gameData->title, gameData->serial);
     } else {
         // recover ini
         this->gameIni.values["title"] = gameData->title;
@@ -365,16 +390,7 @@ void GuiEditor::init() {
             }
         }
 
-        bool pngLoaded = false;
-        for (const DirEntry &entry : FileUtils::diru(gameData->folder)) {
-            if (FileUtils::matchExtension(entry.name, EXT_PNG)) {
-                cover = IMG_LoadTexture(renderer, (gameData->folder + sep + entry.name).c_str());
-                pngLoaded = true;
-            }
-        }
-        if (!pngLoaded) {
-            cover = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "default.png").c_str());
-        }
+        cover = loadCoverTexture(renderer, gameData->folder, gameData->title, gameData->serial);
     }
 
     refreshData();

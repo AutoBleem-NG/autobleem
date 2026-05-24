@@ -1,5 +1,6 @@
 #include "rdb_reader.h"
 
+#include <cctype>
 #include <cstdio>
 #include <cstring>
 #include <utility>
@@ -411,12 +412,19 @@ const RdbReader::Record *RdbReader::findBySerial(const std::string &serial) cons
     if (it != bySerial.end())
         return &records[it->second];
 
-    // The old SQLite cover DB accepted records whose serial started with
-    // "<serial>-", which covered multi-disc and alternate serial suffixes.
-    const std::string prefix = serial + "-";
+    // Fall back to records whose serial starts with `<serial>` followed by a
+    // non-digit. Covers re-release suffixes (`SLUS-01251GH`), revision/disc
+    // separators (`SLUS-00594-1`), and other variants — while avoiding false
+    // matches like `SLUS-01251` → `SLUS-012510`.
     for (const auto &record : records) {
-        if (record.serial.compare(0, prefix.size(), prefix) == 0)
-            return &record;
+        if (record.serial.size() <= serial.size())
+            continue;
+        if (record.serial.compare(0, serial.size(), serial) != 0)
+            continue;
+        const char next = record.serial[serial.size()];
+        if (std::isdigit(static_cast<unsigned char>(next)))
+            continue;
+        return &record;
     }
     return nullptr;
 }

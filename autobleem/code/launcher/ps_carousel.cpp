@@ -3,6 +3,7 @@
 //
 
 #include "ps_carousel.h"
+#include "../engine/cover_db.h"
 #include "../gui/gui.h"
 #include "ra_integrator.h"
 #include "thumbnail_lookup.h"
@@ -18,6 +19,24 @@ using namespace std;
 //*******************************
 // PsCarouselGame::loadTex
 //*******************************
+namespace {
+
+// Resolves the libretro-database canonical name for a game serial, or "" if
+// the cover DB isn't loaded / has no record for that serial. The canonical
+// name (e.g. "Metal Gear Solid (USA) (Disc 1)") matches the thumbnail file
+// name in the libretro-thumbnails pack.
+string resolveRecordName(const string &serial) {
+    if (serial.empty())
+        return "";
+    auto gui = Gui::getInstance();
+    if (!gui || !gui->coverdb || !gui->coverdb->isValid())
+        return "";
+    const auto *rec = gui->coverdb->reader.findBySerial(serial);
+    return rec ? rec->name : "";
+}
+
+} // namespace
+
 void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
     shared_ptr<Gui> gui(Gui::getInstance());
 
@@ -35,19 +54,27 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             SDL_SetTextureBlendMode(renderSurface, SDL_BLENDMODE_BLEND);
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
+            const string recordName = resolveRecordName((*this)->serial);
+
             string imagePath = (*this)->folder + sep + (*this)->base + ".png";
             SDL_SetRenderTarget(renderer, nullptr);
             if (FileUtils::exists(imagePath)) {
                 // User-supplied cover dropped next to the game takes priority.
                 coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
             } else {
-                const string raBoxArt = ThumbnailLookup::findBoxArtPath("Sony - PlayStation", (*this)->title);
+                const string raBoxArt =
+                    ThumbnailLookup::findBoxArtPath("Sony - PlayStation", (*this)->title, recordName);
                 if (!raBoxArt.empty()) {
                     coverPng = IMG_LoadTexture(renderer, raBoxArt.c_str());
                 } else {
                     coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "default.png").c_str());
                 }
             }
+
+            // Screenshot pane for PSX games. The non-foreign branch never
+            // populated snapPng before, so the pane sat empty for PS1 titles.
+            const string snapPath = ThumbnailLookup::findSnapPath("Sony - PlayStation", (*this)->title, "", recordName);
+            snapPng = snapPath.empty() ? nullptr : IMG_LoadTexture(renderer, snapPath.c_str());
 
             if (coverPng != nullptr) {
                 SDL_SetRenderTarget(renderer, renderSurface);
@@ -106,7 +133,8 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             SDL_SetRenderTarget(renderer, nullptr);
             string imagePath;
             if (!(*this)->app) { // RA Game
-                imagePath = ThumbnailLookup::findBoxArtPath((*this)->db_name, (*this)->title);
+                const string recordName = resolveRecordName((*this)->serial);
+                imagePath = ThumbnailLookup::findBoxArtPath((*this)->db_name, (*this)->title, recordName);
                 if (!imagePath.empty()) {
                     coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
                 } else {
@@ -115,12 +143,8 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                 }
 
                 const string snapPath =
-                    ThumbnailLookup::findSnapPath((*this)->db_name, (*this)->title, (*this)->image_path);
-                if (!snapPath.empty()) {
-                    snapPng = IMG_LoadTexture(renderer, snapPath.c_str());
-                } else {
-                    snapPng = nullptr;
-                }
+                    ThumbnailLookup::findSnapPath((*this)->db_name, (*this)->title, (*this)->image_path, recordName);
+                snapPng = snapPath.empty() ? nullptr : IMG_LoadTexture(renderer, snapPath.c_str());
             } else // App
             {
                 imagePath = (*this)->image_path;

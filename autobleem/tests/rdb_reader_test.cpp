@@ -47,6 +47,14 @@ void appendRecord(std::vector<unsigned char> &out) {
     out.push_back(2);
 }
 
+void appendSimpleRecord(std::vector<unsigned char> &out, const std::string &name, const std::string &serial) {
+    out.push_back(0x82); // fixmap, 2 entries
+    appendString(out, "name");
+    appendString(out, name);
+    appendString(out, "serial");
+    appendString(out, serial);
+}
+
 std::string testPath(const std::string &name) { return "/tmp/" + name + "_" + std::to_string(getpid()) + ".rdb"; }
 
 bool writeFile(const std::string &path, const std::vector<unsigned char> &data) {
@@ -119,6 +127,62 @@ TEST(RdbReaderTest, RejectsInvalidMagic) {
     RdbReader reader;
     EXPECT_FALSE(reader.open(path));
     EXPECT_FALSE(reader.isValid());
+
+    std::remove(path.c_str());
+}
+
+TEST(RdbReaderTest, FindBySerialMatchesNonDigitSuffix) {
+    // "SLUS-01251" should match "SLUS-01251GH-F-0" (Greatest Hits variant).
+    std::vector<unsigned char> records;
+    appendSimpleRecord(records, "Final Fantasy IX (USA) (Disc 1)", "SLUS-01251GH-F-0");
+    records.push_back(0xc0);
+
+    const std::string path = testPath("non_digit_suffix");
+    ASSERT_TRUE(writeFile(path, makeRdb(0, records)));
+
+    RdbReader reader;
+    EXPECT_TRUE(reader.open(path));
+
+    const auto *rec = reader.findBySerial("SLUS-01251");
+    ASSERT_NE(nullptr, rec);
+    EXPECT_EQ("Final Fantasy IX (USA) (Disc 1)", rec->name);
+
+    std::remove(path.c_str());
+}
+
+TEST(RdbReaderTest, FindBySerialDoesNotMatchDigitSuffix) {
+    // "SLUS-01251" must NOT match "SLUS-012510" — the digit suffix means
+    // these are unrelated serials.
+    std::vector<unsigned char> records;
+    appendSimpleRecord(records, "Other Game", "SLUS-012510");
+    records.push_back(0xc0);
+
+    const std::string path = testPath("digit_suffix");
+    ASSERT_TRUE(writeFile(path, makeRdb(0, records)));
+
+    RdbReader reader;
+    EXPECT_TRUE(reader.open(path));
+
+    EXPECT_EQ(nullptr, reader.findBySerial("SLUS-01251"));
+
+    std::remove(path.c_str());
+}
+
+TEST(RdbReaderTest, FindBySerialExactMatchPreferredOverPrefix) {
+    std::vector<unsigned char> records;
+    appendSimpleRecord(records, "Other Variant", "SLUS-12345-99");
+    appendSimpleRecord(records, "Exact", "SLUS-12345");
+    records.push_back(0xc0);
+
+    const std::string path = testPath("exact_first");
+    ASSERT_TRUE(writeFile(path, makeRdb(0, records)));
+
+    RdbReader reader;
+    EXPECT_TRUE(reader.open(path));
+
+    const auto *rec = reader.findBySerial("SLUS-12345");
+    ASSERT_NE(nullptr, rec);
+    EXPECT_EQ("Exact", rec->name);
 
     std::remove(path.c_str());
 }
