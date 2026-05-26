@@ -1,6 +1,7 @@
 #include "gui_font.h"
 #include <iostream>
 #include "../log.h"
+#include "../lang.h"
 #include <cassert>
 #include "../utils/file_utils.h"
 #include "gui.h"
@@ -48,11 +49,7 @@ FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) 
     auto renderer = gui->renderer;
 
     string rootPath = gui->getCurrentThemeFontPath();
-    string fontPath;
-    if (type == FONT_MED)
-        fontPath = rootPath + sep + "SST-Medium.ttf";
-    else
-        fontPath = rootPath + sep + "SST-Bold.ttf";
+    string fontPath = getFontPathForCurrentLanguage(rootPath, type);
 
     FC_Font *fc_font = FC_CreateFont();
     FC_LoadFont(fc_font, renderer, fontPath.c_str(), fontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
@@ -69,13 +66,70 @@ FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) 
 }
 
 //********************
+// Fonts::currentLanguageNeedsCjkFont
+//********************
+bool Fonts::currentLanguageNeedsCjkFont() {
+    auto lang = Lang::getInstance();
+    return lang->currentLang.find("Chinese") != string::npos;
+}
+
+//********************
+// Fonts::getResourceFontPath
+//********************
+string Fonts::getResourceFontPath(const string &rootPath, const string &fontName) {
+    string fontsDirPath = rootPath + sep + "fonts" + sep + fontName;
+    if (FileUtils::exists(fontsDirPath)) {
+        return fontsDirPath;
+    }
+
+    string legacyFontDirPath = rootPath + sep + "font" + sep + fontName;
+    if (FileUtils::exists(legacyFontDirPath)) {
+        return legacyFontDirPath;
+    }
+
+    return rootPath + sep + fontName;
+}
+
+//********************
+// Fonts::getFontPathForCurrentLanguage
+//********************
+string Fonts::getFontPathForCurrentLanguage(const string &rootPath, FontType type) {
+    string defaultPath;
+    if (type == FONT_MED)
+        defaultPath = rootPath + sep + "SST-Medium.ttf";
+    else
+        defaultPath = rootPath + sep + "SST-Bold.ttf";
+
+    if (!currentLanguageNeedsCjkFont()) {
+        return defaultPath;
+    }
+
+    string cjkPath;
+    if (type == FONT_MED)
+        cjkPath = rootPath + sep + "SSTJapanese-Regular.ttf";
+    else
+        cjkPath = rootPath + sep + "SSTJapanese-Bold.ttf";
+
+    if (FileUtils::exists(cjkPath)) {
+        return cjkPath;
+    }
+
+    string regularCjkPath = rootPath + sep + "SSTJapanese-Regular.ttf";
+    if (FileUtils::exists(regularCjkPath)) {
+        return regularCjkPath;
+    }
+
+    return defaultPath;
+}
+
+//********************
 // Fonts::openAllFonts
 //********************
 void Fonts::openAllFonts(const std::string &_rootPath, SDL_Shared<SDL_Renderer> renderer) {
     fonts.clear();
     rootPath = _rootPath;
-    medPath = rootPath + sep + "SST-Medium.ttf";
-    boldPath = rootPath + sep + "SST-Bold.ttf";
+    medPath = getFontPathForCurrentLanguage(rootPath, FONT_MED);
+    boldPath = getFontPathForCurrentLanguage(rootPath, FONT_BOLD);
 
     for (auto fontInfo : allFontInfos) {
         string path;

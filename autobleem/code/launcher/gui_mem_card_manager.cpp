@@ -26,7 +26,8 @@ void GuiMcManager::loadAssets() {
     shared_ptr<Gui> gui(Gui::getInstance());
     mcGrid = IMG_LoadTexture(renderer, (gui->getCurrentThemeImagePath() + sep + "MC/Dot_Matrix.png").c_str());
     mcPencil = IMG_LoadTexture(renderer, (gui->getCurrentThemeImagePath() + sep + "MC/Pencil_Carsor.png").c_str());
-    fontJIS = Fonts::openNewSharedCachedFont(Env::getWorkingPath() + sep + "japanese.ttf", 20, renderer);
+    fontJIS =
+        Fonts::openNewSharedCachedFont(Fonts::getResourceFontPath(Env::getWorkingPath(), "japanese.ttf"), 20, renderer);
 
     memcard1 = new CardEdit(renderer);
     memcard2 = new CardEdit(renderer);

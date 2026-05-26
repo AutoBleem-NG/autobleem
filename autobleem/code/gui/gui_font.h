@@ -41,6 +41,9 @@ class Fonts {
     static FC_Font_Shared openNewSharedCachedFont(const std::string &filename, int fontSize,
                                                   SDL_Shared<SDL_Renderer> renderer);
     static FC_Font_Shared openSpecificSharedCachedFont(FontType type, int fontSize);
+    static bool currentLanguageNeedsCjkFont();
+    static std::string getResourceFontPath(const std::string &rootPath, const std::string &fontName);
+    static std::string getFontPathForCurrentLanguage(const std::string &rootPath, FontType type);
 
     // static TTF_Font_Shared openNewSharedTTFFont(const std::string &filename, int fontSize);
 

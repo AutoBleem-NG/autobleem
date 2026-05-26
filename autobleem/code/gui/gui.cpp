@@ -121,13 +121,19 @@ string GuiBase::getCurrentThemeSoundPath() {
 //*******************************
 string GuiBase::getCurrentThemeFontPath() {
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
-    string path = getCurrentThemePath() + sep + "font";
+    string path = getCurrentThemePath() + sep + "fonts";
+    if (!FileUtils::exists(path)) {
+        path = getCurrentThemePath() + sep + "font";
+    }
     if (!FileUtils::exists(path)) {
         path = Env::getSonyPath() + sep + "font";
     }
     return path;
 #else
-    string path = "/media/themes/" + cfg.inifile.values["theme"] + "/font";
+    string path = "/media/themes/" + cfg.inifile.values["theme"] + "/fonts";
+    if (!FileUtils::exists(path)) {
+        path = "/media/themes/" + cfg.inifile.values["theme"] + "/font";
+    }
     if (!FileUtils::exists(path)) {
         path = "/usr/sony/share/data/font";
     }
@@ -246,6 +252,25 @@ SDL_Shared<SDL_Texture> Gui::loadThemeTexture(const string &themePath, const str
     return tex;
 }
 
+static string resolveThemeFontPath(const string &themePath, const string &fontName) {
+    string fontPath = themePath + fontName;
+    if (FileUtils::exists(fontPath)) {
+        return fontPath;
+    }
+
+    string fontsDirPath = themePath + "fonts" + sep + FileUtils::getFileNameFromPath(fontName);
+    if (FileUtils::exists(fontsDirPath)) {
+        return fontsDirPath;
+    }
+
+    string legacyFontDirPath = themePath + "font" + sep + FileUtils::getFileNameFromPath(fontName);
+    if (FileUtils::exists(legacyFontDirPath)) {
+        return legacyFontDirPath;
+    }
+
+    return fontPath;
+}
+
 //*******************************
 // Gui::loadAssets
 //*******************************
@@ -311,7 +336,13 @@ void Gui::loadAssets(bool reloadMusic) {
     buttonTextureMap["Enter"] = loadThemeTexture(themePath, defaultPath, "enter");
     buttonTextureMap["Tab"] = loadThemeTexture(themePath, defaultPath, "tab");
 
-    string fontPath = (themePath + themeData.values["font"]);
+    string fontPath = resolveThemeFontPath(themePath, themeData.values["font"]);
+    if (Fonts::currentLanguageNeedsCjkFont()) {
+        string cjkFontPath = Fonts::getFontPathForCurrentLanguage(getCurrentThemeFontPath(), FONT_MED);
+        if (FileUtils::exists(cjkFontPath)) {
+            fontPath = cjkFontPath;
+        }
+    }
     int fontSize = 0;
     string fontSizeString = themeData.values["fsize"];
     if (fontSizeString != "")
