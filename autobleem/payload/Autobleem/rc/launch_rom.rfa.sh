@@ -1,9 +1,8 @@
 #!/bin/bash
 #
-# launch_rom.rfa.sh - RetroArch ROM launcher (RetroBoot integration)
+# launch_rom.rfa.sh - Legacy RetroArch ROM launcher
 #
-# Copied to /media/retroarch/retroboot/bin/ during backup.sh.
-# Used by RetroBoot to launch ROMs with specified cores.
+# Kept for compatibility with older payloads that still call this script.
 #
 # Arguments:
 #   $1 - ROM/image file path
@@ -21,7 +20,7 @@ echo 2 > /data/power/disable
 echo "Image: $1"
 echo "Core: $2"
 
-# Launch game through RetroBoot
+# Launch game through RetroArch
 sh /media/retroarch/retroboot/bin/launch_rfa_rom.sh "$1" "$2"
 
 # Cleanup - remove load indicator

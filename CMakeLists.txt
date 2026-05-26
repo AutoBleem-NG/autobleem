@@ -269,8 +269,6 @@ add_executable(
         autobleem/code/io/binary_reader.cpp
         autobleem/code/system/process_utils.cpp
         autobleem/code/system/storage_info.cpp
-        autobleem/code/ver_migration.cpp
-        autobleem/code/ver_migration.h
 		autobleem/code/gui/abl.c
 		autobleem/code/gui/abl.h
 		autobleem/code/lightgun_games.h
@@ -319,13 +317,6 @@ else()
              ${CMAKE_DL_LIBS}
     )
 endif()
-
-
-#add_custom_command(TARGET autobleem-gui PRE_BUILD
-#	   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#	   VERBATIM
-#       COMMAND /bin/bash make_english.txt.sh
-#	   )
 
 add_custom_command(TARGET autobleem-gui PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory

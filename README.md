@@ -56,10 +56,8 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 - [Building](docs/building.md) - Build targets, reproducible ARM builds, and prerequisites
 - [Gamepad Compatibility](docs/gamepad-compatibility.md) - Controller support notes
 - [Kernel Installation](docs/kernel-installation.md) - Optional AutoBleem kernel setup
-- [RetroBoot](docs/retroboot.md) - RetroArch and EmulationStation integration
 - [Testing](docs/testing.md) - Running unit tests
 - [Translation](docs/translation.md) - Localization guide
-- [WiFi Setup](docs/wifi-setup.md) - Network setup on supported builds
 
 ## License
 
@@ -69,4 +67,4 @@ GPL-3.0 - See [LICENSE](LICENSE) for details.
 
 - [AKA-Axanar/AutoBleem](https://github.com/AKA-Axanar/AutoBleem) - Enhanced AutoBleem this fork builds upon
 - [screemerpl/AutoBleem](https://github.com/screemerpl/cbleemsync) - Original AutoBleem project
-- See [docs/original-readme.md](docs/original-readme.md#credits-and-links) for full credits
+- See [docs/credits.md](docs/credits.md) for project lineage and bundled component credits

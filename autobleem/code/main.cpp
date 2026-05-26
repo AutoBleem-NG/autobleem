@@ -9,7 +9,6 @@
 #include "engine/cover_db.h"
 #include "engine/database.h"
 #include "engine/get_game_dir_hierarchy.h"
-#include "engine/ini_file.h"
 #include "engine/mem_card.h"
 #include "engine/scanner.h"
 #include "environment.h"
@@ -24,7 +23,6 @@
 #include "launcher/retboot_interceptor.h"
 #include "log.h"
 #include "system/process_utils.h"
-#include "ver_migration.h"
 #include "version.h"
 
 using namespace std;
@@ -144,52 +142,6 @@ int scanGames(GamesHierarchy &gamesHierarchy) {
     return EXIT_SUCCESS;
 }
 
-// Rewrite the gamelist.xml file for Emulation Station to find PS1 cover files
-void rewriteGamelistXml() {
-    // this file was used during 0.9.0 testing.  it must be removed or ES will use it by mistake.
-    FileUtils::removeFile(Env::getPathToGamesDir() + sep + "gamelist.xml");
-
-    string path = Env::getPathToRetroarchDir() + sep + "retroboot/emulationstation/.emulationstation/gamelists/psx";
-    FileUtils::createDir(path);
-    string filePath = path + sep + "gamelist.xml";
-
-    FileUtils::removeFile(filePath);
-
-    PsGames currentGames;
-    Gui::getInstance()->db->getGames(&currentGames);
-
-    ofstream xml;
-    xml.open(filePath.c_str(), ios::binary);
-
-    xml << "<?xml version=\"1.0\"?>" << endl;
-    xml << "<gameList>" << endl;
-
-    auto makeGamesPathRelative = [](const string &oldPath) -> string {
-        string newPath = oldPath;
-        size_t pos = newPath.find("/Games");
-        if (pos != string::npos) {
-            newPath.erase(0, pos - 1 + sizeof("/Games"));
-            newPath = "." + newPath;
-        }
-        return newPath;
-    };
-
-    for (const auto &game : currentGames) {
-        xml << "\t<game>" << endl;
-
-        xml << "\t\t<path>" << makeGamesPathRelative(game->folder) << "</path>" << endl;
-        xml << "\t\t<name>" << game->title << "</name>" << endl;
-        xml << "\t\t<desc>" << game->title << "</desc>" << endl;
-        string imagePath = game->folder + sep + game->base + ".png";
-        xml << "\t\t<image>" << makeGamesPathRelative(imagePath) << "</image>" << endl;
-
-        xml << "\t</game>" << endl;
-    }
-    xml << "</gameList>" << endl;
-
-    xml.close();
-}
-
 int main(int argc, char *argv[]) {
     // Set up environment paths FIRST (needed for log file location)
     if (!Env::parseCommandLineArguments(argc, argv)) {
@@ -261,18 +213,6 @@ int main(int argc, char *argv[]) {
     string prevPath = Env::getWorkingPath() + sep + "autobleem.prev";
     bool prevFileExists = FileUtils::exists(prevPath);
 
-    bool useEmulationStation = false;
-    string rbCfgPath = Env::getPathToRetroarchDir() + sep + "retroboot/retroboot.cfg";
-    if (FileUtils::exists(rbCfgPath)) {
-        Inifile rbCfg;
-        rbCfg.load(rbCfgPath);
-        useEmulationStation = (rbCfg.values["use_emulationstation"] == "1");
-    }
-    bool gamelistXmlExists =
-        !useEmulationStation ||
-        FileUtils::exists(Env::getPathToRetroarchDir() + sep +
-                          "retroboot/emulationstation/.emulationstation/gamelists/psx/gamelist.xml");
-
     GamesHierarchy gamesHierarchy;
     gamesHierarchy.getHierarchy(pathToGamesDir);
 
@@ -282,7 +222,7 @@ int main(int argc, char *argv[]) {
     bool autobleemPrevOutOfDate = gamesHierarchy.gamesDoNotMatchAutobleemPrev(prevPath);
     bool thereAreRawGameFilesInGamesDir = scanner->areThereGameFilesInDir(pathToGamesDir);
 
-    if (!prevFileExists || !gamelistXmlExists || thereAreRawGameFilesInGamesDir || autobleemPrevOutOfDate) {
+    if (!prevFileExists || thereAreRawGameFilesInGamesDir || autobleemPrevOutOfDate) {
         scanner->forceScan = true;
     }
 
@@ -301,7 +241,6 @@ int main(int argc, char *argv[]) {
             // removed from the hierarchy and it force you to rescan on every boot.
             gamesHierarchy.writeAutobleemPrev(prevPath);
             scanGames(gamesHierarchy);
-            rewriteGamelistXml();
 
             gui->forceScan = false;
         }

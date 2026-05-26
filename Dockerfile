@@ -249,7 +249,7 @@ ENV LD_LIBRARY_PATH=/opt/gcc-6/usr/lib/x86_64-linux-gnu
 WORKDIR /tmp
 
 # SDL2 — shared library shipped via the USB payload at /tmp/lib; consumed by
-# autobleem-gui, pscbios, ABFlashKit and other payload apps.
+# autobleem-gui and ABFlashKit.
 #
 # Autotools (not CMake): the known-working PSC archive was configured this
 # way, and newer CMake builds reproduced black-screen failures even with
@@ -301,7 +301,7 @@ RUN wget -q https://github.com/libsdl-org/SDL/releases/download/release-${SDL2_V
     rm -rf SDL2-${SDL2_VERSION}*
 
 # SDL2_image — shared, vendored PNG + JPG only (AVIF/JXL/TIFF/WebP off).
-# Consumed by pscbios and ABFlashKit (libSDL2_image-2.0.so.0).
+# Consumed by ABFlashKit (libSDL2_image-2.0.so.0).
 RUN wget -q https://github.com/libsdl-org/SDL_image/releases/download/release-${SDL2_IMAGE_VERSION}/SDL2_image-${SDL2_IMAGE_VERSION}.tar.gz && \
     tar -xf SDL2_image-${SDL2_IMAGE_VERSION}.tar.gz && \
     cmake -S SDL2_image-${SDL2_IMAGE_VERSION} -B SDL2_image-${SDL2_IMAGE_VERSION}/build \
@@ -351,7 +351,7 @@ RUN wget -q https://github.com/libsdl-org/SDL_mixer/releases/download/release-${
     cmake --install SDL2_mixer-${SDL2_MIXER_VERSION}/build && \
     rm -rf SDL2_mixer-${SDL2_MIXER_VERSION}*
 
-# SDL2_ttf — vendored freetype, no harfbuzz. Consumed by pscbios + ABFlashKit.
+# SDL2_ttf — vendored freetype, no harfbuzz. Consumed by ABFlashKit.
 RUN wget -q https://github.com/libsdl-org/SDL_ttf/releases/download/release-${SDL2_TTF_VERSION}/SDL2_ttf-${SDL2_TTF_VERSION}.tar.gz && \
     tar -xf SDL2_ttf-${SDL2_TTF_VERSION}.tar.gz && \
     cmake -S SDL2_ttf-${SDL2_TTF_VERSION} -B SDL2_ttf-${SDL2_TTF_VERSION}/build \
@@ -418,7 +418,7 @@ RUN docker-validate no-rpath build_arm/autobleem-gui
 
 # Repackage libs.tar.gz with the SDL2 family (core/image/mixer/ttf) replaced
 # by the builds above. Other libs (libiconv, libmamecd, libogg, libvorbis*)
-# are preserved from the original archive so pscbios/ABFlashKit keep working.
+# are preserved from the original archive so ABFlashKit keeps working.
 RUN mkdir -p /tmp/newlibs && \
     cp -P /usr/local/cross-tools/arm-linux-gnueabihf/lib/libSDL2*.so* /tmp/newlibs/ && \
     tar -xzf /build/autobleem/payload/Autobleem/lib/libs.tar.gz \

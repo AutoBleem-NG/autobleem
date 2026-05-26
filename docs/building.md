@@ -177,10 +177,7 @@ Located in `autobleem/cmake/`:
 | File | Description |
 |------|-------------|
 | `MacToolchain.cmake` | ARM cross-compilation on macOS |
-| `PS1Ctoolchain.cmake` | Alternative toolchain |
-| `PSCtoolchainV7.cmake` | Legacy v7 toolchain |
 | `PSCtoolchainV8.cmake` | Primary ARM toolchain for PSC (v8) |
-| `ToolchainServer.cmake` | Server-based toolchain |
 
 ## Troubleshooting
 

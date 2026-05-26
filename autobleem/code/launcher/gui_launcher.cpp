@@ -87,21 +87,11 @@ void GuiLauncher::getGames_SET_SUBDIR(PsGames *gamesList, int rowIndex) {
         return; // no games!
     currentUSBGameDirName = gameRowInfos[rowIndex].rowName;
 
-#if 0
-    for (auto &gameRowInfo : gameRowInfos)
-            PLOG_DEBUG << "game row: " << gameRowInfo.subDirRowIndex << ", " << gameRowInfo.rowName << ", " <<
-                 gameRowInfo.indentLevel << ", " << gameRowInfo.numGames << endl;
-#endif
     PsGames completeList;
     gui->db->getGames(&completeList);
 
     vector<int> gameIdsInRow;
     gui->db->getGameIdsInRow(&gameIdsInRow, rowIndex);
-#if 0
-    for (auto &id : gameIdsInRow) {
-            PLOG_DEBUG << "game row: " << selectedRowIndex << ", id: " << id ;
-        }
-#endif
 
     if (rowIndex < gameRowInfos.size()) {
         for (auto &psgame : completeList) {
@@ -385,14 +375,6 @@ void GuiLauncher::loadAssets() {
         currentRAPlaylistName = raPlaylists[gui->lastRAPlaylistIndex];
     if (gui->lastRAPlaylistIndex < raPlaylists.size())
         gui->lastRAPlaylistName = raPlaylists[gui->lastRAPlaylistIndex];
-#if 0
-    if (gui->lastRAPlaylistName != "")
-    {
-        currentRAPlaylistName = gui->lastRAPlaylistName;
-        //gui->lastRAPlaylistName = "";
-    }
-#endif
-
     for (int i = 0; i < 100; i++) {
         SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT);
     }

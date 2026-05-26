@@ -159,16 +159,6 @@ TEST_F(DatabaseTest, UpdateTitle) {
     EXPECT_TRUE(updated);
 }
 
-TEST_F(DatabaseTest, UpdateYear) {
-    ASSERT_TRUE(db.connect(testDbPath));
-    ASSERT_TRUE(db.createInitialDatabase());
-
-    db.insertGame(1, "Game", "Publisher", 1, 1999, "/path", "/ss", "CARD");
-
-    bool updated = db.updateYear(1, 2001);
-    EXPECT_TRUE(updated);
-}
-
 TEST_F(DatabaseTest, UpdateMemcard) {
     ASSERT_TRUE(db.connect(testDbPath));
     ASSERT_TRUE(db.createInitialDatabase());

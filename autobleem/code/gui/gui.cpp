@@ -10,7 +10,6 @@
 #include "menus/gui_game_manager_menu.h"
 #include "gui_confirm.h"
 #include <SDL2/SDL_image.h>
-#include "../ver_migration.h"
 #include "../launcher/gui_launcher.h"
 #include "gui_pad_test.h"
 #include <unistd.h>
@@ -422,9 +421,6 @@ void Gui::saveSelection() {
     os.open(path);
     os << "#!/bin/sh" << endl << endl;
     os << "AB_SELECTION=" << menuOption << endl;
-    os << "AB_THEME=" << cfg.inifile.values["theme"] << endl;
-    os << "AB_PCSX=" << cfg.inifile.values["pcsx"] << endl;
-    os << "AB_MIP=" << cfg.inifile.values["mip"] << endl;
 
     os.flush();
     os.close();
@@ -445,15 +441,7 @@ void Gui::menuSelection() {
     otherMenuShift = false;
     powerOffShift = false;
     string mainMenu = "|@Start| " + _("AutoBleem") + "    |@X|  " + _("Re/Scan") + " ";
-    string RA_or_EA = _("RetroArch");
-    string cfgPath = Env::getPathToRetroarchDir() + sep + "retroboot/retroboot.cfg";
-    if (FileUtils::exists(cfgPath)) {
-        Inifile RBcfg;
-        RBcfg.load(cfgPath);
-        if (RBcfg.values["use_emulationstation"] == "1")
-            RA_or_EA = _("EmulationStation");
-    }
-    mainMenu += "|@S|  " + RA_or_EA + "   ";
+    mainMenu += "|@S|  " + _("RetroArch") + "   ";
     mainMenu += "|@T|  " + _("About") + "  |@Select|  " + _("Options") + " ";
     mainMenu += "|@L1| " + _("Advanced");
     mainMenu += " |@L2|+|@R2|" + _("Power Off");
@@ -461,13 +449,11 @@ void Gui::menuSelection() {
     string forceScanMenu = _("Games changed. Press") + "  |@X|  " + _("to scan") + "|";
     string otherMenu;
 
-    otherMenu += "|@S|  " + _("Hardware Information") + "  ";
     otherMenu += "|@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
 
     string gamepadNotice = "";
     if (SDL_NumJoysticks() > mapper.getActivePadNum()) {
-        gamepadNotice =
-            _("NOTICE: At least one connected gamepad is not recognized. Use Hardware Information page to setup");
+        gamepadNotice = _("NOTICE: At least one connected gamepad is not recognized.");
     }
 
     if (!forceScan) {
@@ -608,26 +594,6 @@ void Gui::menuSelection() {
                     };
                     break;
                 } else {
-                    if (e.cbutton.button == SDL_BTN_SQUARE) {
-                        Mix_PlayChannel(-1, cursor, 0);
-                        stopAudio();
-                        mapper.flushPads();
-#if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
-                        drawText("Small delay to test");
-                        SDL_Delay(2000);
-#endif
-                        string cmd = Env::getPathToAppsDir() + sep + "pscbios/run.sh";
-                        vector<const char *> argvNew{cmd.c_str(), nullptr};
-                        System::executeFork(cmd.c_str(), argvNew);
-                        SDL_PumpEvents();
-                        SDL_FlushEvents(SDL_FIRSTEVENT, SDL_LASTEVENT);
-                        mapper.probePads();
-                        restartAudio(freq);
-                        playMusic(customMusic, musicPath);
-                        menuSelection();
-                        menuVisible = false;
-                    };
-
                     if (e.cbutton.button == SDL_BTN_CROSS) {
                         Mix_PlayChannel(-1, cursor, 0);
                         auto memcardsScreen = new GuiMemcards(renderer);

@@ -15,14 +15,6 @@ using namespace std;
 //*******************************
 
 //*******************************
-// RELEASE_YEAR is found in both internal.db and regional.db
-// used by Database::updateYear() which is only called by VerMigration::migrate04_05()
-// VerMigration appears to be no longer used
-//*******************************
-// used by: updateYear
-static const char UPDATE_YEAR[] = "UPDATE GAME SET RELEASE_YEAR=? WHERE GAME_ID=?";
-
-//*******************************
 // regional.db
 //*******************************
 
@@ -211,21 +203,6 @@ int Database::getNumGames() {
     }
     sqlite3_finalize(res);
     return number;
-}
-
-// Called by VerMigration::migrate04_05()
-bool Database::updateYear(int id, int year) {
-    sqlite3_stmt *res = nullptr;
-    int rc = sqlite3_prepare_v2(db, UPDATE_YEAR, -1, &res, nullptr);
-    if (rc != SQLITE_OK) {
-        PLOG_ERROR << "Failed: db::updateYear - " << id << ", " << year << " - " << sqlite3_errmsg(db);
-        return false;
-    }
-    sqlite3_bind_int(res, 1, year);
-    sqlite3_bind_int(res, 2, id);
-    sqlite3_step(res);
-    sqlite3_finalize(res);
-    return true;
 }
 
 bool Database::updateMemcard(int id, string memcard) {

@@ -330,17 +330,6 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
     ofstream badGameFile;
     badGameFile.open(badGameFilePath.c_str(), ios::binary);
 
-#if 0
-    int i = 0;
-    for (auto game : gamesScanned) {
-        PLOG_DEBUG << i++ << ": ";
-        if (game)
-            PLOG_DEBUG << game->pathName << ", " << game->fullPath ;
-        else
-            PLOG_DEBUG << "NULL" ;
-    }
-#endif
-
     for (USBGamePtr game : allGames) {
         int i = 0;
         if (game)

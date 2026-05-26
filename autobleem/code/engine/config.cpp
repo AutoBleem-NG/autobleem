@@ -15,16 +15,6 @@ Config::Config() {
     std::string path = Env::getWorkingPath() + sep + "config.ini";
     inifile.load(path);
 
-    // these are no longer used
-    inifile.values.erase("stheme");
-    inifile.values.erase("autoregion");
-    inifile.values.erase("quick");
-    inifile.values.erase("quickmenu");
-    inifile.values.erase("delay");
-    inifile.values.erase("adv");
-    inifile.values.erase("ui");
-    save();
-
     bool aDefaultWasSet{false};
     if (inifile.values["language"] == "") {
         inifile.values["language"] = DEFAULT_LANG;
@@ -52,8 +42,6 @@ Config::Config() {
         aDefaultWasSet = true;
     }
 
-    inifile.values["pcsx"] = "bleemsync";
-
     if (aDefaultWasSet)
         save();
 }
@@ -62,7 +50,6 @@ Config::Config() {
 // Config::save
 //*******************************
 void Config::save() {
-    inifile.values["pcsx"] = "bleemsync";
     std::string path = Env::getWorkingPath() + sep + "config.ini";
     inifile.save(path);
 }

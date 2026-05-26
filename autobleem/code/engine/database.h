@@ -63,7 +63,6 @@ class Database {
     bool insertSubDirGames(int rowIndex, int gameId);
 
     int getNumGames();
-    bool updateYear(int id, int year);
     bool updateMemcard(int id, std::string memcard);
 
     bool getGames(PsGames *result);

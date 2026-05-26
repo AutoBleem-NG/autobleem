@@ -44,8 +44,8 @@ void GuiAbout::render() {
         "Mate(Czech)",
         "Sasha(Italian), Jakejj(BR_Portuguese), jolny(Swedish), StepJefli(Danish), alucard73 / MagnusRC(French), "
         "Quenti(Occitan)",
-        ".-= " + _("Retroboot and emulation cores") + " =-.",
-        "genderbent, KMFDManic",
+        ".-= " + _("RetroArch integration") + " =-.",
+        "genderbent, libretro contributors",
         " ",
         _("Support via Discord") + ": https://discord.gg/AHUS3RM",
         _("This is free software. It works AS IS and We take no responsibility for any issues or damage"),
