@@ -1,8 +1,7 @@
 # AutoBleem English Strings
 # Extracted from source code
-# Total: 178 strings
+# Total: 177 strings
 
-.lic file not found=.lic file not found
 About=About
 Advanced=Advanced
 All Games=All Games

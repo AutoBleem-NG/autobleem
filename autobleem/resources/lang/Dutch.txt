@@ -1,8 +1,7 @@
 # AutoBleem Dutch Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=.lic-bestand niet gevonden
 About=Over
 Advanced=Geavanceerd
 All Games=Alle spellen

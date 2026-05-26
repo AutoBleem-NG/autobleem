@@ -1,8 +1,7 @@
 # AutoBleem Slovak Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=.lic súbor sa nepodarilo nájsť
 About=O programe
 Advanced=Rozšírené
 All Games=Všetky hry

@@ -376,10 +376,6 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                 if (StringUtils::compareCaseInsensitive(file.name, PCSX_CFG)) {
                     game->pcsxCfgFound = true;
                 }
-
-                if (FileUtils::matchExtension(file.name, EXT_LIC)) {
-                    game->licFound = true;
-                }
             }
 
             PLOG_DEBUG << "before recoverMissingFiles() automationUsed=" << game->automationUsed;

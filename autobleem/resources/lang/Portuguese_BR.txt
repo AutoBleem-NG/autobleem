@@ -1,8 +1,7 @@
 # AutoBleem Portuguese_BR Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=Arquivo .lic não encontrado
 About=Sobre o AutoBleem
 Advanced=Avançado
 All Games=Todos os jogos

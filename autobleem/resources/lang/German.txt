@@ -1,8 +1,7 @@
 # AutoBleem German Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=.lic-Datei nicht gefunden
 About=Über
 Advanced=Erweitert
 All Games=Alle Spiele

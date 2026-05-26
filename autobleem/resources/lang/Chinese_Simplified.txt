@@ -1,8 +1,7 @@
 # AutoBleem Chinese_Simplified Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=未找到.lic文件
 About=关于
 Advanced=高级
 All Games=所有游戏

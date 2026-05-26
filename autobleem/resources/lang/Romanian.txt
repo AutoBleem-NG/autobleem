@@ -1,8 +1,7 @@
 # AutoBleem Romanian Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=Fișierul .lic nu a fost găsit
 About=Despre
 Advanced=Avansat
 All Games=Toate jocurile

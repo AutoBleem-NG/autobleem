@@ -152,7 +152,6 @@ SDL2 development packages and is not the release build path.
 build_sys/              # Local x86_64 build
 ├── autobleem-gui       # Main application binary
 ├── default.png         # Default cover image
-├── default.lic         # Default license file
 └── pcsx.cfg            # PCSX configuration template
 
 build_arm/              # ARM build (same structure)

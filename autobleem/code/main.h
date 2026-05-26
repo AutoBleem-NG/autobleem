@@ -18,4 +18,3 @@ const char EXT_BIN[] = ".bin";
 const char EXT_IMG[] = ".img";
 const char EXT_CHD[] = ".chd";
 const char EXT_CUE[] = ".cue";
-const char EXT_LIC[] = ".lic";

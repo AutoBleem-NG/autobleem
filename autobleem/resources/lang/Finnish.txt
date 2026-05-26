@@ -1,8 +1,7 @@
 # AutoBleem Finnish Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=.lic tiedostoa ei löytynyt
 About=Tietoja
 Advanced=Lisäasetukset
 All Games=Kaikki pelit

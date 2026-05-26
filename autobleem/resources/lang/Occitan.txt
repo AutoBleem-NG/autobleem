@@ -1,8 +1,7 @@
 # AutoBleem Occitan Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=Fichièr .lic pas trobat
 About=A prepaus
 Advanced=Avançat
 All Games=Totes los jòcs

@@ -123,11 +123,6 @@ bool USBGame::verify(std::vector<std::string> *failureReasons) {
             failureReasons->emplace_back(_("Game.ini file not valid"));
         result = false;
     }
-    if (!licFound) {
-        if (failureReasons)
-            failureReasons->emplace_back(_(".lic file not found"));
-        result = false;
-    }
     if (!pcsxCfgFound) {
         if (failureReasons)
             failureReasons->emplace_back(_("pcsx.cfg file not found"));
@@ -159,7 +154,6 @@ bool USBGame::print() {
     PLOG_DEBUG << "GameData found: " << gameDataFound;
     PLOG_DEBUG << "Game.ini found: " << gameIniFound;
     PLOG_DEBUG << "Game.ini valid: " << gameIniValid;
-    PLOG_DEBUG << "LIC found:" << licFound;
     PLOG_DEBUG << "pcsx.cfg found: " << pcsxCfgFound;
     PLOG_DEBUG << "TotalDiscs: " << discs.size();
     PLOG_DEBUG << "Favorite: " << favorite;
@@ -259,18 +253,6 @@ void USBGame::recoverMissingFiles() {
                     discs.push_back(disc);
                 }
             }
-        }
-    }
-
-    if (discs.size() > 0) {
-        if (!licFound) {
-            automationUsed = true;
-            PLOG_DEBUG << "Switching automation no lic";
-            string source = workingPath + sep + "default.lic";
-            string destination = fullPath + sep + discs[0].diskName + ".lic";
-            PLOG_DEBUG << "Copy: " << source << " -> " << destination;
-            FileUtils::copy(source, destination);
-            licFound = true;
         }
     }
 

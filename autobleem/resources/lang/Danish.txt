@@ -1,8 +1,7 @@
 # AutoBleem Danish Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=.lic-fil ikke fundet
 About=Om
 Advanced=Advanceret
 All Games=Alle spil

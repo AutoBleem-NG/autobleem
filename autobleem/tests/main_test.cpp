@@ -41,7 +41,6 @@ TEST_F(MainTest, ExtensionConstantsStartWithDot) {
     EXPECT_EQ(EXT_IMG[0], '.');
     EXPECT_EQ(EXT_CHD[0], '.');
     EXPECT_EQ(EXT_CUE[0], '.');
-    EXPECT_EQ(EXT_LIC[0], '.');
 }
 
 TEST_F(MainTest, ExtensionConstantsAreCorrect) {
@@ -52,7 +51,6 @@ TEST_F(MainTest, ExtensionConstantsAreCorrect) {
     EXPECT_STREQ(EXT_IMG, ".img");
     EXPECT_STREQ(EXT_CHD, ".chd");
     EXPECT_STREQ(EXT_CUE, ".cue");
-    EXPECT_STREQ(EXT_LIC, ".lic");
 }
 
 // File and directory constants tests

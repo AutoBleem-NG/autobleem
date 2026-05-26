@@ -1,8 +1,7 @@
 # AutoBleem Polish Translation
 # Format: English Text=Translated Text
-# Untranslated: 0 / Total: 178
+# Untranslated: 0 / Total: 177
 
-.lic file not found=Nie znaleziono pliku .lic
 About=O programie
 Advanced=Zawansowane
 All Games=Wszystkie Gry

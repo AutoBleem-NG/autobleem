@@ -323,6 +323,5 @@ add_custom_command(TARGET autobleem-gui PRE_BUILD
         ${CMAKE_SOURCE_DIR}/autobleem/resources $<TARGET_FILE_DIR:autobleem-gui>)
 
 
-configure_file(autobleem/resources/default.lic default.lic COPYONLY)
 configure_file(autobleem/resources/default.png default.png COPYONLY)
 configure_file(autobleem/resources/pcsx.cfg pcsx.cfg COPYONLY)
