@@ -44,7 +44,7 @@ void GuiSplash::render() {
 
     int y = atoi(gui->themeData.values["ttop"].c_str());
     string splashText = _("AutoBleem") + " " + Version::VERSION + Version::GIT_CHANGED_FLAG;
-    gui->renderText(gui->themeFont, splashText, 0, y, XALIGN_CENTER);
+    gui->renderFittedText(gui->themeFonts[FONT_20_BOLD], splashText, 0, y, rect.w - 20, 20, 12, XALIGN_CENTER);
 
     SDL_RenderPresent(renderer);
 }

@@ -10,6 +10,8 @@
 
 namespace ThumbnailLookup {
 
+const char PlayStationDbName[] = "Sony - PlayStation";
+
 namespace {
 
 const std::vector<std::string> &imageExtensions() {

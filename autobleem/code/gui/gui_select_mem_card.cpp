@@ -63,8 +63,10 @@ void GuiSelectMemcard::render() {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->renderBackground();
     gui->renderTextBar();
-    int yoffset = gui->renderLogo(true);
-    gui->renderTextLine("-=" + _("Select memory card") + "=-", 0, yoffset, XALIGN_CENTER);
+    int yoffset = gui->getContentTopY();
+    int fontSize = gui->getThemeFontSize();
+    SDL_Rect opscreen = gui->getOpscreenRectOfTheme();
+    gui->renderTitleLine(_("Select memory card"), 0, yoffset);
 
     if (selected >= cards.size()) {
         selected = cards.size() - 1;
@@ -84,7 +86,7 @@ void GuiSelectMemcard::render() {
         if (i >= cards.size()) {
             break;
         }
-        gui->renderTextLine(cards[i], pos, yoffset);
+        gui->renderFittedTextLine(cards[i], pos, yoffset, XALIGN_LEFT, 0, opscreen.w - 20, fontSize, 12);
         pos++;
     }
 

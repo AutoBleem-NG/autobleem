@@ -34,6 +34,6 @@ PsCenterLabel::~PsCenterLabel() = default;
 //*******************************
 void PsCenterLabel::render() {
     if (visible) {
-        gui->renderText_WithColor(font, text, x, y, textColor, XALIGN_CENTER);
+        gui->renderFittedText_WithColor(font, text, x, y, SCREEN_WIDTH - 80, 28, 12, textColor, XALIGN_CENTER);
     }
 }

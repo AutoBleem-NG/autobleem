@@ -3,6 +3,7 @@
 #include "../log.h"
 #include "../lang.h"
 #include <cassert>
+#include "../environment.h"
 #include "../utils/file_utils.h"
 #include "gui.h"
 
@@ -44,12 +45,11 @@ FC_Font_Shared Fonts::openNewSharedCachedFont(const string &filename, int fontSi
 // Fonts::openSpecificSharedCachedFont
 // low level open shared font.  type is the font type (FONT_MED, FONT_BOLD).  fontSize is the font point size.
 //********************
-FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) {
+FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) const {
     auto gui = Gui::getInstance();
     auto renderer = gui->renderer;
 
-    string rootPath = gui->getCurrentThemeFontPath();
-    string fontPath = getFontPathForCurrentLanguage(rootPath, type);
+    string fontPath = type == FONT_MED ? medPath : boldPath;
 
     FC_Font *fc_font = FC_CreateFont();
     FC_LoadFont(fc_font, renderer, fontPath.c_str(), fontSize, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
@@ -71,23 +71,6 @@ FC_Font_Shared Fonts::openSpecificSharedCachedFont(FontType type, int fontSize) 
 bool Fonts::currentLanguageNeedsCjkFont() {
     auto lang = Lang::getInstance();
     return lang->currentLang.find("Chinese") != string::npos;
-}
-
-//********************
-// Fonts::getResourceFontPath
-//********************
-string Fonts::getResourceFontPath(const string &rootPath, const string &fontName) {
-    string fontsDirPath = rootPath + sep + "fonts" + sep + fontName;
-    if (FileUtils::exists(fontsDirPath)) {
-        return fontsDirPath;
-    }
-
-    string legacyFontDirPath = rootPath + sep + "font" + sep + fontName;
-    if (FileUtils::exists(legacyFontDirPath)) {
-        return legacyFontDirPath;
-    }
-
-    return rootPath + sep + fontName;
 }
 
 //********************
@@ -143,35 +126,45 @@ void Fonts::openAllFonts(const std::string &_rootPath, SDL_Shared<SDL_Renderer> 
 }
 
 //********************
-// SizesOfBoldThemeFont::AddFont
-// If you ever need to change this to handle both bold and medium fonts change the map key to pair<FontType, pointSize>
-// This class is used by ps_meta.cpp to make the game title font smaller if the game name is do long that it
-// displays beyond the right edge of the screen.
+// Fonts::openAllFontsFromFontFile
 //********************
+void Fonts::openAllFontsFromFontFile(const std::string &fontPath, SDL_Shared<SDL_Renderer> renderer) {
+    fonts.clear();
+    rootPath = fontPath;
+    medPath = fontPath;
+    boldPath = fontPath;
+
+    for (auto fontInfo : allFontInfos) {
+        fonts[fontInfo.fontEnum] = openNewSharedCachedFont(fontPath, fontInfo.size, renderer);
+        fontInfos[fontInfo.fontEnum] = fontInfo;
+    }
+}
 
 //********************
-// SizesOfBoldThemeFont::AddFont
+// SizesOfThemeFont::AddFont
 //********************
-FC_Font_Shared SizesOfBoldThemeFont::AddFont(int size, FC_Font_Shared font) {
-    auto it = boldFonts.find(size);
-    if (it != boldFonts.end())
+FC_Font_Shared SizesOfThemeFont::AddFont(int size, FC_Font_Shared font, FontType type) {
+    auto key = make_pair(type, size);
+    auto it = fonts.find(key);
+    if (it != fonts.end())
         return it->second;
     else {
-        boldFonts[size] = font; // add the passed font as a new font size font
+        fonts[key] = font; // add the passed font as a new font size font
         return font;
     }
 }
 
 //********************
-// SizesOfBoldThemeFont::GetFont
+// SizesOfThemeFont::GetFont
 //********************
-FC_Font_Shared SizesOfBoldThemeFont::GetFont(int size, const Fonts &fonts) {
-    auto it = boldFonts.find(size);
-    if (it != boldFonts.end())
+FC_Font_Shared SizesOfThemeFont::GetFont(int size, const Fonts &themeFonts, FontType type) {
+    auto key = make_pair(type, size);
+    auto it = fonts.find(key);
+    if (it != fonts.end())
         return it->second; // we already have that size
     else {
-        FC_Font_Shared font = fonts.openSpecificSharedCachedFont(FONT_BOLD, size);
-        boldFonts[size] = font;
+        FC_Font_Shared font = themeFonts.openSpecificSharedCachedFont(type, size);
+        fonts[key] = font;
         return font;
     }
 }

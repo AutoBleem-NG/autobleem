@@ -22,9 +22,10 @@ void GuiConfirm::render() {
     shared_ptr<Gui> gui(Gui::getInstance());
     gui->renderBackground();
     gui->renderTextBar();
-    int yoffset = gui->renderLogo(true);
-    gui->renderTextLine("-=" + _("Please confirm") + "=-", 0, yoffset, XALIGN_CENTER);
-    gui->renderTextLine(label, 2, yoffset, XALIGN_CENTER);
+    int yoffset = gui->getContentTopY();
+    int fontSize = gui->getThemeFontSize();
+    gui->renderTitleLine(_("Please confirm"), 0, yoffset);
+    gui->renderFittedTextLine(label, 2, yoffset, XALIGN_CENTER, 0, SCREEN_WIDTH - 80, fontSize, 12);
 
     gui->renderStatus("|@X| " + _("Confirm") + "  |@O| " + _("Cancel") + " |");
     SDL_RenderPresent(renderer);

@@ -61,8 +61,8 @@ template <typename LineDataType> class GuiMenuBase : public GuiScreen {
     int maxVisible = 8;        // the number of lines that can fit on the display (theme dependent)
     int firstVisibleIndex = 0; // current visible range on page
     int lastVisibleIndex = 7;  // current visible range on page
-    int firstRow = 2;          // row 0 is the title.  this is the first row of the menu item lines
-    int yoffset = 0;           // y offset for the line (y=fontHeight*line + yoffset).  set by renderLogo()
+    int firstRow = 1;          // row 0 is the title.  this is the first row of the menu item lines
+    int yoffset = 0;           // y offset for the line (y=fontHeight*line + yoffset).
 
     // this is useful in menus that have blank lines like gui_networkMenu.cpp
     virtual bool skipSelectingThisLineWhenMovingByOne(int index) { return false; }
@@ -163,8 +163,8 @@ template <typename LineDataType> void GuiMenuBase<LineDataType>::render() {
     SDL_RenderClear(renderer);
     gui->renderBackground();
     gui->renderTextBar();
-    yoffset = gui->renderLogo(true);
-    gui->renderTextLine(getTitle(), 0, yoffset, XALIGN_CENTER);
+    yoffset = gui->getContentTopY();
+    gui->renderTitleLine(getTitle(), 0, yoffset);
 
     if (firstRender) {
         computePagePosition();

@@ -32,6 +32,14 @@ Config::Config() {
         inifile.values["music"] = "--";
         aDefaultWasSet = true;
     }
+    if (inifile.values["font"] == "") {
+        inifile.values["font"] = "--";
+        aDefaultWasSet = true;
+    }
+    if (inifile.values["themefont"] == "") {
+        inifile.values["themefont"] = "true";
+        aDefaultWasSet = true;
+    }
     if (inifile.values["showingtimeout"] == "") {
         inifile.values["showingtimeout"] = DefaultShowingTimeoutText;
         aDefaultWasSet = true;

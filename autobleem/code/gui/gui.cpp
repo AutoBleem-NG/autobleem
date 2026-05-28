@@ -9,6 +9,8 @@
 #include "menus/gui_mem_cards_menu.h"
 #include "menus/gui_game_manager_menu.h"
 #include "gui_confirm.h"
+#include "gui_action_text.h"
+#include "gui_text.h"
 #include <SDL2/SDL_image.h>
 #include "../launcher/gui_launcher.h"
 #include "gui_pad_test.h"
@@ -18,6 +20,7 @@
 #include "../system/process_utils.h"
 #include "../system/storage_info.h"
 #include "../utils/string_utils.h"
+#include <algorithm>
 #include <iomanip>
 #include <json.h>
 #include "../nlohmann/fifo_map.h"
@@ -252,25 +255,6 @@ SDL_Shared<SDL_Texture> Gui::loadThemeTexture(const string &themePath, const str
     return tex;
 }
 
-static string resolveThemeFontPath(const string &themePath, const string &fontName) {
-    string fontPath = themePath + fontName;
-    if (FileUtils::exists(fontPath)) {
-        return fontPath;
-    }
-
-    string fontsDirPath = themePath + "fonts" + sep + FileUtils::getFileNameFromPath(fontName);
-    if (FileUtils::exists(fontsDirPath)) {
-        return fontsDirPath;
-    }
-
-    string legacyFontDirPath = themePath + "font" + sep + FileUtils::getFileNameFromPath(fontName);
-    if (FileUtils::exists(legacyFontDirPath)) {
-        return legacyFontDirPath;
-    }
-
-    return fontPath;
-}
-
 //*******************************
 // Gui::loadAssets
 //*******************************
@@ -336,18 +320,14 @@ void Gui::loadAssets(bool reloadMusic) {
     buttonTextureMap["Enter"] = loadThemeTexture(themePath, defaultPath, "enter");
     buttonTextureMap["Tab"] = loadThemeTexture(themePath, defaultPath, "tab");
 
-    string fontPath = resolveThemeFontPath(themePath, themeData.values["font"]);
-    if (Fonts::currentLanguageNeedsCjkFont()) {
-        string cjkFontPath = Fonts::getFontPathForCurrentLanguage(getCurrentThemeFontPath(), FONT_MED);
-        if (FileUtils::exists(cjkFontPath)) {
-            fontPath = cjkFontPath;
-        }
-    }
+    string fontPath = GuiText::resolveSelectedBodyFontPath(Gui::getInstance());
     int fontSize = 0;
     string fontSizeString = themeData.values["fsize"];
     if (fontSizeString != "")
         fontSize = atoi(fontSizeString.c_str());
     themeFont = Fonts::openNewSharedCachedFont(fontPath, fontSize, renderer);
+    themeFonts.openAllFontsFromFontFile(fontPath, renderer);
+    sizesOfThemeFont.Init();
 
     if (reloadMusic) {
         freeMusic();
@@ -471,16 +451,16 @@ void Gui::menuSelection() {
     }
     otherMenuShift = false;
     powerOffShift = false;
-    string mainMenu = "|@Start| " + _("AutoBleem") + "    |@X|  " + _("Re/Scan") + " ";
-    mainMenu += "|@S|  " + _("RetroArch") + "   ";
-    mainMenu += "|@T|  " + _("About") + "  |@Select|  " + _("Options") + " ";
+    string mainMenu = "|@Start| " + _("AutoBleem") + " |@X| " + _("Re/Scan") + " ";
+    mainMenu += "|@S| " + _("RetroArch") + " ";
+    mainMenu += "|@T| " + _("About") + " |@Select| " + _("Options") + " ";
     mainMenu += "|@L1| " + _("Advanced");
-    mainMenu += " |@L2|+|@R2|" + _("Power Off");
+    mainMenu += " |@L2| + |@R2| " + _("Power Off");
 
-    string forceScanMenu = _("Games changed. Press") + "  |@X|  " + _("to scan") + "|";
+    string forceScanMenu = _("Games changed. Press") + " |@X| " + _("to scan");
     string otherMenu;
 
-    otherMenu += "|@X|  " + _("Memory Cards") + "   |@O|  " + _("Game Manager");
+    otherMenu += "|@X| " + _("Memory Cards") + " |@O| " + _("Game Manager");
 
     string gamepadNotice = "";
     if (SDL_NumJoysticks() > mapper.getActivePadNum()) {
@@ -726,44 +706,6 @@ void Gui::exportDBToRetroarch() {
 }
 
 //*******************************
-// Rect and Size routines
-//*******************************
-
-//*******************************
-// Gui::FC_getFontTextSize
-// return FC_Size w of font text and h of font
-//*******************************
-FC_Size Gui::FC_getFontTextSize(FC_Font_Shared font, const char *text) {
-    assert(font != nullptr);
-    FC_Size size;
-    if (font == nullptr || text == nullptr || strlen(text) == 0)
-        size.w = 0;
-    else
-        size.w = FC_GetWidth(font, text);
-    if (font == nullptr)
-        size.h = 0;
-    else
-        size.h = FC_GetLineHeight(font);
-
-    return size;
-}
-
-//*******************************
-// Gui::FC_getFontTextRect
-// return FC_Rect w of font text and h of font
-//*******************************
-FC_Rect Gui::FC_getFontTextRect(FC_Font_Shared font, const char *text, int x, int y) {
-    FC_Size size = FC_getFontTextSize(font, text);
-    FC_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = size.w;
-    rect.h = size.h;
-
-    return rect;
-}
-
-//*******************************
 // Gui::getOpscreenRectOfTheme
 //*******************************
 SDL_Rect Gui::getOpscreenRectOfTheme() {
@@ -774,6 +716,13 @@ SDL_Rect Gui::getOpscreenRectOfTheme() {
     rect.h = atoi(themeData.values["opscreenh"].c_str());
 
     return rect;
+}
+
+int Gui::getContentTopY(int padding) { return getOpscreenRectOfTheme().y + padding; }
+
+int Gui::getContentBottomY(int padding) {
+    SDL_Rect rect = getOpscreenRectOfTheme();
+    return rect.y + rect.h - padding;
 }
 
 //*******************************
@@ -821,201 +770,6 @@ int Gui::align_xPosition(XAlignment xAlign, int x, int width) {
 }
 
 //*******************************
-// Gui::AllTextOrEmojiTokenInfo::compute_xy_relativeOffsets
-// compute x offset, center the y offset of each token to the total height
-//*******************************
-void Gui::AllTextOrEmojiTokenInfo::compute_xy_relativeOffsets() {
-    int xOffset = 0;
-    for (auto &info : tokenInfos) {
-        x = xOffset;
-        xOffset += info.rect.w;
-        info.rect.y = (totalSize.h - info.rect.h) / 2;
-    }
-}
-
-//*******************************
-// Gui::AllTextOrEmojiTokenInfo::getTokenInfo
-// break up the text into tokens of pure text or an emoji icon marker
-// return a vector of the text, emoji texture pointers, width and height of each token and the total width and height.
-//*******************************
-void Gui::AllTextOrEmojiTokenInfo::getTokenInfo(FC_Font_Shared _font, const string &_text) {
-    auto gui = Gui::getInstance();
-    font = _font;
-    if (!font)
-        font = gui->themeFont; // if font == nullptr, default to themeFont
-
-    //
-    // break up the text into tokens of text and emoji markers
-    //
-    string text = _text;
-    if (text.empty())
-        text = " ";
-    if (text.back() != '|') {
-        text = text + "|"; // in case a terminating | is needed
-    }
-    auto tokenStrings = StringUtils::getTokens(text, '|');
-
-    //
-    // fill the info structures
-    //
-
-    for (const auto &tokenString : tokenStrings) { // for each token string
-        if (tokenString == "")
-            continue;
-        TextOrEmojiTokenInfo tokenInfo;
-        tokenInfo.tokenString = tokenString;
-        if (tokenString[0] == '@') { // if emoji marker
-            int w, h;
-            auto it = gui->buttonTextureMap.find(tokenString.c_str() + 1);
-            if (it != gui->buttonTextureMap.end()) {
-                tokenInfo.emoji = it->second; // save the texture pointer
-                SDL_QueryTexture(it->second, nullptr, nullptr, &w, &h);
-                tokenInfo.rect.x = 0;
-                tokenInfo.rect.y = 0;
-                tokenInfo.rect.w = w;
-                tokenInfo.rect.h = h;
-                // update overall size
-                totalSize.w += w;
-                if (h > totalSize.h)
-                    totalSize.h = h;
-                // add the token info
-                tokenInfos.emplace_back(tokenInfo);
-            } else {
-                PLOG_DEBUG << "emoji not found for " << tokenString;
-            }
-        } else {
-            tokenInfo.rect = gui->FC_getFontTextRect(font, tokenString);
-            // update overall size
-            totalSize.w += tokenInfo.rect.w;
-            if (tokenInfo.rect.h > totalSize.h)
-                totalSize.h = tokenInfo.rect.h;
-            // add the token info
-            tokenInfos.emplace_back(tokenInfo);
-        }
-    }
-
-    int xOffset = 0;
-    for (auto &tokenInfo : tokenInfos) {
-        // set the x posit within the string
-        tokenInfo.rect.x = xOffset;
-        xOffset += tokenInfo.rect.w;
-        // adjust the text y and emoji y so they are centered in the total height
-        tokenInfo.rect.y = (totalSize.h - tokenInfo.rect.h) / 2;
-    }
-}
-
-//*******************************
-// Gui::AllTextOrEmojiTokenInfo::render
-// renders/draws the text and emoji icons at the chosen position on the screen
-//*******************************
-void Gui::AllTextOrEmojiTokenInfo::render(int x, int y, XAlignment xAlign) {
-    auto gui = Gui::getInstance();
-    auto renderer = gui->renderer;
-
-    // compute x offset, center the y offset of each token to the total height
-    compute_xy_relativeOffsets();
-
-    // adjust the upper left corner postion if needed
-    if (xAlign != XALIGN_LEFT)
-        x = align_xPosition(xAlign, x, totalSize.w);
-
-    if (drawBackgroundRect) {
-        // render a grey box behind the text
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 70);
-        SDL_Rect backRect;
-        backRect.x = x - 10;
-        backRect.y = y - 2;
-        backRect.w = totalSize.w + 20;
-        backRect.h = totalSize.h + 4;
-
-        SDL_RenderFillRect(renderer, &backRect);
-    }
-
-    for (auto &tokenInfo : tokenInfos) {
-        if (tokenInfo.emoji) {
-            // the token is an emoji texture
-            FC_Rect tempRect = tokenInfo.rect;
-            tempRect.x += x;
-            tempRect.y += y;
-            SDL_RenderCopy(renderer, tokenInfo.emoji, nullptr, &tempRect);
-        } else {
-            // the token is text
-            if (useTextColor) {
-                FC_DrawColor(font, renderer, x + tokenInfo.rect.x, y + tokenInfo.rect.y, textColor,
-                             tokenInfo.tokenString.c_str());
-            } else {
-                FC_DrawAlign(font, renderer, x + tokenInfo.rect.x, y + tokenInfo.rect.y, FC_ALIGN_LEFT,
-                             tokenInfo.tokenString.c_str());
-            }
-        }
-    }
-}
-
-//*******************************
-// Text Rendering routines
-//*******************************
-
-//*******************************
-// Gui::renderText
-// renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
-//*******************************
-int Gui::renderText(FC_Font_Shared font, const string &text, int x, int y, XAlignment xAlign) {
-    AllTextOrEmojiTokenInfo allTokenInfo(font, text);
-    allTokenInfo.render(x, y, xAlign);
-
-    return allTokenInfo.totalSize.h; // return the height
-}
-
-//*******************************
-// Gui::renderText_WithColor
-// if background == true it draws a solid grey box around/behind the text
-// this routine does not support emoji icons.  text only.
-//*******************************
-int Gui::renderText_WithColor(FC_Font_Shared font, const std::string &text, int x, int y, SDL_Color textColor,
-                              XAlignment xAlign, bool background) {
-    AllTextOrEmojiTokenInfo allTokenInfo(font, text);
-    allTokenInfo.setTextColor(textColor);
-    allTokenInfo.drawBackgroundRect = background;
-
-    allTokenInfo.render(x, y, xAlign);
-
-    return allTokenInfo.totalSize.h; // return the height
-};
-
-//*******************************
-// Gui::renderTextLine
-//*******************************
-int Gui::renderTextLine(const string &text, int line, int yoffset, XAlignment xAlign, int xoffset,
-                        FC_Font_Shared font) {
-    if (!font)
-        font = themeFont; // default to themeFont
-
-    SDL_Rect opscreen = getOpscreenRectOfTheme();
-    Uint16 fontHeight = FC_GetLineHeight(font);
-    int x = opscreen.x + 10 + xoffset;
-    int y = (fontHeight * line) + yoffset;
-
-    if (line < 0) {
-        line = -line;
-        y = line;
-    }
-
-    return renderText(font, text, x, y, xAlign);
-}
-
-//*******************************
-// Gui::renderTextLineToColumns
-//*******************************
-int Gui::renderTextLineToColumns(const string &textLeft, const string &textRight, int xLeft, int xRight, int line,
-                                 int yoffset, FC_Font_Shared font) {
-
-    renderTextLine(textLeft, line, yoffset, XALIGN_LEFT, xLeft, font);
-    int h = renderTextLine(textRight, line, yoffset, XALIGN_LEFT, xRight, font);
-
-    return h; // rectangle height
-}
-
-//*******************************
 // Gui::renderTextLineOptions
 //*******************************
 int Gui::renderTextLineOptions(const string &_text, int line, int yoffset, XAlignment xAlign, int xoffset) {
@@ -1033,44 +787,72 @@ int Gui::renderTextLineOptions(const string &_text, int line, int yoffset, XAlig
         text = text.substr(0, text.find("|"));
     }
 
-    // render the text string without the check/uncheck icon
-    int h = renderTextLine(text, line, yoffset, xAlign, xoffset);
+    SDL_Rect opscreen = getOpscreenRectOfTheme();
+    int fontSize = getThemeFontSize();
+
+    int textWidth = opscreen.w - xoffset - 20;
+    if (button != -1) {
+        textWidth -= getCheckIconWidth() + 20;
+    }
 
     if (button == -1) {
+        // render the text string without the check/uncheck icon
+        int h = renderFittedTextLine(text, line, yoffset, xAlign, xoffset, textWidth, fontSize, 12, themeFont);
         return h; // there is no check/uncheck emoji on this line
     }
 
     // render the check/uncheck icon on the right side of opscreen
-    SDL_Rect opscreen = getOpscreenRectOfTheme();
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
 
     int x = opscreen.x + opscreen.w - 10 - getCheckIconWidth();
     int y = (fontHeight * line) + yoffset;
-    if (button == 1) {
-        renderText(themeFont, "|@Check|", x, y);
-    } else if (button == 0) {
-        renderText(themeFont, "|@Uncheck|", x, y);
+    if (line < 0) {
+        y = -line;
     }
 
-    return h;
+    FC_Font_Shared fittedFont = getFittingThemeFont(themeFont, fontSize, 12, text, textWidth);
+    AllTextOrEmojiTokenInfo textInfo(fittedFont, text);
+    AllTextOrEmojiTokenInfo buttonInfo(themeFont, button == 1 ? "|@Check|" : "|@Uncheck|");
+    int rowHeight = std::max(textInfo.totalSize.h, buttonInfo.totalSize.h);
+    int textX = opscreen.x + 10 + xoffset;
+    textInfo.render(textX, y + ((rowHeight - textInfo.totalSize.h) / 2) + getTextVisualYOffset(fittedFont), xAlign);
+
+    if (button == 1) {
+        buttonInfo.render(x, y + ((rowHeight - buttonInfo.totalSize.h) / 2));
+    } else if (button == 0) {
+        buttonInfo.render(x, y + ((rowHeight - buttonInfo.totalSize.h) / 2));
+    }
+
+    return rowHeight;
 }
 
 //*******************************
 // Gui::renderSelectionBox
 //*******************************
 void Gui::renderSelectionBox(int line, int yoffset, int xoffset, FC_Font_Shared font) {
-    SDL_Shared<SDL_Texture> textTex;
+    if (!font)
+        font = themeFont;
+
+    Uint16 fontHeight = FC_GetLineHeight(font);
+    int selectionOffset = getSelectionBoxYOffset(font);
+    int y = yoffset + fontHeight * line;
+    if (line < 0) {
+        y = -line;
+    }
+    renderSelectionBoxAtY(y - selectionOffset, fontHeight + (selectionOffset * 2), xoffset, font);
+}
+
+void Gui::renderSelectionBoxAtY(int y, int height, int xoffset, FC_Font_Shared font) {
     if (!font)
         font = themeFont;
 
     string fg = themeData.values["text_fg"];
-    Uint16 fontHeight = FC_GetLineHeight(font);
     SDL_Rect opscreen = getOpscreenRectOfTheme();
     SDL_Rect rectSelection;
     rectSelection.x = opscreen.x + 5 + xoffset;
-    rectSelection.y = yoffset + fontHeight * (line);
+    rectSelection.y = y;
     rectSelection.w = opscreen.w - 10 - xoffset;
-    rectSelection.h = fontHeight;
+    rectSelection.h = height;
 
     SDL_SetRenderDrawColor(renderer, getR(fg), getG(fg), getB(fg), 255);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -1101,16 +883,21 @@ void Gui::renderLabelBox(int line, int yoffset) {
 void Gui::renderTextChar(const string &text, int line, int yoffset, int x) {
     Uint16 fontHeight = FC_GetLineHeight(themeFont);
     int y = (fontHeight * line) + yoffset;
-    FC_DrawAlign(themeFont, renderer, x, y, FC_ALIGN_LEFT, text.c_str());
+    FC_DrawAlign(themeFont, renderer, x, y, FC_ALIGN_LEFT, "%s", text.c_str());
 }
 
 //*******************************
 // Gui::renderFreeSpace
 //*******************************
-void Gui::renderFreeSpace() {
-    int x = atoi(themeData.values["fsposx"].c_str());
-    int y = atoi(themeData.values["fsposy"].c_str());
-    renderText(themeFont, _("Free space") + " : " + System::getStorageInfo().formatted(), x, y);
+void Gui::renderFreeSpace(int y) {
+    if (y < 0) {
+        y = atoi(themeData.values["fsposy"].c_str());
+    }
+    if (y <= 0) {
+        y = 35;
+    }
+    renderFittedText_WithColor(themeFonts[FONT_20_BOLD], _("Free space") + " : " + System::getStorageInfo().formatted(),
+                               0, y, SCREEN_WIDTH - 80, 20, 12, getTitleTextColor(), XALIGN_CENTER);
 }
 
 //*******************************
@@ -1141,21 +928,53 @@ int Gui::renderLogo(bool small) {
 }
 
 //*******************************
+// Gui::renderActionText
+//*******************************
+int Gui::renderActionText(FC_Font_Shared baseFont, const string &text, int y, int maxWidth, int maxSize, int minSize) {
+    GuiActionText::Layout layout =
+        GuiActionText::getLayout(Gui::getInstance(), baseFont, text, maxWidth, maxSize, minSize);
+    int x = (SCREEN_WIDTH / 2) - (layout.width / 2);
+    GuiActionText::renderLayout(layout, x, y);
+
+    return layout.height;
+}
+
+//*******************************
 // Gui::renderStatus
 //*******************************
 void Gui::renderStatus(const string &text, int posy) {
-    string bg = themeData.values["text_bg"];
-
-    SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), atoi(themeData.values["textalpha"].c_str()));
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_Rect rect = getTextRectOfTheme();
-    SDL_RenderFillRect(renderer, &rect);
+    string bg = themeData.values["main_bg"];
+    SDL_Rect themeRect = getTextRectOfTheme();
 
     int y = atoi(themeData.values["ttop"].c_str());
     if (posy != -1)
         y = posy; // override the bottom status y position.  so far this has never been used.
 
-    renderText(themeFont, text, 0, y, XALIGN_CENTER);
+    GuiActionText::Layout layout =
+        GuiActionText::getLayout(Gui::getInstance(), themeFonts[FONT_20_BOLD], text, themeRect.w - 20, 20, 12);
+    int verticalPadding = 6;
+    SDL_Rect rect = themeRect;
+    rect.h = std::max(themeRect.h, layout.height + (verticalPadding * 2));
+    rect.y = y - verticalPadding;
+    if (rect.y + rect.h > SCREEN_HEIGHT) {
+        rect.y = SCREEN_HEIGHT - rect.h;
+    }
+    if (rect.y < 0) {
+        rect.y = 0;
+    }
+
+    bool isBottomStatus = posy == -1 || rect.y >= SCREEN_HEIGHT - 120;
+    string alpha = isBottomStatus ? themeData.get("statusalpha", "70") : themeData.get("mainalpha", "170");
+    int bgAlpha = atoi(alpha.c_str());
+    if (bgAlpha > 0) {
+        SDL_SetRenderDrawColor(renderer, getR(bg), getG(bg), getB(bg), bgAlpha);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        SDL_RenderFillRect(renderer, &rect);
+    }
+
+    int textY = rect.y + ((rect.h - layout.height) / 2);
+    int x = (SCREEN_WIDTH / 2) - (layout.width / 2);
+    GuiActionText::renderLayout(layout, x, textY);
 }
 
 //*******************************

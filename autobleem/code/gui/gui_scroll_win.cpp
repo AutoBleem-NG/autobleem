@@ -20,10 +20,12 @@ void GuiScrollWin::init() { gui = Gui::getInstance(); }
 void GuiScrollWin::render() {
     gui->renderBackground();
     gui->renderTextBar();
-    int yoffset = gui->renderLogo(true);
+    int yoffset = gui->getContentTopY();
 
+    int fontSize = gui->getThemeFontSize();
+    SDL_Rect opscreen = gui->getOpscreenRectOfTheme();
     for (int i = 0; i < lines.size(); ++i) {
-        gui->renderTextLine(lines[i], i, 0, XALIGN_LEFT);
+        gui->renderFittedTextLine(lines[i], i, yoffset, XALIGN_LEFT, 0, opscreen.w - 20, fontSize, 12);
     }
     SDL_RenderPresent(renderer);
 }

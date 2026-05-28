@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.10)
 project(autobleem-gui)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -171,13 +171,22 @@ add_executable(
         autobleem/code/environment.h
         autobleem/code/gui/gui.cpp
         autobleem/code/gui/gui.h
+        autobleem/code/gui/gui_action_text.cpp
+        autobleem/code/gui/gui_action_text.h
         autobleem/code/gui/gui_about.cpp
         autobleem/code/gui/gui_about.h
         autobleem/code/gui/gui_confirm.cpp
         autobleem/code/gui/gui_confirm.h
         autobleem/code/gui/gui_font.cpp
+        autobleem/code/gui/gui_font_paths.cpp
         autobleem/code/gui/gui_font.h
         autobleem/code/gui/gui_font_wrapper.h
+        autobleem/code/gui/gui_layout.cpp
+        autobleem/code/gui/gui_layout.h
+        autobleem/code/gui/gui_text.cpp
+        autobleem/code/gui/gui_text_render.cpp
+        autobleem/code/gui/gui_text_utils.cpp
+        autobleem/code/gui/gui_text.h
         autobleem/code/gui/gui_keyboard.cpp
         autobleem/code/gui/gui_keyboard.h
         autobleem/code/gui/gui_pad_test.cpp

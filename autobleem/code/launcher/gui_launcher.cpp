@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include "gui_launcher.h"
 #include "../gui/gui.h"
+#include "../gui/gui_layout.h"
 #include "../gui/menus/gui_options_menu.h"
 #include "../gui/gui_confirm.h"
 #include <algorithm>
@@ -18,39 +19,58 @@ using namespace std;
 const SDL_Color brightWhite = {255, 255, 255, SDL_ALPHA_OPAQUE};
 
 namespace {
-void renderTextureFit(SDL_Shared<SDL_Renderer> renderer, SDL_Shared<SDL_Texture> texture, const SDL_Rect &bounds) {
-    if (texture == nullptr) {
-        return;
-    }
+const int screenCenterX = SCREEN_WIDTH / 2;
+const int selectedCoverY = 180;
+const int selectedCoverSize = 226;
+const int selectedCoverX = screenCenterX - (selectedCoverSize / 2);
+const int selectedCoverSideGap = 47;
+const int selectedSnapWidth = 240;
+const int selectedSnapHeight = 180;
+const int selectedCoverToPlayGap = 42;
+const int selectedMetaY = 273;
+const int selectedMetaSettingsY = 203;
+const int selectedCoverSettingsY = 90;
+const int selectedCoverShade = 255;
+const int selectedCoverSettingsShade = 220;
+const int carouselAnimationMs = 200;
+const int settingsBackCollapsedLen = 100;
+const int settingsBackExpandedLen = 280;
+const int settingsBackAnimationMs = 100;
+const int optionsMenuGamesY = 520;
+const int optionsMenuSettingsY = 440;
+const int optionsMenuWidth = 118;
+const int playButtonX = 540;
+const int playTextWidth = 262;
+const int arrowHalfWidth = 12;
+const int arrowY = 360;
+const int actionLabelY = 640;
+const int actionLabelMaxFontSize = 22;
+const int actionLabelMinFontSize = 12;
+const int enterActionLabelX = 638;
+const int enterActionLabelWidth = 140;
+const int cancelActionLabelX = 800;
+const int cancelActionLabelWidth = 140;
+const int guideActionLabelX = 945;
+const int guideActionLabelWidth = 260;
 
-    Uint32 format;
-    int access;
-    int textureWidth;
-    int textureHeight;
-    SDL_QueryTexture(texture, &format, &access, &textureWidth, &textureHeight);
-    if (textureWidth <= 0 || textureHeight <= 0) {
-        return;
-    }
+SDL_Rect getSelectedCoverRect() { return {selectedCoverX, selectedCoverY, selectedCoverSize, selectedCoverSize}; }
 
-    SDL_Rect input;
-    input.x = 0;
-    input.y = 0;
-    input.w = textureWidth;
-    input.h = textureHeight;
-
-    SDL_Rect output = bounds;
-    const float textureAspect = static_cast<float>(textureWidth) / static_cast<float>(textureHeight);
-    const float boundsAspect = static_cast<float>(bounds.w) / static_cast<float>(bounds.h);
-    if (textureAspect > boundsAspect) {
-        output.h = static_cast<int>(bounds.w / textureAspect);
-        output.y = bounds.y + (bounds.h - output.h) / 2;
-    } else {
-        output.w = static_cast<int>(bounds.h * textureAspect);
-        output.x = bounds.x + (bounds.w - output.w) / 2;
-    }
-
-    SDL_RenderCopy(renderer, texture, &input, &output);
+SDL_Rect getSelectedSnapRect() {
+    SDL_Rect cover = getSelectedCoverRect();
+    return {cover.x - selectedCoverSideGap - selectedSnapWidth, cover.y + cover.h - selectedSnapHeight,
+            selectedSnapWidth, selectedSnapHeight};
 }
+
+int getSelectedMetaX() {
+    SDL_Rect cover = getSelectedCoverRect();
+    return cover.x + cover.w + selectedCoverSideGap;
+}
+
+int getSelectedPlayY() {
+    SDL_Rect cover = getSelectedCoverRect();
+    return cover.y + cover.h + selectedCoverToPlayGap;
+}
+
 } // namespace
 
 //*******************************
@@ -392,8 +412,7 @@ void GuiLauncher::loadAssets() {
         secColor.a = SDL_ALPHA_OPAQUE;
     }
 
-    gui->themeFonts.openAllFonts(gui->getCurrentThemeFontPath(), renderer);
-    gui->sizesOfBoldThemeFont.Init(); // the different sizes are used for the game name in the carousel
+    gui->sizesOfThemeFont.Init();
 
     // count, x_start, y_start, fontEnum, fontHeight, separationBetweenLines
     notificationLines.createAndSetDefaults(2, 10, 10, FONT_22_MED, 24, 8);
@@ -442,14 +461,14 @@ void GuiLauncher::loadAssets() {
     staticElements.push_back(footer);
 
     playButton = new PsObj("playButton", gui->getCurrentThemeImagePath() + sep + "GR/Acid_C_Btn.png");
-    playButton->y = 428;
-    playButton->x = 540;
+    playButton->y = getSelectedPlayY();
+    playButton->x = playButtonX;
     playButton->visible = selGameIndex != -1;
     staticElements.push_back(playButton);
 
     playText = new PsZoomBtn("playText", gui->getCurrentThemeImagePath() + sep + "BMP_Text/Play_Text.png");
-    playText->y = 428;
-    playText->x = 640 - 262 / 2;
+    playText->y = getSelectedPlayY();
+    playText->x = screenCenterX - (playTextWidth / 2);
     playText->visible = selGameIndex != -1;
     playText->ox = playText->x;
     playText->oy = playText->y;
@@ -463,14 +482,14 @@ void GuiLauncher::loadAssets() {
         settingsFile = "/CB/Function_BG.png";
     }
     settingsBack = new PsSettingsBack("playButton", gui->getCurrentThemeImagePath() + settingsFile);
-    settingsBack->setCurLen(100);
+    settingsBack->setCurLen(settingsBackCollapsedLen);
     settingsBack->visible = true;
     staticElements.push_back(settingsBack);
 
     meta = new PsMeta("meta", gui->getCurrentThemeImagePath() + sep + "CB/PlayerOne.png");
     meta->fonts = gui->themeFonts;
-    meta->x = 785;
-    meta->y = 285;
+    meta->x = getSelectedMetaX();
+    meta->y = selectedMetaY;
     meta->visible = true;
     if (selGameIndex != -1 && selGameIndexInCarouselGamesIsValid()) {
         meta->updateTexts(carouselGames[selGameIndex], fgColor);
@@ -490,8 +509,8 @@ void GuiLauncher::loadAssets() {
     staticElements.push_back(meta);
 
     arrow = new PsMoveBtn("arrow", gui->getCurrentThemeImagePath() + sep + "GR/arrow.png");
-    arrow->x = 640 - 12;
-    arrow->y = 360;
+    arrow->x = screenCenterX - arrowHalfWidth;
+    arrow->y = arrowY;
     arrow->originaly = arrow->y;
     arrow->visible = false;
     staticElements.push_back(arrow);
@@ -741,14 +760,14 @@ void GuiLauncher::render() {
                 SDL_Rect coverRect;
                 coverRect.x = point.x;
                 coverRect.y = point.y;
-                coverRect.w = 226 * point.scale;
-                coverRect.h = 226 * point.scale;
+                coverRect.w = selectedCoverSize * point.scale;
+                coverRect.h = selectedCoverSize * point.scale;
 
                 SDL_Rect fullRect;
                 fullRect.x = 0;
                 fullRect.y = 0;
-                fullRect.w = 226;
-                fullRect.h = 226;
+                fullRect.w = selectedCoverSize;
+                fullRect.h = selectedCoverSize;
                 SDL_SetTextureColorMod(currentGameTex, point.shade, point.shade, point.shade);
                 SDL_RenderCopy(renderer, currentGameTex, &fullRect, &coverRect);
             }
@@ -756,20 +775,26 @@ void GuiLauncher::render() {
     }
 
     if (state == STATE_GAMES && selGameIndexInCarouselGamesIsValid()) {
-        SDL_Rect snapRect;
-        snapRect.x = 260;
-        snapRect.y = 225;
-        snapRect.w = 240;
-        snapRect.h = 180;
-        renderTextureFit(renderer, carouselGames[selGameIndex].snapPng, snapRect);
+        SDL_Rect snapRect = getSelectedSnapRect();
+        GuiLayout::renderTextureFit(renderer, carouselGames[selGameIndex].snapPng, snapRect);
     }
 
     psOptionsMenu->render();
 
-    auto font24 = gui->themeFonts[FONT_22_MED];
-    gui->renderText_WithColor(font24, _("Enter"), 638, 640, secColor);
-    gui->renderText_WithColor(font24, _("Cancel"), 800, 640, secColor);
-    gui->renderText_WithColor(font24, _("Button Guide"), 945, 640, secColor);
+    auto renderActionLabel = [this](const string &text, int x, int maxWidth, const PsObj *button) {
+        FC_Font_Shared labelFont = gui->getFittingThemeFont(gui->themeFonts[FONT_22_MED], actionLabelMaxFontSize,
+                                                            actionLabelMinFontSize, text, maxWidth);
+        Gui::AllTextOrEmojiTokenInfo labelInfo(labelFont, text);
+        labelInfo.setTextColor(secColor);
+        int y = actionLabelY;
+        if (button != nullptr) {
+            y = button->y + ((button->h - labelInfo.totalSize.h) / 2);
+        }
+        labelInfo.render(x, y);
+    };
+    renderActionLabel(_("Enter"), enterActionLabelX, enterActionLabelWidth, xButton);
+    renderActionLabel(_("Cancel"), cancelActionLabelX, cancelActionLabelWidth, oButton);
+    renderActionLabel(_("Button Guide"), guideActionLabelX, guideActionLabelWidth, tButton);
 
     notificationLines.tickTock();
 
@@ -948,16 +973,16 @@ void GuiLauncher::moveMainCover(int state) {
         return;
     }
     PsScreenpoint point1;
-    point1.x = 640 - 113;
-    point1.y = 180;
+    point1.x = selectedCoverX;
+    point1.y = selectedCoverY;
     point1.scale = 1;
-    point1.shade = 255;
+    point1.shade = selectedCoverShade;
 
     PsScreenpoint point2;
-    point2.x = 640 - 113;
-    point2.y = 90;
+    point2.x = selectedCoverX;
+    point2.y = selectedCoverSettingsY;
     point2.scale = 1;
-    point2.shade = 220;
+    point2.shade = selectedCoverSettingsShade;
 
     long time = SDL_GetTicks();
 
@@ -965,11 +990,11 @@ void GuiLauncher::moveMainCover(int state) {
         if (state == STATE_GAMES) {
             carouselGames[selGameIndex].destination = point1;
             carouselGames[selGameIndex].animationStart = time;
-            carouselGames[selGameIndex].animationDuration = 200;
+            carouselGames[selGameIndex].animationDuration = carouselAnimationMs;
         } else {
             carouselGames[selGameIndex].destination = point2;
             carouselGames[selGameIndex].animationStart = time;
-            carouselGames[selGameIndex].animationDuration = 200;
+            carouselGames[selGameIndex].animationDuration = carouselAnimationMs;
         }
     }
 }
@@ -980,20 +1005,20 @@ void GuiLauncher::moveMainCover(int state) {
 void GuiLauncher::switchState(int state, int time) {
     if (state == STATE_GAMES) {
         Mix_PlayChannel(-1, gui->home_up, 0);
-        settingsBack->animEndTime = time + 100;
-        settingsBack->nextLen = 100;
+        settingsBack->animEndTime = time + settingsBackAnimationMs;
+        settingsBack->nextLen = settingsBackCollapsedLen;
         playButton->visible = true;
         playText->visible = true;
         if (!staticMeta) {
-            meta->animEndTime = time + 200;
-            meta->nextPos = 285;
+            meta->animEndTime = time + carouselAnimationMs;
+            meta->nextPos = selectedMetaY;
             meta->prevPos = meta->y;
         }
         this->state = STATE_GAMES;
         arrow->visible = false;
         arrow->animationStarted = time;
-        psOptionsMenu->duration = 200;
-        psOptionsMenu->targety = 520;
+        psOptionsMenu->duration = carouselAnimationMs;
+        psOptionsMenu->targety = optionsMenuGamesY;
         psOptionsMenu->animationStarted = time;
         psOptionsMenu->active = false;
         menuHead->visible = false;
@@ -1002,20 +1027,20 @@ void GuiLauncher::switchState(int state, int time) {
         moveMainCover(state);
     } else {
         Mix_PlayChannel(-1, gui->home_down, 0);
-        settingsBack->animEndTime = time + 100;
-        settingsBack->nextLen = 280;
+        settingsBack->animEndTime = time + settingsBackAnimationMs;
+        settingsBack->nextLen = settingsBackExpandedLen;
         playButton->visible = false;
         playText->visible = false;
         if (!staticMeta) {
-            meta->animEndTime = time + 200;
-            meta->nextPos = 215;
+            meta->animEndTime = time + carouselAnimationMs;
+            meta->nextPos = selectedMetaSettingsY;
             meta->prevPos = meta->y;
         }
         this->state = STATE_SET;
         arrow->visible = true;
         arrow->animationStarted = time;
-        psOptionsMenu->duration = 200;
-        psOptionsMenu->targety = 440;
+        psOptionsMenu->duration = carouselAnimationMs;
+        psOptionsMenu->targety = optionsMenuSettingsY;
         psOptionsMenu->animationStarted = time;
         psOptionsMenu->active = true;
         menuHead->visible = true;
@@ -1044,7 +1069,7 @@ void GuiLauncher::showOptions() { // "SETTINGS", GAME", "MEMORY CARD", "RESUME"
 
     psOptionsMenu->psGame = psGame;
     psOptionsMenu->selOption = 0;
-    psOptionsMenu->x = 640 - 118 / 2;
+    psOptionsMenu->x = screenCenterX - (optionsMenuWidth / 2);
     psOptionsMenu->ox = psOptionsMenu->x;
     psOptionsMenu->xoff[0] = 0;
     psOptionsMenu->xoff[1] = 0;

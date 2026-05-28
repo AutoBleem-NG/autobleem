@@ -5,6 +5,7 @@
 #include "gui_game_editor_menu_ra.h"
 #include "../../log.h"
 #include "../gui.h"
+#include "../gui_layout.h"
 #include "../gui_keyboard.h"
 #include "../gui_select_mem_card.h"
 #include "../../engine/mem_card.h"
@@ -16,7 +17,6 @@
 #include "../../lightgun_games.h"
 #include "../../system/process_utils.h"
 #include <iostream>
-#include "../../engine/cover_db.h"
 #include "../../launcher/ra_integrator.h"
 #include "../../launcher/thumbnail_lookup.h"
 
@@ -64,14 +64,8 @@ void GuiEditor_RA::refreshData() { shared_ptr<Gui> gui(Gui::getInstance()); }
 // GuiEditor_RA::GetBoxArtTexture
 //*******************************
 SDL_Shared<SDL_Texture> GuiEditor_RA::GetBoxArtTexture() {
-    string recordName;
-    if (!gameData->serial.empty()) {
-        auto gui = Gui::getInstance();
-        if (gui && gui->coverdb && gui->coverdb->isValid()) {
-            if (const auto *rec = gui->coverdb->reader.findBySerial(gameData->serial))
-                recordName = rec->name;
-        }
-    }
+    auto gui = Gui::getInstance();
+    string recordName = Coverdb::findRecordNameForSerial(gui->coverdb, gameData->serial);
 
     SDL_Shared<SDL_Texture> coverPng;
     const string imagePath = ThumbnailLookup::findBoxArtPath(gameData->db_name, gameData->title, recordName);
@@ -89,7 +83,6 @@ SDL_Shared<SDL_Texture> GuiEditor_RA::GetBoxArtTexture() {
 //*******************************
 void GuiEditor_RA::init() {
     shared_ptr<Gui> gui(Gui::getInstance());
-    bool pngLoaded = false;
 
     cover = GetBoxArtTexture();
 
@@ -105,12 +98,16 @@ void GuiEditor_RA::render() {
     int line = 0;
     gui->renderBackground();
     gui->renderTextBar();
-    int yoffset = gui->renderLogo(true);
+    int yoffset = gui->getContentTopY();
 
     // Game.ini
-    gui->renderTextLine(_("Title") + ": " + gameData->title, line++, yoffset, XALIGN_CENTER);
-    gui->renderTextLine(_("Game File") + ": " + gameData->image_path, line++, yoffset, XALIGN_CENTER);
-    gui->renderTextLine(_("Game Core") + ": " + gameData->core_name, line++, yoffset, XALIGN_CENTER);
+    auto editorFont = gui->themeFonts[FONT_22_MED];
+    const int editorTextWidth = SCREEN_WIDTH - 80;
+    gui->renderTitleLine(gameData->title, line++, yoffset);
+    gui->renderFittedTextLine(_("Game File") + ": " + gameData->image_path, line++, yoffset, XALIGN_CENTER, 0,
+                              editorTextWidth, 22, 12, editorFont);
+    gui->renderFittedTextLine(_("Game Core") + ": " + gameData->core_name, line++, yoffset, XALIGN_CENTER, 0,
+                              editorTextWidth, 22, 12, editorFont);
 
     gui->renderTextLineOptions(_("Lightgun Game") + ":" +
                                    (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gameData)
@@ -130,24 +127,9 @@ void GuiEditor_RA::render() {
     // display RA cover here
     // ******************************************************************************
 
-    Uint32 format;
-    int access;
-    int cover_w, cover_h;
-    SDL_QueryTexture(cover, &format, &access, &cover_w, &cover_h);
-
-    // calculate output rect with aspect ratio
-    int biggerSize = cover_w > cover_h ? cover_w : cover_h;
-    float magnify = 226.0 / biggerSize;
-
-    SDL_Rect outputRect;
-    outputRect.x = atoi(gui->themeData.values["ecoverx"].c_str());
-    outputRect.y = atoi(gui->themeData.values["ecovery"].c_str());
-    outputRect.w = cover_w * magnify;
-    outputRect.h = cover_h * magnify;
-    outputRect.x += (226 - outputRect.w) / 2;
-    outputRect.y += (226 - outputRect.h) / 2;
-
-    SDL_RenderCopy(renderer, cover, nullptr, &outputRect);
+    SDL_Rect coverBounds{atoi(gui->themeData.values["ecoverx"].c_str()), atoi(gui->themeData.values["ecovery"].c_str()),
+                         226, 226};
+    GuiLayout::renderTextureFit(renderer, cover, coverBounds);
 
     SDL_RenderPresent(renderer);
 }

@@ -15,6 +15,8 @@
 
 namespace ThumbnailLookup {
 
+extern const char PlayStationDbName[];
+
 // libretro-thumbnails replaces filesystem-unsafe characters in record names
 // with '_' before writing files. Exposed so callers building their own
 // candidates can match the same escaping.

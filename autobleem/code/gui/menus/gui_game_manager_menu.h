@@ -16,6 +16,14 @@ class GuiManager : public GuiTwoColumnStringMenu {
 
     void init() override;
     void render() override;
+    void renderLineIndexOnRow(int index, int row) override;
+    void renderColumnHeaders();
+    void renderGameRows();
+    void renderTableBottomLine();
+    void renderSelectionBox();
+    void renderPreview();
+    void updatePreviewTextures();
+    void syncVisibleWindow();
 
     std::string getTitle() override;
     std::string getStatusLine() override;
@@ -30,6 +38,9 @@ class GuiManager : public GuiTwoColumnStringMenu {
     void doDelete() override { doSquare_Pressed(); }
 
     PsGames psGames;
+    int previewIndex = -1;
+    SDL_Shared<SDL_Texture> previewCover;
+    SDL_Shared<SDL_Texture> previewScreenshot;
     static int flushCovers(const char *file, const struct stat *sb, int flag, struct FTW *s);
     static bool sortByTitle(PsGamePtr i, PsGamePtr j) { return SortByCaseInsensitive(i->title, j->title); }
 };
