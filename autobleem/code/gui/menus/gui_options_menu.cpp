@@ -4,9 +4,61 @@
 
 using namespace std;
 
+static bool hasChoice(const vector<string> &list, const string &choice) {
+    for (const string &entry : list) {
+        if (entry == choice) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void addFontChoicesFromDir(vector<string> &list, const string &path) {
+    DirEntries files = FileUtils::diru_FilesOnly(path);
+    for (const DirEntry &entry : files) {
+        if (!FileUtils::matchExtension(entry.name, "ttf") && !FileUtils::matchExtension(entry.name, "otf")) {
+            continue;
+        }
+
+        if (!hasChoice(list, entry.name)) {
+            list.push_back(entry.name);
+        }
+    }
+}
+
+static string getWrappedChoice(OptionsInfo &info, const string &current, bool next) {
+    const vector<string> &list = info.choices;
+    if (list.empty()) {
+        return "";
+    }
+
+    int pos = 0;
+    for (int i = 0; i < list.size(); i++) {
+        if (list[i] == current) {
+            pos = i;
+            break;
+        }
+    }
+
+    if (next) {
+        pos++;
+        if (pos >= list.size()) {
+            pos = 0;
+        }
+    } else {
+        pos--;
+        if (pos < 0) {
+            pos = list.size() - 1;
+        }
+    }
+
+    return list[pos];
+}
+
 string GuiOptions::getStatusLine() {
     auto id = lines[selected].id;
-    if (id == CFG_THEME || id == CFG_MUSIC)
+    if (id == CFG_THEME || id == CFG_FONT || id == CFG_MUSIC)
         return "|@X| " + _("OK") + "     " + "|@O| " + _("Cancel") + "  " + "|@Start|   " + _("Random") + "|";
     else
         return "|@X| " + _("OK") + "     " + "|@O| " + _("Cancel") + "|";
@@ -24,6 +76,20 @@ vector<string> GuiOptions::getThemes() {
             list.push_back(entry.name); // add the theme dir name
         }
     }
+
+    return list;
+}
+
+//*******************************
+// GuiOptions::getFonts
+//*******************************
+vector<string> GuiOptions::getFonts() {
+    vector<string> list;
+    list.push_back("--");
+
+    addFontChoicesFromDir(list, Env::getPathToRetroarchDir() + sep + "fonts");
+    addFontChoicesFromDir(list, Env::getWorkingPath() + sep + "fonts");
+    addFontChoicesFromDir(list, gui->getCurrentThemeFontPath());
 
     return list;
 }
@@ -82,6 +148,8 @@ void GuiOptions::fill() {
     lang->load(DEFAULT_LANG);
 
     lines.emplace_back(CFG_THEME, _("AutoBleem Theme"), "theme", false, getThemes());
+    lines.emplace_back(CFG_THEME_FONT, _("Use Font from Theme"), "themefont", true, vector<string>({"false", "true"}));
+    lines.emplace_back(CFG_FONT, _("Font"), "font", false, getFonts());
     lines.emplace_back(CFG_SHOW_ORIGAMES, _("Show Internal Games"), "origames", true,
                        vector<string>({"false", "true"}));
     lines.emplace_back(CFG_JEWEL, _("Cover Style"), "jewel", false, getJewels());
@@ -105,8 +173,64 @@ void GuiOptions::fill() {
 //*******************************
 void GuiOptions::init() {
     GuiOptionsMenuBase::init(); // call the base class init()
+    firstRow = 1;
     lines.clear();
     fill();
+}
+
+void GuiOptions::render() {
+    SDL_RenderClear(renderer);
+    gui->renderBackground();
+    gui->renderTextBar();
+
+    if (firstRender) {
+        computePagePosition();
+        firstRender = false;
+    }
+
+    SDL_Rect opscreen = gui->getOpscreenRectOfTheme();
+    int visibleCount = 0;
+    if (getVerticalSize() > 0) {
+        visibleCount = lastVisibleIndex - firstVisibleIndex + 1;
+        if (visibleCount > getVerticalSize()) {
+            visibleCount = getVerticalSize();
+        }
+    }
+
+    int fontHeight = FC_GetLineHeight(font);
+    int lineCount = visibleCount + 1;
+    int firstLineY = gui->getContentTopY();
+    int lastLineY = gui->getContentBottomY() - fontHeight;
+    int rowSpacing = fontHeight;
+    if (lineCount > 1 && lastLineY > firstLineY) {
+        rowSpacing = (lastLineY - firstLineY) / (lineCount - 1);
+        if (rowSpacing < fontHeight) {
+            rowSpacing = fontHeight;
+        }
+    }
+
+    gui->renderTitleLine(getTitle(), -firstLineY, 0);
+
+    int row = 1;
+    for (int i = firstVisibleIndex; i <= lastVisibleIndex; i++) {
+        if (i < 0 || i >= getVerticalSize()) {
+            break;
+        }
+        string line = getLineText(lines[i]);
+        gui->renderTextLineOptions(line, -(firstLineY + (rowSpacing * row)), 0, XALIGN_LEFT);
+        row++;
+    }
+
+    if (getVerticalSize() > 0) {
+        int selectedRow = selected - firstVisibleIndex + 1;
+        int selectedY = firstLineY + (rowSpacing * selectedRow);
+        int selectionHeight = std::max(fontHeight + (Gui::getSelectionBoxYOffset(font) * 2), rowSpacing - 2);
+        int selectionY = selectedY - ((selectionHeight - fontHeight) / 2) - Gui::getSelectionBoxYOffset(font);
+        gui->renderSelectionBoxAtY(selectionY, selectionHeight, 0, font);
+    }
+
+    gui->renderStatus(getStatusLine());
+    SDL_RenderPresent(renderer);
 }
 
 //*******************************
@@ -117,6 +241,8 @@ std::string GuiOptions::getLineText(const OptionsInfo &info) {
     auto value = gui->cfg.inifile.values[info.iniKey];
     if (info.keyIsBoolean) {
         temp += getBooleanSymbolText(info, value);
+    } else if (info.id == CFG_FONT && (value == "" || value == "--")) {
+        temp += _("Theme Default");
     } else {
         temp += value; // append the current text value in the options list
     }
@@ -130,11 +256,16 @@ std::string GuiOptions::getLineText(const OptionsInfo &info) {
 string GuiOptions::doPrevNextOption(OptionsInfo &info, bool next) {
     int id = info.id;
 
-    // do the default action
-    string nextValue = GuiOptionsMenuBase::doPrevNextOption(info, next);
+    string nextValue;
+    if (id == CFG_FONT) {
+        nextValue = getWrappedChoice(info, gui->cfg.inifile.values[info.iniKey], next);
+        gui->cfg.inifile.values[info.iniKey] = nextValue;
+    } else {
+        nextValue = GuiOptionsMenuBase::doPrevNextOption(info, next);
+    }
 
     // after doing the default these need special action afterwards
-    if (id == CFG_THEME) {
+    if (id == CFG_THEME || id == CFG_THEME_FONT || id == CFG_FONT) {
         gui->loadAssets();
         font = gui->themeFont; // get the new font for the menu
     } else if (id == CFG_LANG) {
@@ -154,7 +285,7 @@ string GuiOptions::doPrevNextOption(OptionsInfo &info, bool next) {
 //*******************************
 string GuiOptions::doRandomOption() {
     int id = lines[selected].id;
-    if (id == CFG_THEME || id == CFG_MUSIC) {
+    if (id == CFG_THEME || id == CFG_FONT || id == CFG_MUSIC) {
         auto &choices = lines[selected].choices;
         unsigned int size = choices.size();
         if (size > 1)
@@ -173,7 +304,7 @@ string GuiOptions::doOptionIndex(uint index) {
         string nextValue = GuiOptionsMenuBase::doOptionIndex(index);
 
         // after doing the default these need special action afterwards
-        if (id == CFG_THEME) {
+        if (id == CFG_THEME || id == CFG_THEME_FONT || id == CFG_FONT) {
             gui->loadAssets();
             font = gui->themeFont; // get the new font for the menu
         } else if (id == CFG_LANG) {

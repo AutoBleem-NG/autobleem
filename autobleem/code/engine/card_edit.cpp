@@ -49,7 +49,7 @@ CardEdit::CardEdit(SDL_Shared<SDL_Renderer> renderer1) {
     load_file(Env::getWorkingPath() + sep + "memcard" + sep + "card1.mcd");
 }
 
-CardEdit::~CardEdit() { delete convTable; }
+CardEdit::~CardEdit() { delete[] convTable; }
 
 vector<int> CardEdit::getGameSlots(int startslot) {
     vector<int> slots;

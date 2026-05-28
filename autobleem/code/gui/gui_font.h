@@ -4,6 +4,7 @@
 #include "gui_sdl_wrapper.h"
 #include <map>
 #include <string>
+#include <utility>
 
 enum FontEnum {
     FONT_15_BOLD,
@@ -40,31 +41,33 @@ class Fonts {
 
     static FC_Font_Shared openNewSharedCachedFont(const std::string &filename, int fontSize,
                                                   SDL_Shared<SDL_Renderer> renderer);
-    static FC_Font_Shared openSpecificSharedCachedFont(FontType type, int fontSize);
+    FC_Font_Shared openSpecificSharedCachedFont(FontType type, int fontSize) const;
     static bool currentLanguageNeedsCjkFont();
+    static std::string getThemeFontPath(const std::string &themePath, const std::string &fontName);
+    static std::string getRetroarchFontPath(const std::string &fontName);
     static std::string getResourceFontPath(const std::string &rootPath, const std::string &fontName);
+    static std::string getFirstAvailableFontPath(const std::string &path);
     static std::string getFontPathForCurrentLanguage(const std::string &rootPath, FontType type);
 
     // static TTF_Font_Shared openNewSharedTTFFont(const std::string &filename, int fontSize);
 
     // in gui_launcher.cpp this call is used to change all the fonts to use the fonts in the current theme
     void openAllFonts(const std::string &_rootPath, SDL_Shared<SDL_Renderer> renderer);
+    void openAllFontsFromFontFile(const std::string &fontPath, SDL_Shared<SDL_Renderer> renderer);
 };
 
 //********************
-// SizesOfBoldThemeFont
-// If you ever need to change this to handle both bold and medium fonts change the map key to pair<FontType, pointSize>
-// This class is used by ps_meta.cpp to make the game title font smaller if the game name is do long that it
-// displays beyond the right edge of the screen.
+// SizesOfThemeFont
+// Caches resized theme fonts for text that needs to shrink to fit its available width.
 //********************
-class SizesOfBoldThemeFont {
-    std::map<int, FC_Font_Shared> boldFonts;
+class SizesOfThemeFont {
+    std::map<std::pair<FontType, int>, FC_Font_Shared> fonts;
 
   public:
-    SizesOfBoldThemeFont() = default;
-    void Init() { boldFonts.clear(); }
-    FC_Font_Shared AddFont(int size, FC_Font_Shared boldFont);
-    FC_Font_Shared GetFont(int size, const Fonts &fonts);
+    SizesOfThemeFont() = default;
+    void Init() { fonts.clear(); }
+    FC_Font_Shared AddFont(int size, FC_Font_Shared font, FontType type = FONT_BOLD);
+    FC_Font_Shared GetFont(int size, const Fonts &fonts, FontType type = FONT_BOLD);
 };
 
 using FC_Point = SDL_Point;

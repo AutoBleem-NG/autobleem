@@ -18,7 +18,7 @@ void GuiPadTest::init() {
     if (joyid != -1) {
         SDL_Joystick *joy = SDL_JoystickFromInstanceID(joyid);
 
-        appendLine("-=" + _("New GamePad found") + "=-");
+        appendLine(_("New GamePad found"));
         appendLine(SDL_JoystickName(joy));
     }
     appendLine("Hold down three buttons to exit");

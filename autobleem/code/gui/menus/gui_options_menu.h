@@ -11,6 +11,8 @@
 
 enum {
     CFG_THEME = 0,
+    CFG_THEME_FONT,
+    CFG_FONT,
     CFG_SHOW_ORIGAMES,
     CFG_UI,
     CFG_JEWEL,
@@ -34,17 +36,18 @@ class GuiOptions : public GuiOptionsMenuBase {
     explicit GuiOptions(SDL_Shared<SDL_Renderer> _renderer) : GuiOptionsMenuBase(_renderer) {}
 
     void init() override;
-    // void render() override;
+    void render() override;
     // void loop() override;
 
     std::vector<std::string> getThemes();
+    std::vector<std::string> getFonts();
     std::vector<std::string> getJewels();
     std::vector<std::string> getMusic();
     std::vector<std::string> getTimeoutValues();
 
     void fill();
 
-    std::string getTitle() override { return "-=" + _("Configuration") + "=-"; }
+    std::string getTitle() override { return _("Configuration"); }
     std::string getStatusLine() override;
 
     std::string getLineText(const OptionsInfo &info) override;

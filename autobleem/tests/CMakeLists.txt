@@ -1,5 +1,5 @@
 # Test suite for AutoBleem
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.10)
 
 # Fetch Google Test from GitHub
 include(FetchContent)
@@ -143,6 +143,28 @@ target_link_libraries(
 )
 
 gtest_discover_tests(log_test)
+
+# GUI text/layout helper tests
+add_executable(
+    gui_text_test
+    gui_text_test.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/gui/gui_text_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/gui/gui_font_paths.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/gui/gui_layout.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/environment.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/file_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/path_utils.cpp
+    ${CMAKE_SOURCE_DIR}/autobleem/code/utils/string_utils.cpp
+)
+
+target_link_libraries(
+    gui_text_test
+    GTest::gtest_main
+    Threads::Threads
+    SDL2
+)
+
+gtest_discover_tests(gui_text_test)
 
 # Lang (translation) tests
 add_executable(

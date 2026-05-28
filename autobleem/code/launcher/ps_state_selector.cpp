@@ -81,14 +81,14 @@ void PsStateSelector::render() {
         SDL_Shared<SDL_Texture> infoText;
         SDL_Rect infoRect, infoDest;
 
-        gui->renderText_WithColor(font30, text, 0, 110, brightWhite, XALIGN_CENTER);
+        gui->renderFittedText_WithColor(font30, text, 0, 110, 1180, 28, 16, brightWhite, XALIGN_CENTER);
 
         if (operation == OP_LOAD) {
-            gui->renderText(font24,
-                            "|@T| " + _("Delete") + "     |@X| " + _("Select") + "     |@O| " + _("Cancel") + "|", 0,
-                            150, XALIGN_CENTER);
+            gui->renderActionText(font24,
+                                  "|@T| " + _("Delete") + "     |@X| " + _("Select") + "     |@O| " + _("Cancel") + "|",
+                                  150, 1180, 22, 12);
         } else {
-            gui->renderText(font24, "|@X| " + _("Select") + "     |@O| " + _("Cancel") + "|", 0, 150, XALIGN_CENTER);
+            gui->renderActionText(font24, "|@X| " + _("Select") + "     |@O| " + _("Cancel") + "|", 150, 1180, 22, 12);
         }
 
         for (int i = 0; i < 4; i++) {
@@ -121,7 +121,8 @@ void PsStateSelector::render() {
                 SDL_RenderCopy(renderer, slotImg[i], &input, &imgOut);
             }
 
-            gui->renderText_WithColor(font24, _("Slot") + " " + to_string(i + 1), output.x + 60, 270, brightWhite);
+            gui->renderFittedText_WithColor(font24, _("Slot") + " " + to_string(i + 1), output.x + 60, 270, 200, 22, 12,
+                                            brightWhite);
         }
     }
 }

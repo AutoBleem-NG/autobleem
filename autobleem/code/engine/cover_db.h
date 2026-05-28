@@ -4,6 +4,7 @@
 #pragma once
 
 #include "rdb_reader.h"
+#include <string>
 
 //******************
 // Coverdb
@@ -20,4 +21,5 @@ class Coverdb {
     ~Coverdb() = default;
 
     bool isValid() const { return reader.isValid(); }
+    static std::string findRecordNameForSerial(const Coverdb *coverdb, const std::string &serial);
 };

@@ -35,6 +35,7 @@ class Star {
     float x, y;
     RGB color;
     float speed;
+    float drift;
     float size;
 };
 
@@ -45,5 +46,6 @@ class StarFx {
     SDL_Shared<SDL_Renderer> renderer;
 
   private:
+    Uint32 lastTicks = 0;
     vector<Star> starLayers[7];
 };

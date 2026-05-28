@@ -7,9 +7,9 @@
 #include "launcher/thumbnail_lookup.h"
 
 #include "environment.h"
+#include "utils/file_utils.h"
 
 #include <cstdio>
-#include <cstdlib>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <string>
@@ -71,8 +71,7 @@ class ThumbnailLookupTest : public ::testing::Test {
     void TearDown() override {
         Env::resetPaths();
         ThumbnailLookup::clearCaches();
-        std::string cmd = "rm -rf '" + usbRoot + "'";
-        std::system(cmd.c_str());
+        FileUtils::removeDirAndContents(usbRoot);
     }
 };
 

@@ -25,7 +25,10 @@ class GuiTwoColumnStringMenu : public GuiMenuBase<TwoColumnsOfText> {
     std::string getStatusLine() override { return GuiMenuBase::getStatusLine(); }
 
     void renderLineIndexOnRow(int index, int row) override {
-        gui->renderTextLineToColumns(lines[index].line_L, lines[index].line_R, xoffset_L, xoffset_R, row, yoffset,
-                                     font);
+        int menuFontSize = useSmallerFont ? 15 : gui->getThemeFontSize();
+        gui->renderFittedTextLine(lines[index].line_L, row, yoffset, XALIGN_LEFT, xoffset_L, xoffset_R - xoffset_L - 20,
+                                  menuFontSize, 12, font);
+        gui->renderFittedTextLine(lines[index].line_R, row, yoffset, XALIGN_LEFT, xoffset_R,
+                                  SCREEN_WIDTH - xoffset_R - 40, menuFontSize, 12, font);
     }
 };

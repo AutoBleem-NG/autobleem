@@ -18,3 +18,12 @@ Coverdb::Coverdb() {
         PLOG_ERROR << "failed to open rdb " << path;
     }
 }
+
+std::string Coverdb::findRecordNameForSerial(const Coverdb *coverdb, const std::string &serial) {
+    if (serial.empty() || coverdb == nullptr || !coverdb->isValid()) {
+        return "";
+    }
+
+    const auto *record = coverdb->reader.findBySerial(serial);
+    return record != nullptr ? record->name : "";
+}

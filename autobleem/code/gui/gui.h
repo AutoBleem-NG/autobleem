@@ -52,7 +52,7 @@ class GuiBase {
     SDL_Shared<SDL_Renderer> renderer;
 
     Fonts themeFonts;
-    SizesOfBoldThemeFont sizesOfBoldThemeFont; // the different sizes are used for the game name in the carousel
+    SizesOfThemeFont sizesOfThemeFont;
     Fonts sonyFonts;
     Config cfg;
     bool inGuiLauncher = false;
@@ -188,9 +188,21 @@ class Gui : public GuiBase {
 
     FC_Rect getOpscreenRectOfTheme();
     FC_Rect getTextRectOfTheme();
+    int getContentTopY(int padding = 18);
+    int getContentBottomY(int padding = 18);
 
     int getCheckIconWidth(); // returns the width of the check icon texture.  used to compute the x position.
     static int align_xPosition(XAlignment xAlign, int x, int width);
+    static SDL_Color getTitleTextColor();
+    static int getFontPointSize(FontEnum fontEnum);
+    static int getTextVisualYOffset(FC_Font_Shared font);
+    static int getSelectionBoxYOffset(FC_Font_Shared font);
+    static int getEmojiVisualYOffset(const std::string &tokenString);
+    int getThemeFontSize(int fallback = 20);
+    int getTitleFontSize();
+    FC_Font_Shared getFittingThemeFont(FC_Font_Shared baseFont, int maxSize, int minSize, const std::string &text,
+                                       int maxWidth);
+    int renderTitleLine(const std::string &text, int line, int yoffset, FC_Font_Shared font = FC_Font_Shared());
 
     //*******************************
     // Text tokenizing structure routines
@@ -237,16 +249,27 @@ class Gui : public GuiBase {
 
     // renders/draws the line of text and emoji icons at the chosen position on the screen.  returns the height.
     int renderText(FC_Font_Shared font, const std::string &text, int x, int y, XAlignment xAlign = XALIGN_LEFT);
+    int renderFittedText(FC_Font_Shared baseFont, const std::string &text, int x, int y, int maxWidth, int maxSize,
+                         int minSize, XAlignment xAlign = XALIGN_LEFT);
 
     // if background == true it draws a solid grey box around/behind the text
     // this routine does not support emoji icons.  text only.
     int renderText_WithColor(FC_Font_Shared font, const std::string &text, int x, int y, SDL_Color textColor,
                              XAlignment xAlign = XALIGN_LEFT, bool background = false);
+    int renderFittedText_WithColor(FC_Font_Shared baseFont, const std::string &text, int x, int y, int maxWidth,
+                                   int maxSize, int minSize, SDL_Color textColor, XAlignment xAlign = XALIGN_LEFT,
+                                   bool background = false);
 
     // returns rectangle height
     int renderTextLine(const std::string &text, int line, int yoffset = 0, XAlignment xAlign = XALIGN_LEFT,
                        int xoffset = 0,
                        FC_Font_Shared font = FC_Font_Shared()); // font will default to themeFont in the cpp
+    int renderFittedTextLine(const std::string &text, int line, int yoffset = 0, XAlignment xAlign = XALIGN_LEFT,
+                             int xoffset = 0, int maxWidth = SCREEN_WIDTH, int maxSize = 20, int minSize = 11,
+                             FC_Font_Shared font = FC_Font_Shared());
+    int renderFittedTextLine_WithColor(const std::string &text, int line, int yoffset, XAlignment xAlign, int xoffset,
+                                       int maxWidth, int maxSize, int minSize, SDL_Color textColor,
+                                       FC_Font_Shared font = FC_Font_Shared());
 
     int renderTextLineToColumns(const string &textLeft, const string &textRight, int xLeft, int xRight, int line,
                                 int yoffset = 0, FC_Font_Shared font = FC_Font_Shared());
@@ -255,18 +278,21 @@ class Gui : public GuiBase {
                               int xoffset = 0);
 
     void renderSelectionBox(int line, int yoffset, int xoffset = 0, FC_Font_Shared font = FC_Font_Shared());
+    void renderSelectionBoxAtY(int y, int height, int xoffset = 0, FC_Font_Shared font = FC_Font_Shared());
 
     void renderLabelBox(int line, int yoffset);
 
     void renderTextChar(const std::string &text, int line, int yoffset, int posx);
 
-    void renderFreeSpace();
+    void renderFreeSpace(int y = -1);
 
     void renderBackground();
 
     int renderLogo(bool small);
 
     void renderStatus(const std::string &text, int pos = -1);
+    int renderActionText(FC_Font_Shared baseFont, const std::string &text, int y, int maxWidth, int maxSize,
+                         int minSize);
 
     void renderTextBar();
 

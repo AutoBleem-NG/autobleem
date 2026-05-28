@@ -4,10 +4,10 @@
 
 #include "gui_game_editor_menu.h"
 #include "../gui.h"
+#include "../gui_layout.h"
 #include "../gui_keyboard.h"
 #include "../gui_select_mem_card.h"
 #include "../../engine/cfg_processor.h"
-#include "../../engine/cover_db.h"
 #include "../../engine/mem_card.h"
 #include "../../launcher/thumbnail_lookup.h"
 #include <SDL2/SDL_image.h>
@@ -16,40 +16,10 @@
 #include "../../environment.h"
 #include "../../lightgun_games.h"
 #include "../../system/process_utils.h"
+#include <algorithm>
+#include <vector>
 
 using namespace std;
-
-namespace {
-
-// Resolves the libretro-database canonical name for a serial, or "" if the
-// cover DB has no matching record. Used to pick the correct thumbnail file
-// for region-tagged libretro-thumbnails entries.
-string resolveRecordName(const string &serial) {
-    if (serial.empty())
-        return "";
-    auto gui = Gui::getInstance();
-    if (!gui || !gui->coverdb || !gui->coverdb->isValid())
-        return "";
-    const auto *rec = gui->coverdb->reader.findBySerial(serial);
-    return rec ? rec->name : "";
-}
-
-// Cover-art resolution for the editor menu: a PNG dropped in the game's
-// own folder wins (user override), then libretro-thumbnails Named_Boxarts
-// (resolved through serial + title), then the bundled default cover.
-SDL_Shared<SDL_Texture> loadCoverTexture(SDL_Shared<SDL_Renderer> renderer, const string &gameFolder,
-                                         const string &title, const string &serial) {
-    for (const DirEntry &entry : FileUtils::diru(gameFolder)) {
-        if (FileUtils::matchExtension(entry.name, EXT_PNG))
-            return IMG_LoadTexture(renderer, (gameFolder + sep + entry.name).c_str());
-    }
-    const string raBoxArt = ThumbnailLookup::findBoxArtPath("Sony - PlayStation", title, resolveRecordName(serial));
-    if (!raBoxArt.empty())
-        return IMG_LoadTexture(renderer, raBoxArt.c_str());
-    return IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "default.png").c_str());
-}
-
-} // namespace
 
 #define OPT_FIRST 5
 #define OPT_FAVORITE 5
@@ -65,6 +35,231 @@ SDL_Shared<SDL_Texture> loadCoverTexture(SDL_Shared<SDL_Renderer> renderer, cons
 #define OPT_PLUGIN 15
 #define OPT_INTERPOLATION 16
 #define OPT_LAST 16
+
+namespace {
+const int editorPanelGap = 26;
+const int editorPanelPadding = 16;
+const int editorInfoPanelWidth = 390;
+const int editorInfoLabelWidth = 112;
+const int editorCoverSize = 226;
+const int editorTitleMaxFontSize = 22;
+const int editorTitleMinFontSize = 13;
+const int editorInfoMaxFontSize = 16;
+const int editorInfoMinFontSize = 10;
+const int editorSettingsTitleMaxFontSize = 20;
+const int editorSettingsTitleMinFontSize = 13;
+const int editorSettingsMaxFontSize = 19;
+const int editorSettingsMinFontSize = 12;
+const int editorSettingsValueWidth = 170;
+const int editorSettingsMinRowStep = 28;
+const int editorSettingsRowGap = 6;
+const SDL_Color editorPanelFillColor = {0, 0, 0, 118};
+const SDL_Color editorPanelBorderColor = {255, 255, 255, 42};
+const SDL_Color editorMutedTextColor = {205, 205, 205, 255};
+
+// Cover-art resolution for the editor menu: a PNG dropped in the game's
+// own folder wins (user override), then libretro-thumbnails Named_Boxarts
+// (resolved through serial + title), then the bundled default cover.
+SDL_Shared<SDL_Texture> loadCoverTexture(SDL_Shared<SDL_Renderer> renderer, const string &gameFolder,
+                                         const string &title, const string &serial) {
+    for (const DirEntry &entry : FileUtils::diru(gameFolder)) {
+        if (FileUtils::matchExtension(entry.name, EXT_PNG))
+            return IMG_LoadTexture(renderer, (gameFolder + sep + entry.name).c_str());
+    }
+    auto gui = Gui::getInstance();
+    const string recordName = Coverdb::findRecordNameForSerial(gui->coverdb, serial);
+    const string raBoxArt = ThumbnailLookup::findBoxArtPath(ThumbnailLookup::PlayStationDbName, title, recordName);
+    if (!raBoxArt.empty())
+        return IMG_LoadTexture(renderer, raBoxArt.c_str());
+    return IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "default.png").c_str());
+}
+
+struct EditorLayout {
+    SDL_Rect infoPanel;
+    SDL_Rect settingsPanel;
+    SDL_Rect coverRect;
+    int infoTitleY = 0;
+    int infoFirstRowY = 0;
+    int infoRowStep = 0;
+    int settingsTitleY = 0;
+    int settingsFirstRowY = 0;
+    int settingsRowStep = 0;
+    int settingsRowHeight = 0;
+    int settingsLabelX = 0;
+    int settingsLabelWidth = 0;
+    int settingsValueX = 0;
+    int settingsValueWidth = 0;
+};
+
+EditorLayout getEditorLayout(const shared_ptr<Gui> &gui, int optionCount) {
+    SDL_Rect opscreen = gui->getOpscreenRectOfTheme();
+    int top = gui->getContentTopY(14);
+    int bottom = gui->getContentBottomY(16);
+    int right = opscreen.x + opscreen.w - 18;
+    int panelHeight = bottom - top;
+
+    EditorLayout layout;
+    layout.infoPanel = {opscreen.x + 18, top, editorInfoPanelWidth, panelHeight};
+    layout.settingsPanel = {layout.infoPanel.x + layout.infoPanel.w + editorPanelGap, top,
+                            right - (layout.infoPanel.x + layout.infoPanel.w + editorPanelGap), panelHeight};
+
+    int coverSize = std::min(editorCoverSize, layout.infoPanel.w - (editorPanelPadding * 2));
+    layout.coverRect = {layout.infoPanel.x + ((layout.infoPanel.w - coverSize) / 2), layout.infoPanel.y + 58, coverSize,
+                        coverSize};
+    layout.infoTitleY = layout.infoPanel.y + 14;
+    layout.infoFirstRowY = layout.coverRect.y + layout.coverRect.h + 18;
+    layout.infoRowStep = std::max(22, FC_GetLineHeight(gui->themeFonts[FONT_15_BOLD]) + 5);
+
+    layout.settingsTitleY = layout.settingsPanel.y + 14;
+    layout.settingsFirstRowY = layout.settingsPanel.y + 52;
+    int settingsFontHeight = FC_GetLineHeight(gui->themeFonts[FONT_20_BOLD]);
+    Gui::AllTextOrEmojiTokenInfo checkInfo(gui->themeFonts[FONT_20_BOLD], "|@Check|");
+    int settingsContentHeight = std::max(settingsFontHeight, checkInfo.totalSize.h);
+    int defaultRowStep = std::max(editorSettingsMinRowStep, settingsContentHeight + editorSettingsRowGap);
+    int availableHeight =
+        layout.settingsPanel.y + layout.settingsPanel.h - editorPanelPadding - layout.settingsFirstRowY;
+    int availableStep = optionCount > 0 ? availableHeight / optionCount : defaultRowStep;
+    layout.settingsRowStep = std::max(settingsContentHeight, std::min(defaultRowStep, availableStep));
+    layout.settingsRowHeight = settingsContentHeight;
+    layout.settingsLabelX = layout.settingsPanel.x + editorPanelPadding;
+    layout.settingsValueWidth = editorSettingsValueWidth;
+    layout.settingsValueX =
+        layout.settingsPanel.x + layout.settingsPanel.w - editorPanelPadding - layout.settingsValueWidth;
+    layout.settingsLabelWidth = layout.settingsValueX - layout.settingsLabelX - editorPanelPadding;
+    return layout;
+}
+
+void renderCoverFrame(SDL_Shared<SDL_Renderer> renderer, const SDL_Rect &rect) {
+    GuiLayout::renderRectOutline(renderer, rect, {255, 255, 255, 35});
+}
+
+void renderEditorInfoLine(const shared_ptr<Gui> &gui, const EditorLayout &layout, int row, const string &label,
+                          const string &value) {
+    int y = layout.infoFirstRowY + (layout.infoRowStep * row);
+    int x = layout.infoPanel.x + editorPanelPadding;
+    int valueX = x + editorInfoLabelWidth + 8;
+    int valueWidth = layout.infoPanel.x + layout.infoPanel.w - editorPanelPadding - valueX;
+
+    gui->renderFittedText_WithColor(gui->themeFonts[FONT_15_BOLD], label, x, y, editorInfoLabelWidth,
+                                    editorInfoMaxFontSize, editorInfoMinFontSize, Gui::getTitleTextColor());
+    gui->renderFittedText_WithColor(gui->themeFonts[FONT_15_BOLD], value, valueX, y, valueWidth, editorInfoMaxFontSize,
+                                    editorInfoMinFontSize, editorMutedTextColor);
+}
+
+void renderCenteredFittedText(const shared_ptr<Gui> &gui, FC_Font_Shared baseFont, const string &text,
+                              const SDL_Rect &rect, int maxSize, int minSize, SDL_Color color) {
+    FC_Font_Shared font = gui->getFittingThemeFont(baseFont, maxSize, minSize, text, rect.w);
+    Gui::AllTextOrEmojiTokenInfo textInfo(font, text);
+    textInfo.setTextColor(color);
+    int x = rect.x + ((rect.w - textInfo.totalSize.w) / 2);
+    int y = rect.y + std::max(0, (rect.h - textInfo.totalSize.h) / 2);
+    textInfo.render(x, y);
+}
+
+struct EditorOptionLine {
+    EditorOptionLine(int _id, const string &_label, const string &_value) : id(_id), label(_label), value(_value) {}
+
+    int id;
+    string label;
+    string value;
+};
+
+string checkedValue(bool checked) { return checked ? "|@Check|" : "|@Uncheck|"; }
+
+string getIniValue(const Inifile &ini, const string &key) {
+    auto it = ini.values.find(key);
+    return it == ini.values.end() ? "" : it->second;
+}
+
+vector<EditorOptionLine> buildEditorOptions(const GuiEditor &editor) {
+    vector<EditorOptionLine> options;
+    options.emplace_back(OPT_FAVORITE, _("Favorite"),
+                         checkedValue(editor.gameData->internal ? editor.gameData->favorite
+                                                                : getIniValue(editor.gameIni, "favorite") == "1"));
+    options.emplace_back(OPT_LIGHTGUN, _("Lightgun Game"),
+                         checkedValue(Gui::getInstance()->lightgunGames.IsGameALightgunGame(editor.gameData)));
+    options.emplace_back(OPT_PLAY_USING_RA, _("Play using RA"),
+                         checkedValue(editor.gameData->internal
+                                          ? editor.gameData->play_using_ra
+                                          : getIniValue(editor.gameIni, "play_using_ra") == "true"));
+    options.emplace_back(OPT_LOCK, _("Lock data"), checkedValue(getIniValue(editor.gameIni, "automation") == "0"));
+    options.emplace_back(OPT_HIGHRES, _("High res"), checkedValue(editor.highres == 1));
+    options.emplace_back(OPT_SPEEDHACK, _("SpeedHack"), checkedValue(editor.speedhack == 1));
+    options.emplace_back(OPT_SCANLINES, _("Scanlines"), checkedValue(editor.scanlines == 1));
+    options.emplace_back(OPT_SCANLINELV, _("Scanline Level"), to_string(editor.scanlineLevel));
+    options.emplace_back(OPT_CLOCK_PSX, _("Clock"), to_string(editor.clock));
+    options.emplace_back(OPT_FRAMESKIP, _("Frameskip"), to_string(editor.frameskip));
+    if (!editor.internal) {
+        options.emplace_back(OPT_PLUGIN, _("Plugin"), editor.gpu);
+    }
+    options.emplace_back(OPT_INTERPOLATION, _("Spu Interpolation"), to_string(editor.interpolation));
+    return options;
+}
+
+string formatMemoryCardName(const string &memcard) {
+    return memcard == "SONY" ? string(_("Internal")) : memcard + " " + "(" + _("Custom") + ")";
+}
+
+void renderEditorOptionRow(const shared_ptr<Gui> &gui, const EditorLayout &layout, const EditorOptionLine &option,
+                           int visibleRow, bool selected) {
+    int y = layout.settingsFirstRowY + (layout.settingsRowStep * visibleRow);
+    int textY = y + ((layout.settingsRowHeight - FC_GetLineHeight(gui->themeFonts[FONT_20_BOLD])) / 2);
+    if (selected) {
+        string fg = gui->themeData.values["text_fg"];
+        SDL_Rect selection{layout.settingsPanel.x + 8, y - 2, layout.settingsPanel.w - 16,
+                           layout.settingsRowHeight + 4};
+        SDL_Color selectionColor = {static_cast<Uint8>(gui->getR(fg)), static_cast<Uint8>(gui->getG(fg)),
+                                    static_cast<Uint8>(gui->getB(fg)), 255};
+        GuiLayout::renderRectOutline(gui->renderer, selection, selectionColor);
+    }
+
+    gui->renderFittedText(gui->themeFonts[FONT_20_BOLD], option.label, layout.settingsLabelX, textY,
+                          layout.settingsLabelWidth, editorSettingsMaxFontSize, editorSettingsMinFontSize);
+
+    int rightMargin = SCREEN_WIDTH - (layout.settingsValueX + layout.settingsValueWidth);
+    Gui::AllTextOrEmojiTokenInfo valueInfo(gui->themeFonts[FONT_20_BOLD], option.value);
+    valueInfo.render(rightMargin, y + ((layout.settingsRowHeight - valueInfo.totalSize.h) / 2), XALIGN_RIGHT);
+}
+
+} // namespace
+
+namespace {
+bool isEditorOptionVisible(int option, bool internal) { return !(internal && option == OPT_PLUGIN); }
+
+int clampEditorOption(int option, bool internal) {
+    if (isEditorOptionVisible(option, internal)) {
+        return option;
+    }
+
+    for (int next = option + 1; next <= OPT_LAST; ++next) {
+        if (isEditorOptionVisible(next, internal)) {
+            return next;
+        }
+    }
+    for (int previous = option - 1; previous >= OPT_FIRST; --previous) {
+        if (isEditorOptionVisible(previous, internal)) {
+            return previous;
+        }
+    }
+
+    return OPT_FIRST;
+}
+
+int moveEditorOption(int option, int direction, bool internal) {
+    int next = option;
+    do {
+        next += direction;
+        if (next < OPT_FIRST) {
+            return clampEditorOption(OPT_FIRST, internal);
+        }
+        if (next > OPT_LAST) {
+            return clampEditorOption(OPT_LAST, internal);
+        }
+    } while (!isEditorOptionVisible(next, internal));
+
+    return next;
+}
+} // namespace
 
 //*******************************
 // GuiEditor::processOptionChange
@@ -402,90 +597,39 @@ void GuiEditor::init() {
 void GuiEditor::render() {
     shared_ptr<Gui> gui(Gui::getInstance());
 
-    int line = 0;
     gui->renderBackground();
     gui->renderTextBar();
-    int yoffset = gui->renderLogo(true);
 
-    // Game.ini
+    vector<EditorOptionLine> options = buildEditorOptions(*this);
+    selOption = clampEditorOption(selOption, internal);
+    EditorLayout layout = getEditorLayout(gui, options.size());
 
-    gui->renderTextLine("-=" + gameIni.values["title"] + "=-", line++, yoffset, XALIGN_CENTER);
+    GuiLayout::renderPanel(renderer, layout.infoPanel, editorPanelFillColor, editorPanelBorderColor);
+    GuiLayout::renderPanel(renderer, layout.settingsPanel, editorPanelFillColor, editorPanelBorderColor);
 
-    if (!internal) {
-        gui->renderTextLine(_("Folder") + ": " + gameIni.entry, line++, yoffset, XALIGN_CENTER);
-    } else {
-        gui->renderTextLine(_("Folder") + ": " + gameData->folder, line++, yoffset, XALIGN_CENTER);
+    SDL_Rect titleRect{layout.infoPanel.x + editorPanelPadding, layout.infoTitleY,
+                       layout.infoPanel.w - (editorPanelPadding * 2), 30};
+    renderCenteredFittedText(gui, gui->themeFonts[FONT_20_BOLD], gameIni.values["title"], titleRect,
+                             editorTitleMaxFontSize, editorTitleMinFontSize, Gui::getTitleTextColor());
+
+    GuiLayout::renderTextureFit(renderer, cover, layout.coverRect);
+    renderCoverFrame(renderer, layout.coverRect);
+
+    string folderText = internal ? gameData->folder : gameIni.entry;
+    renderEditorInfoLine(gui, layout, 0, _("Folder"), folderText);
+    renderEditorInfoLine(gui, layout, 1, _("Published by"), gameIni.values["publisher"]);
+    renderEditorInfoLine(gui, layout, 2, _("Year"), gameIni.values["year"]);
+    renderEditorInfoLine(gui, layout, 3, _("Players"), gameIni.values["players"]);
+    renderEditorInfoLine(gui, layout, 4, _("Memory Card"), formatMemoryCardName(gameIni.values["memcard"]));
+
+    SDL_Rect settingsTitleRect{layout.settingsPanel.x + editorPanelPadding, layout.settingsTitleY,
+                               layout.settingsPanel.w - (editorPanelPadding * 2), 28};
+    renderCenteredFittedText(gui, gui->themeFonts[FONT_20_BOLD], _("Options"), settingsTitleRect,
+                             editorSettingsTitleMaxFontSize, editorSettingsTitleMinFontSize, Gui::getTitleTextColor());
+
+    for (int i = 0; i < options.size(); ++i) {
+        renderEditorOptionRow(gui, layout, options[i], i, options[i].id == selOption);
     }
-
-    gui->renderTextLine(_("Published by") + ": " + gameIni.values["publisher"], line++, yoffset, XALIGN_CENTER);
-
-    gui->renderTextLine(_("Year") + ": " + gameIni.values["year"] + "   " + _("Players") + ": " +
-                            gameIni.values["players"],
-                        line++, yoffset, XALIGN_CENTER);
-
-    gui->renderTextLine(_("Memory Card") + ": " +
-                            (gameIni.values["memcard"] == "SONY"
-                                 ? string(_("Internal"))
-                                 : gameIni.values["memcard"] + " " + "(" + _("Custom") + ")"),
-                        line++, yoffset, XALIGN_CENTER);
-
-    if (gameData->internal) {
-        gui->renderTextLineOptions(_("Favorite") + ":" +
-                                       (gameData->favorite ? string("|@Check|") : string("|@Uncheck|")),
-                                   OPT_FAVORITE, yoffset, XALIGN_LEFT, 300);
-    } else {
-        gui->renderTextLineOptions(_("Favorite") + ":" +
-                                       (gameIni.values["favorite"] == "1" ? string("|@Check|") : string("|@Uncheck|")),
-                                   OPT_FAVORITE, yoffset, XALIGN_LEFT, 300);
-    }
-
-    gui->renderTextLineOptions(_("Lightgun Game") + ":" +
-                                   (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gameData)
-                                        ? string("|@Check|")
-                                        : string("|@Uncheck|")),
-                               OPT_LIGHTGUN, yoffset, XALIGN_LEFT, 300);
-
-    if (gameData->internal) {
-        gui->renderTextLineOptions(_("Play using RA") + ":" +
-                                       (gameData->play_using_ra ? string("|@Check|") : string("|@Uncheck|")),
-                                   OPT_PLAY_USING_RA, yoffset, XALIGN_LEFT, 300);
-    } else {
-        gui->renderTextLineOptions(
-            _("Play using RA") + ":" +
-                (gameIni.values["play_using_ra"] == "true" ? string("|@Check|") : string("|@Uncheck|")),
-            OPT_PLAY_USING_RA, yoffset, XALIGN_LEFT, 300);
-    }
-
-    // pcsx.cfg
-
-    gui->renderTextLineOptions(_("Lock data") + ":" +
-                                   (gameIni.values["automation"] == "0" ? string("|@Check|") : string("|@Uncheck|")),
-                               OPT_LOCK, yoffset, XALIGN_LEFT, 300);
-
-    gui->renderTextLineOptions(_("High res") + ":" + (highres == 1 ? string("|@Check|") : string("|@Uncheck|")),
-                               OPT_HIGHRES, yoffset, XALIGN_LEFT, 300);
-
-    gui->renderTextLineOptions(_("SpeedHack") + ":" + (speedhack == 1 ? string("|@Check|") : string("|@Uncheck|")),
-                               OPT_SPEEDHACK, yoffset, XALIGN_LEFT, 300);
-
-    gui->renderTextLineOptions(_("Scanlines") + ":" + (scanlines == 1 ? string("|@Check|") : string("|@Uncheck|")),
-                               OPT_SCANLINES, yoffset, XALIGN_LEFT, 300);
-
-    gui->renderTextLineOptions(_("Scanline Level") + ": " + to_string(scanlineLevel), OPT_SCANLINELV, yoffset,
-                               XALIGN_LEFT, 300);
-
-    gui->renderTextLineOptions(_("Clock") + ": " + to_string(clock), OPT_CLOCK_PSX, yoffset, XALIGN_LEFT, 300);
-
-    gui->renderTextLineOptions(_("Frameskip") + ": " + to_string(frameskip), OPT_FRAMESKIP, yoffset, XALIGN_LEFT, 300);
-
-    if (!internal) {
-        gui->renderTextLineOptions(_("Plugin") + ": " + gpu, OPT_PLUGIN, yoffset, XALIGN_LEFT, 300);
-    }
-
-    gui->renderTextLineOptions(_("Spu Interpolation") + ": " + to_string(interpolation), OPT_INTERPOLATION, yoffset,
-                               XALIGN_LEFT, 300);
-
-    gui->renderSelectionBox(selOption, yoffset, 300);
 
     string guiMenu = "|@T| " + _("Rename");
 
@@ -500,14 +644,6 @@ void GuiEditor::render() {
     guiMenu += " |@O| " + _("Go back") + "|";
 
     gui->renderStatus(guiMenu);
-
-    SDL_Rect rect;
-    rect.x = atoi(gui->themeData.values["ecoverx"].c_str());
-    rect.y = atoi(gui->themeData.values["ecovery"].c_str());
-    rect.w = 226;
-    rect.h = 226;
-
-    SDL_RenderCopy(renderer, cover, nullptr, &rect);
 
     SDL_RenderPresent(renderer);
 }
@@ -540,20 +676,14 @@ void GuiEditor::loop() {
                 if (gui->mapper.isDown(&e)) {
                     do {
                         Mix_PlayChannel(-1, gui->cursor, 0);
-                        selOption++;
-                        if (selOption > OPT_LAST) {
-                            selOption = OPT_LAST;
-                        }
+                        selOption = moveEditorOption(selOption, 1, internal);
                         render();
                     } while (fastForwardUntilAnotherEvent(120));
                 }
                 if (gui->mapper.isUp(&e)) {
                     do {
                         Mix_PlayChannel(-1, gui->cursor, 0);
-                        selOption--;
-                        if (selOption < OPT_FIRST) {
-                            selOption = OPT_FIRST;
-                        }
+                        selOption = moveEditorOption(selOption, -1, internal);
                         render();
                     } while (fastForwardUntilAnotherEvent(120));
                 }

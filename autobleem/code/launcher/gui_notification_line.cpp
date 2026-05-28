@@ -1,6 +1,7 @@
 #include "gui_notification_line.h"
 #include "gui_launcher.h"
 #include "../gui/gui.h"
+#include "../gui/gui_action_text.h"
 
 using namespace std;
 
@@ -38,10 +39,24 @@ void NotificationLine::tickTock() {
             if (currentTimeTicks - notificationTime > timeLimit) // if time limit reached
                 notificationTime = 0;                            // turn off the display
         }
-        if (notificationTime != 0)
-            gui->renderText_WithColor(gui->themeFonts[fontEnum], text, x, y, textColor, XALIGN_CENTER, true);
-    } else // not timed - keep display on
-        gui->renderText_WithColor(gui->themeFonts[fontEnum], text, x, y, textColor, XALIGN_CENTER, true);
+    }
+
+    if (!timed || notificationTime != 0) {
+        if (text.find("|@") != string::npos) {
+            GuiActionText::Layout layout = GuiActionText::getLayout(
+                gui, gui->themeFonts[fontEnum], text, SCREEN_WIDTH - 80, Gui::getFontPointSize(fontEnum), 12);
+            int textX = (SCREEN_WIDTH / 2) - (layout.width / 2);
+            SDL_SetRenderDrawColor(gui->renderer, 0, 0, 0, 70);
+            SDL_SetRenderDrawBlendMode(gui->renderer, SDL_BLENDMODE_BLEND);
+            SDL_Rect backRect{textX - 10, y - 2, layout.width + 20, layout.height + 4};
+            SDL_RenderFillRect(gui->renderer, &backRect);
+            GuiActionText::renderLayout(layout, textX, y);
+            return;
+        }
+
+        gui->renderFittedText_WithColor(gui->themeFonts[fontEnum], text, x, y, SCREEN_WIDTH - 80,
+                                        Gui::getFontPointSize(fontEnum), 12, textColor, XALIGN_CENTER, true);
+    }
 }
 
 //*******************************

@@ -15,6 +15,48 @@
 
 using namespace std;
 
+namespace {
+const int metaRightPadding = 30;
+const int metaTitleMaxFontSize = 28;
+const int metaTitleMinFontSize = 16;
+const int metaDetailMaxFontSize = 15;
+const int metaDetailMinFontSize = 11;
+const int metaTitleToDetailsOffset = 51;
+const int metaDetailLineOffset = 21;
+const int metaDetailBlockBottomPadding = 6;
+const int metaDetailsToInfoOffset = 6;
+const int metaPlayerTextOffsetX = 35;
+const int metaDiscIconOffsetX = 135;
+const int metaDiscTextOffsetX = 170;
+const int metaSystemIconOffsetX = 190;
+const int metaIconSpread = 40;
+const int metaIconSize = 30;
+const int metaIconYOffset = -2;
+const char evoIconDir[] = "evoimg/";
+const char ps1IconFile[] = "ps1.png";
+const char usbIconFile[] = "usb.png";
+const char hdIconFile[] = "hd.png";
+const char sdIconFile[] = "sd.png";
+const char lockIconFile[] = "lock.png";
+const char unlockIconFile[] = "unlock.png";
+const char cdIconFile[] = "cd.png";
+const char favoriteIconFile[] = "favorite.png";
+const char retroarchIconFile[] = "ra.png";
+const char lightgunIconFile[] = "lightgun.png";
+const char lightgun2IconFile[] = "lightgun2.png";
+
+SDL_Shared<SDL_Texture> loadEvoIcon(SDL_Shared<SDL_Renderer> renderer, const string &rootPath, const string &filename) {
+    return IMG_LoadTexture(renderer, (rootPath + evoIconDir + filename).c_str());
+}
+
+int getCenteredRowY(int rowY, int rowHeight, int itemHeight) { return rowY + ((rowHeight - itemHeight) / 2); }
+
+void renderTextCenteredInRow(FC_Font_Shared font, const string &text, int x, int rowY, int rowHeight) {
+    Gui::AllTextOrEmojiTokenInfo textInfo(font, text);
+    textInfo.render(x, getCenteredRowY(rowY, rowHeight, textInfo.totalSize.h) + Gui::getTextVisualYOffset(font));
+}
+} // namespace
+
 //*******************************
 // PsMeta::updateTexts
 //*******************************
@@ -110,17 +152,17 @@ void PsMeta::render() {
 
     if (internalOffTex == nullptr) {
         string curPath = Env::getWorkingPath() + sep;
-        internalOnTex = IMG_LoadTexture(renderer, (curPath + "evoimg/ps1.png").c_str());
-        internalOffTex = IMG_LoadTexture(renderer, (curPath + "evoimg/usb.png").c_str());
-        hdOnTex = IMG_LoadTexture(renderer, (curPath + "evoimg/hd.png").c_str());
-        hdOffTex = IMG_LoadTexture(renderer, (curPath + "evoimg/sd.png").c_str());
-        lockOnTex = IMG_LoadTexture(renderer, (curPath + "evoimg/lock.png").c_str());
-        lockOffTex = IMG_LoadTexture(renderer, (curPath + "evoimg/unlock.png").c_str());
-        cdTex = IMG_LoadTexture(renderer, (curPath + "evoimg/cd.png").c_str());
-        favoriteTex = IMG_LoadTexture(renderer, (curPath + "evoimg/favorite.png").c_str());
-        raTex = IMG_LoadTexture(renderer, (curPath + "evoimg/ra.png").c_str());
-        lightgunTex = IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun.png").c_str());
-        lightgun2Tex = IMG_LoadTexture(renderer, (curPath + "evoimg/lightgun2.png").c_str());
+        internalOnTex = loadEvoIcon(renderer, curPath, ps1IconFile);
+        internalOffTex = loadEvoIcon(renderer, curPath, usbIconFile);
+        hdOnTex = loadEvoIcon(renderer, curPath, hdIconFile);
+        hdOffTex = loadEvoIcon(renderer, curPath, sdIconFile);
+        lockOnTex = loadEvoIcon(renderer, curPath, lockIconFile);
+        lockOffTex = loadEvoIcon(renderer, curPath, unlockIconFile);
+        cdTex = loadEvoIcon(renderer, curPath, cdIconFile);
+        favoriteTex = loadEvoIcon(renderer, curPath, favoriteIconFile);
+        raTex = loadEvoIcon(renderer, curPath, retroarchIconFile);
+        lightgunTex = loadEvoIcon(renderer, curPath, lightgunIconFile);
+        lightgun2Tex = loadEvoIcon(renderer, curPath, lightgun2IconFile);
     }
 
     if (visible) {
@@ -132,36 +174,22 @@ void PsMeta::render() {
 
         auto nameFont = fonts[FONT_28_BOLD];
         auto otherFont = fonts[FONT_15_BOLD];
-
-        gui->sizesOfBoldThemeFont.AddFont(28, nameFont);
+        const int textMaxWidth = SCREEN_WIDTH - x - metaRightPadding;
 
         int yOffset = 0;
         //
         // game name line
         //
-        // if the game name goes off the end of the screen use a smaller font
-        int textWidth = FC_GetWidth(nameFont, gameName.c_str());
-        if (x + textWidth > SCREEN_WIDTH) {
-            int miniMe = 28.0 * (static_cast<float>(SCREEN_WIDTH - x) / static_cast<float>(textWidth)) + 0.5;
-            nameFont = gui->sizesOfBoldThemeFont.GetFont(miniMe, gui->themeFonts);
-
-            // if it's still a bit over the right edge go down one more font size
-            textWidth = FC_GetWidth(nameFont, gameName.c_str());
-            if (x + textWidth > SCREEN_WIDTH) {
-                --miniMe;
-                nameFont = gui->sizesOfBoldThemeFont.GetFont(miniMe, gui->themeFonts);
-            }
-        }
-        gui->renderText(nameFont, gameName, x, y + yOffset);
+        gui->renderFittedText(nameFont, gameName, x, y + yOffset, textMaxWidth, metaTitleMaxFontSize,
+                              metaTitleMinFontSize);
 
         //
         // publisher line
         //
-        yOffset += 35;
-        if (!foreign)
-            gui->renderText(otherFont, publisher + ", " + year, x, y + yOffset);
-        else
-            gui->renderText(otherFont, publisher, x, y + yOffset);
+        yOffset += metaTitleToDetailsOffset;
+        string publisherLine = !foreign ? publisher + ", " + year : publisher;
+        gui->renderFittedText(otherFont, publisherLine, x, y + yOffset, textMaxWidth, metaDetailMaxFontSize,
+                              metaDetailMinFontSize);
 
         //
         // if PS1
@@ -170,39 +198,43 @@ void PsMeta::render() {
             //
             // serial number line
             //
-            yOffset += 21;
-            gui->renderText(otherFont, _("Serial") + ": " + serial + ", " + _("Region") + ": " + region, x,
-                            y + yOffset);
+            yOffset += metaDetailLineOffset;
+            gui->renderFittedText(otherFont, _("Serial") + ": " + serial + ", " + _("Region") + ": " + region, x,
+                                  y + yOffset, textMaxWidth, metaDetailMaxFontSize, metaDetailMinFontSize);
 
             //
             // last played line
             //
-            yOffset += 21;
+            yOffset += metaDetailLineOffset + metaDetailBlockBottomPadding;
 #if defined(__x86_64__) || defined(_M_X64) || defined(PI_DEBUG)
             // the devel system has time
-            gui->renderText(otherFont, _("Last Played") + ": " + last_played, x, y + yOffset);
+            gui->renderFittedText(otherFont, _("Last Played") + ": " + last_played, x, y + yOffset, textMaxWidth,
+                                  metaDetailMaxFontSize, metaDetailMinFontSize);
 #else
             if (Env::autobleemKernel)
-                gui->renderText(otherFont, _("Last Played") + ": " + last_played, x, y + yOffset);
+                gui->renderFittedText(otherFont, _("Last Played") + ": " + last_played, x, y + yOffset, textMaxWidth,
+                                      metaDetailMaxFontSize, metaDetailMinFontSize);
 #endif
-            yOffset += 22;
+            yOffset += metaDetailsToInfoOffset;
         }
 
-        int xoffset = 190, spread = 40;
         int spreadCount = 1;
 
         //
         // if PS1
         //
         if (!foreign) {
+            const int infoRowY = y + yOffset + metaIconYOffset;
+            const int infoRowHeight = metaIconSize;
+
             //
             // num players
             //
-            gui->renderText(otherFont, players, x + 35, y + yOffset);
+            renderTextCenteredInRow(otherFont, players, x + metaPlayerTextOffsetX, infoRowY, infoRowHeight);
 
             SDL_QueryTexture(tex, &format, &access, &w, &h);
             rect.x = x;
-            rect.y = y + yOffset - 2;
+            rect.y = getCenteredRowY(infoRowY, infoRowHeight, h);
             rect.w = w;
             rect.h = h;
 
@@ -215,20 +247,20 @@ void PsMeta::render() {
             //
             // render internal icon
             //
-            rect.x = x + 135;
+            rect.x = x + metaDiscIconOffsetX;
             SDL_RenderCopy(renderer, cdTex, &fullRect, &rect);
 
-            gui->renderText(otherFont, to_string(discs), x + 170, y + yOffset);
+            renderTextCenteredInRow(otherFont, to_string(discs), x + metaDiscTextOffsetX, infoRowY, infoRowHeight);
 
-            rect.x = x + xoffset;
-            rect.y = y + yOffset - 2;
-            rect.w = 30;
-            rect.h = 30;
+            rect.x = x + metaSystemIconOffsetX;
+            rect.y = getCenteredRowY(infoRowY, infoRowHeight, metaIconSize);
+            rect.w = metaIconSize;
+            rect.h = metaIconSize;
 
             fullRect.x = 0;
             fullRect.y = 0;
-            fullRect.w = 30;
-            fullRect.h = 30;
+            fullRect.w = metaIconSize;
+            fullRect.h = metaIconSize;
             if (internal) {
                 locked = true;
                 hd = false;
@@ -240,7 +272,7 @@ void PsMeta::render() {
             //
             // HD icon
             //
-            rect.x = x + xoffset + (spread * spreadCount);
+            rect.x = x + metaSystemIconOffsetX + (metaIconSpread * spreadCount);
             if (hd) {
                 SDL_RenderCopy(renderer, hdOnTex, &fullRect, &rect);
             } else {
@@ -251,7 +283,7 @@ void PsMeta::render() {
             // lock icon
             //
             ++spreadCount;
-            rect.x = x + xoffset + (spread * spreadCount);
+            rect.x = x + metaSystemIconOffsetX + (metaIconSpread * spreadCount);
             if (locked) {
                 SDL_RenderCopy(renderer, lockOnTex, &fullRect, &rect);
             } else {
@@ -263,7 +295,7 @@ void PsMeta::render() {
             //
             if (favorite) {
                 ++spreadCount;
-                rect.x = x + xoffset + (spread * spreadCount);
+                rect.x = x + metaSystemIconOffsetX + (metaIconSpread * spreadCount);
                 SDL_RenderCopy(renderer, favoriteTex, &fullRect, &rect);
             }
 
@@ -272,7 +304,7 @@ void PsMeta::render() {
             //
             if (play_using_ra) {
                 ++spreadCount;
-                rect.x = x + xoffset + (spread * spreadCount);
+                rect.x = x + metaSystemIconOffsetX + (metaIconSpread * spreadCount);
                 SDL_RenderCopy(renderer, raTex, &fullRect, &rect);
             }
 
@@ -281,7 +313,7 @@ void PsMeta::render() {
             //
             if (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gamePathForLightgunGamesFile)) {
                 ++spreadCount;
-                rect.x = x + xoffset + (spread * spreadCount);
+                rect.x = x + metaSystemIconOffsetX + (metaIconSpread * spreadCount);
                 if (players.size() > 0 && players[0] >= '2')
                     SDL_RenderCopy(renderer, lightgun2Tex, &fullRect, &rect);
                 else
@@ -295,10 +327,10 @@ void PsMeta::render() {
                 //
                 // retroarch icon
                 //
-                yOffset += 21;
+                yOffset += metaDetailLineOffset;
                 SDL_QueryTexture(raTex, &format, &access, &w, &h);
                 rect.x = x;
-                rect.y = y + yOffset - 2;
+                rect.y = y + yOffset + metaIconYOffset;
                 rect.w = w;
                 rect.h = h;
 
@@ -312,7 +344,7 @@ void PsMeta::render() {
                 // favorite icon
                 //
                 if (favorite) {
-                    rect.x += spread;
+                    rect.x += metaIconSpread;
                     SDL_RenderCopy(renderer, favoriteTex, &fullRect, &rect);
                 }
 
@@ -320,7 +352,7 @@ void PsMeta::render() {
                 // light gun icon
                 //
                 if (Gui::getInstance()->lightgunGames.IsGameALightgunGame(gamePathForLightgunGamesFile)) {
-                    rect.x += spread;
+                    rect.x += metaIconSpread;
                     SDL_RenderCopy(renderer, lightgunTex, &fullRect, &rect);
                 }
             }

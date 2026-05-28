@@ -44,9 +44,10 @@ void GuiKeyboard::init() {
 void GuiKeyboard::render() {
     gui->renderBackground();
     gui->renderTextBar();
-    int yoffset = gui->renderLogo(true);
+    int yoffset = gui->getContentTopY();
     gui->renderLabelBox(1, yoffset);
-    gui->renderTextLine("-= " + label + " =-", 0, yoffset, XALIGN_CENTER);
+    int fontSize = gui->getThemeFontSize();
+    gui->renderTitleLine(label, 0, yoffset);
 
     //*******************************
     // drawRectangle lambda
@@ -70,14 +71,15 @@ void GuiKeyboard::render() {
     else
         displayResult = result;
     displayResult.insert(cursorIndex, "#");
-    gui->renderTextLine(displayResult, 1, yoffset, XALIGN_CENTER);
+    FC_Font_Shared inputFont = gui->getFittingThemeFont(gui->themeFont, fontSize, 12, displayResult, SCREEN_WIDTH - 80);
+    gui->renderText(inputFont, displayResult, 0, yoffset + FC_GetLineHeight(gui->themeFont), XALIGN_CENTER);
 
     SDL_Rect rect2 = gui->getOpscreenRectOfTheme();
-    Uint16 fontHeight = FC_GetLineHeight(gui->themeFont);
+    Uint16 fontHeight = FC_GetLineHeight(inputFont);
     SDL_Shared<SDL_Texture> tex;
 
     if (L2_cursor_shift || usingUsbKeyboard) {
-        FC_Rect rectEditbox = gui->FC_getFontTextRect(gui->themeFont, displayResult);
+        FC_Rect rectEditbox = gui->FC_getFontTextRect(inputFont, displayResult);
         rectEditbox.x = gui->align_xPosition(XALIGN_CENTER, 0, rectEditbox.w);
         rectEditbox.y = (1 * rectEditbox.h) + yoffset; // line 1 (0 == top)
 
@@ -85,10 +87,10 @@ void GuiKeyboard::render() {
         FC_Size textBeforeCursorSize;
         // get the size of the text before the cursor
         if (cursorIndex > 0) {
-            textBeforeCursorSize = gui->FC_getFontTextSize(gui->themeFont, displayResult.substr(0, cursorIndex));
+            textBeforeCursorSize = gui->FC_getFontTextSize(inputFont, displayResult.substr(0, cursorIndex));
         }
         // get the cursor size
-        FC_Size cursorSize = gui->FC_getFontTextSize(gui->themeFont, "#");
+        FC_Size cursorSize = gui->FC_getFontTextSize(inputFont, "#");
         // bounding box rectangle around the # cursor
         SDL_Rect cursorRect{rectEditbox.x + textBeforeCursorSize.w, rectEditbox.y, // x, y position
                             cursorSize.w, cursorSize.h};                           // w, h

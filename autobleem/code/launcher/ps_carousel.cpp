@@ -3,7 +3,6 @@
 //
 
 #include "ps_carousel.h"
-#include "../engine/cover_db.h"
 #include "../gui/gui.h"
 #include "ra_integrator.h"
 #include "thumbnail_lookup.h"
@@ -16,25 +15,18 @@ using namespace std;
 
 #define SLOT_SIZE 120
 
-//*******************************
-// PsCarouselGame::loadTex
-//*******************************
 namespace {
-
-// Resolves the libretro-database canonical name for a game serial, or "" if
-// the cover DB isn't loaded / has no record for that serial. The canonical
-// name (e.g. "Metal Gear Solid (USA) (Disc 1)") matches the thumbnail file
-// name in the libretro-thumbnails pack.
-string resolveRecordName(const string &serial) {
-    if (serial.empty())
-        return "";
-    auto gui = Gui::getInstance();
-    if (!gui || !gui->coverdb || !gui->coverdb->isValid())
-        return "";
-    const auto *rec = gui->coverdb->reader.findBySerial(serial);
-    return rec ? rec->name : "";
-}
-
+const int selectedCoverSize = 226;
+const int selectedCoverX = (SCREEN_WIDTH / 2) - (selectedCoverSize / 2);
+const int selectedCoverY = 180;
+const int jewelCoverX = 23;
+const int jewelCoverY = 5;
+const int jewelCoverWidth = 199;
+const int jewelCoverHeight = 217;
+const char localCoverExtension[] = ".png";
+const char defaultCoverFile[] = "default.png";
+const char retroarchCoverFile[] = "evoimg/ra-cover.png";
+const char appCoverFile[] = "evoimg/app-cover.png";
 } // namespace
 
 void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
@@ -42,8 +34,8 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 
     if (!(*this)->foreign) {
         if (coverPng == nullptr) {
-            SDL_Shared<SDL_Texture> renderSurface =
-                SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET, 226, 226);
+            SDL_Shared<SDL_Texture> renderSurface = SDL_CreateTexture(
+                renderer, SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET, selectedCoverSize, selectedCoverSize);
             SDL_Rect fullRect;
 
             SDL_SetRenderTarget(renderer, renderSurface);
@@ -54,33 +46,34 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             SDL_SetTextureBlendMode(renderSurface, SDL_BLENDMODE_BLEND);
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-            const string recordName = resolveRecordName((*this)->serial);
+            const string recordName = Coverdb::findRecordNameForSerial(gui->coverdb, (*this)->serial);
 
-            string imagePath = (*this)->folder + sep + (*this)->base + ".png";
+            string imagePath = (*this)->folder + sep + (*this)->base + localCoverExtension;
             SDL_SetRenderTarget(renderer, nullptr);
             if (FileUtils::exists(imagePath)) {
                 // User-supplied cover dropped next to the game takes priority.
                 coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
             } else {
                 const string raBoxArt =
-                    ThumbnailLookup::findBoxArtPath("Sony - PlayStation", (*this)->title, recordName);
+                    ThumbnailLookup::findBoxArtPath(ThumbnailLookup::PlayStationDbName, (*this)->title, recordName);
                 if (!raBoxArt.empty()) {
                     coverPng = IMG_LoadTexture(renderer, raBoxArt.c_str());
                 } else {
-                    coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "default.png").c_str());
+                    coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + defaultCoverFile).c_str());
                 }
             }
 
             // Screenshot pane for PSX games. The non-foreign branch never
             // populated snapPng before, so the pane sat empty for PS1 titles.
-            const string snapPath = ThumbnailLookup::findSnapPath("Sony - PlayStation", (*this)->title, "", recordName);
+            const string snapPath =
+                ThumbnailLookup::findSnapPath(ThumbnailLookup::PlayStationDbName, (*this)->title, "", recordName);
             snapPng = snapPath.empty() ? nullptr : IMG_LoadTexture(renderer, snapPath.c_str());
 
             if (coverPng != nullptr) {
                 SDL_SetRenderTarget(renderer, renderSurface);
                 fullRect.x = 0;
                 fullRect.y = 0;
-                fullRect.h = 226, fullRect.w = 226;
+                fullRect.h = selectedCoverSize, fullRect.w = selectedCoverSize;
 
                 Uint32 format;
                 int access;
@@ -88,15 +81,15 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 
                 SDL_Rect outputRect;
                 if (gui->cdJewel != nullptr) {
-                    outputRect.x = 23;
-                    outputRect.y = 5;
-                    outputRect.h = 217;
-                    outputRect.w = 199;
+                    outputRect.x = jewelCoverX;
+                    outputRect.y = jewelCoverY;
+                    outputRect.h = jewelCoverHeight;
+                    outputRect.w = jewelCoverWidth;
                 } else {
                     outputRect.x = 0;
                     outputRect.y = 0;
-                    outputRect.h = 226;
-                    outputRect.w = 226;
+                    outputRect.h = selectedCoverSize;
+                    outputRect.w = selectedCoverSize;
                 }
                 if (coverPng != nullptr) {
                     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
@@ -107,7 +100,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 
                 fullRect.x = 0;
                 fullRect.y = 0;
-                fullRect.h = 226, fullRect.w = 226;
+                fullRect.h = selectedCoverSize, fullRect.w = selectedCoverSize;
                 if (gui->cdJewel != nullptr) {
                     SDL_RenderCopy(renderer, gui->cdJewel, &fullRect, &fullRect);
                 }
@@ -118,8 +111,8 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
         }
     } else { // foreign
         if (coverPng == nullptr) {
-            SDL_Shared<SDL_Texture> renderSurface =
-                SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET, 226, 226);
+            SDL_Shared<SDL_Texture> renderSurface = SDL_CreateTexture(
+                renderer, SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET, selectedCoverSize, selectedCoverSize);
             SDL_Rect fullRect;
 
             SDL_SetRenderTarget(renderer, renderSurface);
@@ -133,13 +126,13 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             SDL_SetRenderTarget(renderer, nullptr);
             string imagePath;
             if (!(*this)->app) { // RA Game
-                const string recordName = resolveRecordName((*this)->serial);
+                const string recordName = Coverdb::findRecordNameForSerial(gui->coverdb, (*this)->serial);
                 imagePath = ThumbnailLookup::findBoxArtPath((*this)->db_name, (*this)->title, recordName);
                 if (!imagePath.empty()) {
                     coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
                 } else {
                     PLOG_DEBUG << "boxart image NOT found for " << (*this)->title;
-                    coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/ra-cover.png").c_str());
+                    coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + retroarchCoverFile).c_str());
                 }
 
                 const string snapPath =
@@ -154,8 +147,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
                 } else {
                     // use default
                     PLOG_DEBUG << "boxart image NOT found for " << imagePath;
-                    coverPng =
-                        IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + "evoimg/app-cover.png").c_str());
+                    coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + appCoverFile).c_str());
                 }
             }
 
@@ -165,7 +157,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             SDL_SetRenderTarget(renderer, renderSurface);
             fullRect.x = 0;
             fullRect.y = 0;
-            fullRect.h = 226, fullRect.w = 226;
+            fullRect.h = selectedCoverSize, fullRect.w = selectedCoverSize;
 
             Uint32 format;
             int access;
@@ -178,10 +170,10 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
 
             outputRect.x = 0;
             outputRect.y = 0;
-            outputRect.h = (226 * fullRect.h) / biggerSize;
-            outputRect.w = (226 * fullRect.w) / biggerSize;
-            outputRect.x = (226 - outputRect.w) / 2;
-            outputRect.y = (226 - outputRect.h) / 2;
+            outputRect.h = (selectedCoverSize * fullRect.h) / biggerSize;
+            outputRect.w = (selectedCoverSize * fullRect.w) / biggerSize;
+            outputRect.x = (selectedCoverSize - outputRect.w) / 2;
+            outputRect.y = (selectedCoverSize - outputRect.h) / 2;
 
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
             SDL_RenderCopy(renderer, coverPng, &fullRect, &outputRect);
@@ -190,7 +182,7 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             coverPng = nullptr;
             fullRect.x = 0;
             fullRect.y = 0;
-            fullRect.h = 226, fullRect.w = 226;
+            fullRect.h = selectedCoverSize, fullRect.w = selectedCoverSize;
             coverPng = renderSurface;
 
             SDL_SetRenderTarget(renderer, nullptr);
@@ -244,8 +236,8 @@ void PsCarousel::initCoverPositions() {
     coverPositions.push_back(createCoverPoint(0, 150, 0));
 
     PsScreenpoint point;
-    point.x = 640 - 113;
-    point.y = 180;
+    point.x = selectedCoverX;
+    point.y = selectedCoverY;
     point.scale = 1;
     point.shade = 255;
     coverPositions.push_back(point);
