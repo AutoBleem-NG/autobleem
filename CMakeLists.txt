@@ -167,6 +167,8 @@ add_executable(
         autobleem/code/engine/scanner.h
         autobleem/code/engine/serial_scanner.cpp
         autobleem/code/engine/serial_scanner.h
+        autobleem/code/engine/thumbnail_cache.cpp
+        autobleem/code/engine/thumbnail_cache.h
         autobleem/code/environment.cpp
         autobleem/code/environment.h
         autobleem/code/gui/gui.cpp

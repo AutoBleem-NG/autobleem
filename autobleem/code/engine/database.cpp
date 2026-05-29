@@ -1,4 +1,5 @@
 #include "database.h"
+#include "game_ini_keys.h"
 #include "ini_file.h"
 #include "../utils/string_utils.h"
 #include <iostream>
@@ -9,6 +10,20 @@
 #include "../environment.h"
 
 using namespace std;
+
+namespace {
+
+void loadGameIniFields(PsGamePtr &game, const Inifile &ini) {
+    game->locked = !(ini.get("automation", "0") == "1");
+    game->hd = (ini.get("highres", "0") == "1");
+    game->favorite = (ini.get("favorite", "0") == "1");
+    game->play_using_ra = (ini.get("play_using_ra", "false") == "true");
+    game->thumbnail_record_name = ini.get(GameIniKeys::ThumbnailRecordName);
+    game->cached_cover_path = ini.get(GameIniKeys::CachedCoverPath);
+    game->cached_snap_path = ini.get(GameIniKeys::CachedSnapPath);
+}
+
+} // namespace
 
 //*******************************
 // DATABASE SQL
@@ -380,10 +395,7 @@ bool Database::refreshGameInternal(PsGamePtr &psGame) {
             if (FileUtils::exists(gameIniPath)) {
                 Inifile ini;
                 ini.load(gameIniPath);
-                psGame->locked = !(ini.values["automation"] == "1");
-                psGame->hd = (ini.values["highres"] == "1");
-                psGame->favorite = (ini.values["favorite"] == "1");
-                psGame->play_using_ra = (ini.values["play_using_ra"] == "true");
+                loadGameIniFields(psGame, ini);
             }
         }
     } else {
@@ -433,10 +445,7 @@ bool Database::refreshGame(PsGamePtr &game) {
             if (FileUtils::exists(gameIniPath)) {
                 Inifile ini;
                 ini.load(gameIniPath);
-                game->locked = !(ini.values["automation"] == "1");
-                game->hd = (ini.values["highres"] == "1");
-                game->favorite = (ini.values["favorite"] == "1");
-                game->play_using_ra = (ini.values["play_using_ra"] == "true");
+                loadGameIniFields(game, ini);
             }
         }
     } else {
@@ -485,10 +494,7 @@ bool Database::getGames(PsGames *result) {
             if (FileUtils::exists(gameIniPath)) {
                 Inifile ini;
                 ini.load(gameIniPath);
-                game->locked = !(ini.values["automation"] == "1");
-                game->hd = (ini.values["highres"] == "1");
-                game->favorite = (ini.values["favorite"] == "1");
-                game->play_using_ra = (ini.values["play_using_ra"] == "true");
+                loadGameIniFields(game, ini);
             }
             result->push_back(game);
         }

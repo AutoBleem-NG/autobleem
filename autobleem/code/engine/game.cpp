@@ -2,12 +2,13 @@
 // Created by screemer on 2018-12-15.
 //
 #include "game.h"
-#include "metadata.h"
-#include "iso_dir.h"
-#include "ini_file.h"
 #include "cfg_processor.h"
-#include "../gui/gui.h"
+#include "game_ini_keys.h"
+#include "ini_file.h"
+#include "iso_dir.h"
+#include "metadata.h"
 #include "serial_scanner.h"
+#include "../gui/gui.h"
 #include "../utils/string_utils.h"
 #include <sstream>
 #include <fstream>
@@ -329,6 +330,9 @@ void USBGame::updateObj() {
         highRes = atoi(tmp.c_str());
     else
         highRes = false;
+    thumbnailRecordName = valueOrDefault(GameIniKeys::ThumbnailRecordName, "", false);
+    cachedCoverPath = valueOrDefault(GameIniKeys::CachedCoverPath, "", false);
+    cachedSnapPath = valueOrDefault(GameIniKeys::CachedSnapPath, "", false);
     favorite = valueOrDefault("favorite", "0", false); // favorite is a new field that didn't exist before so
     play_using_ra =
         valueOrDefault("play_using_ra", "false", false); // favorite is a new field that didn't exist before so
@@ -396,6 +400,9 @@ void USBGame::saveIni(string path) {
     ini->values["automation"] = to_string(automationUsed);
     ini->values["imagetype"] = to_string(imageType);
     ini->values["highres"] = to_string(highRes);
+    ini->values[GameIniKeys::ThumbnailRecordName] = thumbnailRecordName;
+    ini->values[GameIniKeys::CachedCoverPath] = cachedCoverPath;
+    ini->values[GameIniKeys::CachedSnapPath] = cachedSnapPath;
     if (memcard.empty())
         ini->values["memcard"] = "SONY";
     else

@@ -8,6 +8,7 @@
 #include "cfg_processor.h"
 #include "metadata.h"
 #include "serial_scanner.h"
+#include "thumbnail_cache.h"
 #include "../lang.h"
 #include "../log.h"
 #include "../utils/string_utils.h"
@@ -315,6 +316,7 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
 
     PLOG_INFO << "Starting USB games directory scan";
     Gui::splash(_("Scanning..."));
+    shared_ptr<Gui> gui(Gui::getInstance());
 
     if (!FileUtils::exists(Env::getPathToSaveStatesDir())) {
         FileUtils::createDir(Env::getPathToSaveStatesDir());
@@ -422,6 +424,12 @@ void Scanner::scanUSBGamesDirectory(GamesHierarchy &gamesHierarchy) {
                     }
                 }
             }
+
+            const ThumbnailCacheEntry thumbnailCache =
+                ThumbnailCache::findPlayStation(gui->coverdb, game->serial, game->title);
+            game->thumbnailRecordName = thumbnailCache.recordName;
+            game->cachedCoverPath = thumbnailCache.coverPath;
+            game->cachedSnapPath = thumbnailCache.snapPath;
             game->saveIni(gameIniPath);
             game->readIni(gameIniPath); // the updated iniValues are needed for updateObj
                                         // game->print();

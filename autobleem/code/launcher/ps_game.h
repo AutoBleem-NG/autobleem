@@ -56,6 +56,9 @@ class PsGame {
     bool kernel = false;
 
     std::string db_name;
+    std::string thumbnail_record_name;
+    std::string cached_cover_path;
+    std::string cached_snap_path;
 
     void setMemCard(std::string name);
     std::string findResumePicture();

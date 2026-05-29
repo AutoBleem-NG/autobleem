@@ -4,7 +4,6 @@
 #pragma once
 
 #include "../main.h"
-#include <vector>
 #include <memory>
 #include <vector>
 #include <map>
@@ -57,6 +56,9 @@ class USBGame {
     ImageType imageType = IMAGE_BIN;
     bool highRes = false;
     std::string firstBinPath;
+    std::string thumbnailRecordName;
+    std::string cachedCoverPath;
+    std::string cachedSnapPath;
 
     void readIni(std::string path);
     void saveIni(std::string path);

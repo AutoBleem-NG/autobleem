@@ -27,12 +27,44 @@ const char localCoverExtension[] = ".png";
 const char defaultCoverFile[] = "default.png";
 const char retroarchCoverFile[] = "evoimg/ra-cover.png";
 const char appCoverFile[] = "evoimg/app-cover.png";
+
+string existingPathOrEmpty(const string &path) { return (!path.empty() && FileUtils::exists(path)) ? path : ""; }
+
+string findPs1RecordName(const PsGame &game, const Coverdb *coverdb) {
+    return game.thumbnail_record_name.empty() ? Coverdb::findRecordNameForSerial(coverdb, game.serial)
+                                              : game.thumbnail_record_name;
+}
+
+string findPs1CoverPath(const PsGame &game, const string &recordName) {
+    const string localCoverPath = game.folder + sep + game.base + localCoverExtension;
+    if (FileUtils::exists(localCoverPath)) {
+        // User-supplied cover dropped next to the game takes priority.
+        return localCoverPath;
+    }
+
+    const string cachedCoverPath = existingPathOrEmpty(game.cached_cover_path);
+    if (!cachedCoverPath.empty()) {
+        return cachedCoverPath;
+    }
+
+    const string raBoxArt = ThumbnailLookup::findBoxArtPath(ThumbnailLookup::PlayStationDbName, game.title, recordName);
+    return raBoxArt.empty() ? Env::getWorkingPath() + sep + defaultCoverFile : raBoxArt;
+}
+
+string findPs1SnapPath(const PsGame &game, const string &recordName) {
+    const string cachedSnapPath = existingPathOrEmpty(game.cached_snap_path);
+    if (!cachedSnapPath.empty()) {
+        return cachedSnapPath;
+    }
+    return ThumbnailLookup::findSnapPath(ThumbnailLookup::PlayStationDbName, game.title, "", recordName);
+}
 } // namespace
 
 void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
     shared_ptr<Gui> gui(Gui::getInstance());
+    PsGamePtr game = *this;
 
-    if (!(*this)->foreign) {
+    if (!game->foreign) {
         if (coverPng == nullptr) {
             SDL_Shared<SDL_Texture> renderSurface = SDL_CreateTexture(
                 renderer, SDL_PIXELFORMAT_ABGR32, SDL_TEXTUREACCESS_TARGET, selectedCoverSize, selectedCoverSize);
@@ -46,27 +78,14 @@ void PsCarouselGame::loadTex(SDL_Shared<SDL_Renderer> renderer) {
             SDL_SetTextureBlendMode(renderSurface, SDL_BLENDMODE_BLEND);
             SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-            const string recordName = Coverdb::findRecordNameForSerial(gui->coverdb, (*this)->serial);
-
-            string imagePath = (*this)->folder + sep + (*this)->base + localCoverExtension;
             SDL_SetRenderTarget(renderer, nullptr);
-            if (FileUtils::exists(imagePath)) {
-                // User-supplied cover dropped next to the game takes priority.
-                coverPng = IMG_LoadTexture(renderer, imagePath.c_str());
-            } else {
-                const string raBoxArt =
-                    ThumbnailLookup::findBoxArtPath(ThumbnailLookup::PlayStationDbName, (*this)->title, recordName);
-                if (!raBoxArt.empty()) {
-                    coverPng = IMG_LoadTexture(renderer, raBoxArt.c_str());
-                } else {
-                    coverPng = IMG_LoadTexture(renderer, (Env::getWorkingPath() + sep + defaultCoverFile).c_str());
-                }
-            }
+            const string recordName = findPs1RecordName(*game, gui->coverdb);
+            const string coverPath = findPs1CoverPath(*game, recordName);
+            coverPng = IMG_LoadTexture(renderer, coverPath.c_str());
 
             // Screenshot pane for PSX games. The non-foreign branch never
             // populated snapPng before, so the pane sat empty for PS1 titles.
-            const string snapPath =
-                ThumbnailLookup::findSnapPath(ThumbnailLookup::PlayStationDbName, (*this)->title, "", recordName);
+            const string snapPath = findPs1SnapPath(*game, recordName);
             snapPng = snapPath.empty() ? nullptr : IMG_LoadTexture(renderer, snapPath.c_str());
 
             if (coverPng != nullptr) {
