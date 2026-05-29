@@ -32,6 +32,9 @@ enum {
 // GuiOptions
 //********************
 class GuiOptions : public GuiOptionsMenuBase {
+  private:
+    void applyOptionSideEffects(int id, const std::string &nextValue);
+
   public:
     explicit GuiOptions(SDL_Shared<SDL_Renderer> _renderer) : GuiOptionsMenuBase(_renderer) {}
 

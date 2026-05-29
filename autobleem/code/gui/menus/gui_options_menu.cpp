@@ -56,6 +56,23 @@ static string getWrappedChoice(OptionsInfo &info, const string &current, bool ne
     return list[pos];
 }
 
+static bool shouldReloadMusicForOption(int id) {
+    return id == CFG_THEME || id == CFG_MUSIC || id == CFG_ENABLE_BACKGROUND_MUSIC;
+}
+
+void GuiOptions::applyOptionSideEffects(int id, const string &nextValue) {
+    if (id == CFG_THEME || id == CFG_THEME_FONT || id == CFG_FONT) {
+        gui->loadAssets(shouldReloadMusicForOption(id));
+        font = gui->themeFont;
+    } else if (id == CFG_LANG) {
+        lang->load(nextValue);
+        gui->loadAssets(false);
+        font = gui->themeFont;
+    } else if (id == CFG_MUSIC || id == CFG_ENABLE_BACKGROUND_MUSIC) {
+        gui->loadAssets();
+    }
+}
+
 string GuiOptions::getStatusLine() {
     auto id = lines[selected].id;
     if (id == CFG_THEME || id == CFG_FONT || id == CFG_MUSIC)
@@ -264,17 +281,7 @@ string GuiOptions::doPrevNextOption(OptionsInfo &info, bool next) {
         nextValue = GuiOptionsMenuBase::doPrevNextOption(info, next);
     }
 
-    // after doing the default these need special action afterwards
-    if (id == CFG_THEME || id == CFG_THEME_FONT || id == CFG_FONT) {
-        gui->loadAssets();
-        font = gui->themeFont; // get the new font for the menu
-    } else if (id == CFG_LANG) {
-        lang->load(nextValue);
-        gui->loadAssets(false);
-        font = gui->themeFont;
-    } else if (id == CFG_MUSIC || id == CFG_ENABLE_BACKGROUND_MUSIC) {
-        gui->loadAssets();
-    }
+    applyOptionSideEffects(id, nextValue);
 
     return nextValue;
 }
@@ -303,17 +310,7 @@ string GuiOptions::doOptionIndex(uint index) {
         // do the default action
         string nextValue = GuiOptionsMenuBase::doOptionIndex(index);
 
-        // after doing the default these need special action afterwards
-        if (id == CFG_THEME || id == CFG_THEME_FONT || id == CFG_FONT) {
-            gui->loadAssets();
-            font = gui->themeFont; // get the new font for the menu
-        } else if (id == CFG_LANG) {
-            lang->load(nextValue);
-            gui->loadAssets(false);
-            font = gui->themeFont;
-        } else if (id == CFG_MUSIC || id == CFG_ENABLE_BACKGROUND_MUSIC) {
-            gui->loadAssets();
-        }
+        applyOptionSideEffects(id, nextValue);
 
         return nextValue;
     } else

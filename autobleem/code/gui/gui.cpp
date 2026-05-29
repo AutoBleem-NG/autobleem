@@ -35,6 +35,53 @@ using ordered_json = basic_json<my_workaround_fifo_map>;
 
 #define RA_PLAYLIST "AutoBleem.lpl"
 
+namespace {
+struct NextMusicPlaybackState {
+    bool custom = false;
+    int frequency = 32000;
+    string path;
+    bool enabled = false;
+    int loops = 0;
+    string resolvedPath;
+};
+
+NextMusicPlaybackState resolveNextMusicPlaybackState(const Gui &gui, const string &themePath) {
+    NextMusicPlaybackState nextState;
+    nextState.path = gui.themeData.get("music");
+    if (gui.cfg.inifile.get("music") != "--") {
+        nextState.custom = true;
+        nextState.path = gui.cfg.inifile.get("music");
+    }
+
+    if (FileUtils::getFileExtension(nextState.path) == "ogg") {
+        nextState.frequency = 44100;
+    }
+
+    nextState.enabled = gui.cfg.inifile.get("nomusic") != "true" && gui.themeData.get("loop") != "-1";
+    nextState.loops = nextState.custom ? -1 : (gui.themeData.get("loop") == "1" ? -1 : 0);
+    nextState.resolvedPath =
+        nextState.custom ? Env::getWorkingPath() + sep + "music/" + nextState.path : themePath + nextState.path;
+    return nextState;
+}
+
+bool audioMatchesFrequency(int frequency) {
+    int currentAudioFrequency, currentAudioChannels;
+    Uint16 currentAudioFormat;
+    return Mix_QuerySpec(&currentAudioFrequency, &currentAudioFormat, &currentAudioChannels) > 0 &&
+           currentAudioFrequency == frequency;
+}
+
+bool matchesCurrentMusicPlayback(const Gui &gui, const NextMusicPlaybackState &nextState) {
+    bool matches = gui.musicState.enabled == nextState.enabled && gui.musicState.custom == nextState.custom &&
+                   gui.musicState.frequency == nextState.frequency && gui.musicState.path == nextState.path &&
+                   gui.musicState.loops == nextState.loops && gui.musicState.resolvedPath == nextState.resolvedPath;
+    if (nextState.enabled) {
+        return matches && gui.music != nullptr;
+    }
+    return matches && gui.music == nullptr;
+}
+} // namespace
+
 //********************
 // GuiBase::GuiBase
 //********************
@@ -216,7 +263,7 @@ void Gui::playMusic(bool customMusic, string musicPath) {
     if (cfg.inifile.values["nomusic"] != "true")
         if (themeData.values["loop"] != "-1") {
             if (!customMusic) {
-                music = Mix_LoadMUS((themePath + themeData.values["music"]).c_str());
+                music = Mix_LoadMUS((themePath + musicPath).c_str());
                 if (music == nullptr) {
                     printf("Unable to load Music file: %s\n", Mix_GetError());
                 }
@@ -237,9 +284,11 @@ void Gui::playMusic(bool customMusic, string musicPath) {
 
 void Gui::freeMusic() {
     if (music != nullptr) {
+        Mix_HaltMusic();
         Mix_FreeMusic(music);
         music = nullptr;
     }
+    musicState = MusicPlaybackState();
 }
 //*******************************
 // Gui::loadThemeTexture
@@ -329,25 +378,19 @@ void Gui::loadAssets(bool reloadMusic) {
     themeFonts.openAllFontsFromFontFile(fontPath, renderer);
     sizesOfThemeFont.Init();
 
-    if (reloadMusic) {
+    NextMusicPlaybackState nextMusicState = resolveNextMusicPlaybackState(*this, themePath);
+    if (reloadMusic &&
+        (!audioMatchesFrequency(nextMusicState.frequency) || !matchesCurrentMusicPlayback(*this, nextMusicState))) {
         freeMusic();
+        this->restartAudio(nextMusicState.frequency);
+        this->playMusic(nextMusicState.custom, nextMusicState.path);
     }
-    customMusic = false;
-    freq = 32000;
-    musicPath = themeData.values["music"];
-    if (cfg.inifile.values["music"] != "--") {
-        customMusic = true;
-        musicPath = cfg.inifile.values["music"];
-    }
-
-    if (FileUtils::getFileExtension(musicPath) == "ogg") {
-        freq = 44100;
-    }
-
-    if (reloadMusic) {
-        this->restartAudio(freq);
-        this->playMusic(customMusic, musicPath);
-    }
+    musicState.custom = nextMusicState.custom;
+    musicState.frequency = nextMusicState.frequency;
+    musicState.path = nextMusicState.path;
+    musicState.enabled = nextMusicState.enabled;
+    musicState.loops = nextMusicState.loops;
+    musicState.resolvedPath = nextMusicState.resolvedPath;
     cursor = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cursor.wav").c_str());
     cancel = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "cancel.wav").c_str());
     home_up = Mix_LoadWAV((this->getCurrentThemeSoundPath() + sep + "home_up.wav").c_str());

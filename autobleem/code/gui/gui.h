@@ -116,9 +116,16 @@ class Gui : public GuiBase {
     void playMusic(bool customMusic, string musicPath);
     void restartAudio(int freq);
     void freeMusic();
-    bool customMusic = false;
-    int freq = 44100;
-    string musicPath;
+
+    struct MusicPlaybackState {
+        bool custom = false;
+        int frequency = 44100;
+        string path;
+        bool enabled = false;
+        int loops = 0;
+        string resolvedPath;
+    };
+    MusicPlaybackState musicState;
 
     MenuOption menuOption = MENU_OPTION_SCAN;
 
