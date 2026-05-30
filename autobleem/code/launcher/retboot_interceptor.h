@@ -18,7 +18,7 @@ class RetroArchInterceptor : public EmuInterceptor {
     void transferConfig(PsGamePtr &game);
 
   public:
-    bool execute(PsGamePtr &game, int resumepoint);
-    void memcardIn(PsGamePtr &game);
-    void memcardOut(PsGamePtr &game);
+    bool execute(PsGamePtr &game, int resumepoint) override;
+    void memcardIn(PsGamePtr &game) override;
+    void memcardOut(PsGamePtr &game) override;
 };

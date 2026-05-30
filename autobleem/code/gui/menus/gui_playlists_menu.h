@@ -22,8 +22,8 @@ class GuiPlaylists : public GuiStringMenu {
     std::string getTitle() override { return _("Select RetroArch Playlist"); }
     std::string getStatusLine() override { return GuiStringMenu::getStatusLine(); }
 
-    void doEnter() { doCross_Pressed(); }
-    void doEscape() { doCircle_Pressed(); }
+    void doEnter() override { doCross_Pressed(); }
+    void doEscape() override { doCircle_Pressed(); }
 
     std::vector<std::string> playlists;
     shared_ptr<RAIntegrator> integrator;

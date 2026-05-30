@@ -38,9 +38,9 @@ class GuiMemcards : public GuiStringMenu {
     void doTriangle_Pressed() override;
     void doCross_Pressed() override;
 
-    void doEnter() { doCross_Pressed(); }
-    void doEscape() { doCircle_Pressed(); }
-    void doDelete() { doSquare_Pressed(); }
+    void doEnter() override { doCross_Pressed(); }
+    void doEscape() override { doCircle_Pressed(); }
+    void doDelete() override { doSquare_Pressed(); }
 
   private:
     std::vector<CustomCardSummary> summaries;

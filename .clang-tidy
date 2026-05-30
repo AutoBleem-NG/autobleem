@@ -84,5 +84,5 @@ CheckOptions:
     value:        'NULL'
 
 WarningsAsErrors: ''
-HeaderFilterRegex: 'autobleem/.*\.(h|hpp)$'
+HeaderFilterRegex: 'autobleem/(?!libs/)'
 FormatStyle: none

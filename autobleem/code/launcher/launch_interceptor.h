@@ -15,7 +15,7 @@ using namespace std;
 class LaunchInterceptor : public EmuInterceptor {
   private:
   public:
-    bool execute(PsGamePtr &game, int resumepoint);
+    bool execute(PsGamePtr &game, int resumepoint) override;
 };
 
 #endif // AUTOBLEEM_GUI_LAUNCH_INTERCEPTOR_H

@@ -15,6 +15,6 @@ class GuiGameDirMenu : public GuiStringMenu {
     std::string getTitle() override { return _("Select PS1 Game Category"); }
     std::string getStatusLine() override { return GuiStringMenu::getStatusLine(); }
 
-    void doEnter() { doCross_Pressed(); }
-    void doEscape() { doCircle_Pressed(); }
+    void doEnter() override { doCross_Pressed(); }
+    void doEscape() override { doCircle_Pressed(); }
 };

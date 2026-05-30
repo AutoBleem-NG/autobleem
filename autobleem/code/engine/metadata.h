@@ -15,7 +15,7 @@ class Metadata {
     std::string serial;
     std::string region;
     int players = 0;
-    char *bytes = NULL;
+    char *bytes = nullptr;
     int dataSize = 0;
     bool valid = false;
 
@@ -24,9 +24,9 @@ class Metadata {
     bool lookupBySerial(const std::string &serial);
     bool lookupByTitle(const std::string &title);
     void clean() {
-        if (bytes != NULL) {
+        if (bytes != nullptr) {
             delete[] bytes;
-            bytes = NULL;
+            bytes = nullptr;
         }
         dataSize = 0;
     }
