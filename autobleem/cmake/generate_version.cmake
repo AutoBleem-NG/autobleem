@@ -86,8 +86,8 @@ string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%d %H:%M:%S" UTC)
 
 # Configure the version header
 configure_file(
-    ${SOURCE_DIR}/autobleem/code/version.h.in
-    ${BINARY_DIR}/autobleem/code/version.h
+    ${SOURCE_DIR}/code/version.h.in
+    ${BINARY_DIR}/code/version.h
     @ONLY
 )
 

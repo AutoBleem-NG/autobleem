@@ -40,7 +40,7 @@ All tests should pass out of the box.
 **Need to build without tests?**
 ```bash
 cd build_sys
-cmake .. -DBUILD_TESTS=OFF
+cmake -S ../autobleem -B . -DBUILD_TESTS=OFF
 make
 ```
 

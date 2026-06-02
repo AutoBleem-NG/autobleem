@@ -57,6 +57,7 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 - [Bluetooth Controller Setup](docs/bluetooth-setup.md) - Experimental Bluetooth pairing notes
 - [Boot Process](docs/boot-process.md) - How AutoBleem boots on the PSC
 - [Building](docs/building.md) - Build targets, reproducible ARM builds, and prerequisites
+- [Changelog](docs/changelog.md) - Project release history
 - [Credits](docs/credits.md) - Project lineage and bundled component credits
 - [Distribution Layout](docs/distribution-layout.md) - Expected deployed USB package structure
 - [Gamepad Compatibility](docs/gamepad-compatibility.md) - Controller support notes

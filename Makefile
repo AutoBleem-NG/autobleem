@@ -23,6 +23,10 @@
 # Docker image name
 DOCKER_IMAGE := autobleem-builder
 
+# Keep Docker Buildx metadata in the workspace when DOCKER_CONFIG is read-only.
+BUILDX_CONFIG ?= $(abspath .cache/docker-buildx)
+export BUILDX_CONFIG
+
 # Number of parallel jobs for make
 JOBS := 4
 
@@ -31,6 +35,23 @@ ENABLE_UPX ?= false
 
 # CMake build type
 BUILD_TYPE := Release
+
+# New CMake source root after the layout move.
+CMAKE_SOURCE_DIR := autobleem
+CMAKE_SOURCE_ABS := $(abspath $(CMAKE_SOURCE_DIR))
+ARM_TOOLCHAIN_FILE := $(CMAKE_SOURCE_ABS)/cmake/PSCtoolchainV8.cmake
+MAC_TOOLCHAIN_FILE := $(CMAKE_SOURCE_ABS)/cmake/MacToolchain.cmake
+
+define ensure_cmake_build_dir
+	@if [ -f "$(1)/CMakeCache.txt" ]; then \
+		cached_src="$$(sed -n 's/^CMAKE_HOME_DIRECTORY:INTERNAL=//p' "$(1)/CMakeCache.txt" | tail -n 1)"; \
+		if [ "$$cached_src" != "$(CMAKE_SOURCE_ABS)" ]; then \
+			echo "Removing stale $(1) cache from $$cached_src"; \
+			rm -rf "$(1)"; \
+		fi; \
+	fi
+	@mkdir -p "$(1)"
+endef
 
 # Default target: build ARM payload via Docker (no host deps required).
 # Use `make sys` explicitly if you want the x86_64 dev build (needs libsdl2-dev).
@@ -46,6 +67,7 @@ build: docker-build
 
 docker-build:
 	@echo "Building Docker image for ARM cross-compilation..."
+	@mkdir -p "$(BUILDX_CONFIG)"
 	@if ! command -v docker >/dev/null 2>&1; then \
 		echo "ERROR: Docker not found!"; \
 		echo "Install from: https://docs.docker.com/get-docker/"; \
@@ -114,8 +136,8 @@ docker-clean:
 # Native build for local system (x86_64) - incremental
 sys:
 	@echo "Building for local system (incremental)..."
-	@mkdir -p build_sys
-	@cd build_sys && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) .. > /dev/null
+	$(call ensure_cmake_build_dir,build_sys)
+	@cmake -S autobleem -B build_sys -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) > /dev/null
 	cd build_sys && make -j $(JOBS)
 	@echo "Build complete: build_sys/"
 
@@ -123,16 +145,16 @@ sys:
 sys-clean:
 	@echo "Clean rebuilding for local system..."
 	rm -rf build_sys
-	mkdir -p build_sys
-	cd build_sys && cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
+	$(call ensure_cmake_build_dir,build_sys)
+	cmake -S autobleem -B build_sys -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 	cd build_sys && make -j $(JOBS)
 	@echo "Build complete: build_sys/"
 
 # Native ARM build using local toolchain - incremental (requires PSCtoolchainV8)
 arm:
 	@echo "Building for ARM using local toolchain (incremental)..."
-	@mkdir -p build_arm
-	@cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/PSCtoolchainV8.cmake .. > /dev/null
+	$(call ensure_cmake_build_dir,build_arm)
+	@cmake -S autobleem -B build_arm -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE="$(ARM_TOOLCHAIN_FILE)" > /dev/null
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
@@ -140,16 +162,16 @@ arm:
 arm-clean:
 	@echo "Clean rebuilding for ARM using local toolchain..."
 	rm -rf build_arm
-	mkdir -p build_arm
-	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/PSCtoolchainV8.cmake ..
+	$(call ensure_cmake_build_dir,build_arm)
+	cmake -S autobleem -B build_arm -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE="$(ARM_TOOLCHAIN_FILE)"
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
 # Native ARM build for macOS - incremental
 mac:
 	@echo "Building for ARM using Mac toolchain (incremental)..."
-	@mkdir -p build_arm
-	@cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/MacToolchain.cmake .. > /dev/null
+	$(call ensure_cmake_build_dir,build_arm)
+	@cmake -S autobleem -B build_arm -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE="$(MAC_TOOLCHAIN_FILE)" > /dev/null
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
@@ -157,8 +179,8 @@ mac:
 mac-clean:
 	@echo "Clean rebuilding for ARM using Mac toolchain..."
 	rm -rf build_arm
-	mkdir -p build_arm
-	cd build_arm && cmake -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=../autobleem/cmake/MacToolchain.cmake ..
+	$(call ensure_cmake_build_dir,build_arm)
+	cmake -S autobleem -B build_arm -DCMAKE_SYSTEM_PROCESSOR="Arm" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE="$(MAC_TOOLCHAIN_FILE)"
 	cd build_arm && make -j $(JOBS)
 	@echo "Build complete: build_arm/"
 
@@ -212,10 +234,10 @@ lint:
 		echo "Install with: sudo apt-get install clang-tidy"; \
 		exit 1; \
 	fi
+	$(call ensure_cmake_build_dir,build_sys)
 	@if [ ! -f "build_sys/compile_commands.json" ]; then \
 		echo "Generating compile_commands.json..."; \
-		mkdir -p build_sys; \
-		cd build_sys && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..; \
+		cmake -S autobleem -B build_sys -DCMAKE_EXPORT_COMPILE_COMMANDS=ON; \
 	fi
 	@echo "Running clang-tidy checks..."
 	@find autobleem/code -type f -name "*.cpp" | while read file; do \
@@ -231,7 +253,7 @@ test:
 		echo "Build directory not found. Run 'make sys' first."; \
 		exit 1; \
 	fi
-	@if [ ! -d "build_sys/autobleem/tests" ]; then \
+	@if [ ! -d "build_sys/tests" ]; then \
 		echo "Tests not built. Building..."; \
 		cd build_sys && make -j $(JOBS); \
 	fi

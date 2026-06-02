@@ -36,6 +36,7 @@ CMakeFiles/
 
 cmake-build*/
 out/
+.cache/
 
 CMakeLists.txt.user
 CMakeCache.txt
