@@ -10,7 +10,8 @@ The AutoBleem Kernel can only be installed on a PlayStation Classic that is in i
 
 1. Format your USB drive to FAT32 and label it `SONY`
 
-2. Install AutoBleem on your USB drive
+2. Install a full AutoBleem USB package that includes the Apps set and
+   Kernel Installer (ABFlashKit)
 
 3. Ensure your PSC is unmodified or has been restored to original condition
 
@@ -24,16 +25,16 @@ The AutoBleem Kernel can only be installed on a PlayStation Classic that is in i
 
 8. At the AutoBleem start screen, press **Start** on the controller
 
-9. Once in AutoBleem, press **Select** twice to navigate to Apps. Navigate to the **ABFlashkit** App
+9. Once in AutoBleem, press **Select** until the Apps set is shown. Navigate to **Kernel Installer (ABFlashKit)**. If it is not listed, the USB package is incomplete for kernel installation
 
-10. Start ABFlashkit by pressing **X**
+10. Start Kernel Installer (ABFlashKit) by pressing **X**
 
-11. Read the ABFlashkit notes that appear, then press **X**
+11. Read the ABFlashKit notes that appear, then press **X**
     - If you get an error that the PSC is not in its original condition, see [Removing BleemSync](bleemsync-removal.md) and try again
 
 12. When the process is complete, your PSC will boot normally. You now have restored your backup kernel or vanilla PSC kernel
 
-13. To install the AutoBleem kernel, navigate to the AutoBleem Apps menu and start ABFlashkit again (steps 8-11)
+13. To install the AutoBleem kernel, navigate to the AutoBleem Apps menu and start Kernel Installer (ABFlashKit) again (steps 8-11)
 
 14. Press **X** to flash the AutoBleem kernel. Once complete, the screen will go black
 

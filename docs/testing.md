@@ -15,7 +15,7 @@ ctest --output-on-failure
 ## Running Specific Tests
 
 ```bash
-cd build_sys/tests
+cd build_sys/autobleem/tests
 
 # Run a specific test executable
 ./<test_name>
@@ -37,7 +37,7 @@ All tests should pass out of the box.
 
 ## Troubleshooting
 
-**Tests not building?**
+**Need to build without tests?**
 ```bash
 cd build_sys
 cmake .. -DBUILD_TESTS=OFF
@@ -45,10 +45,14 @@ make
 ```
 
 **Wrong working directory?**
-Always run tests from `build_sys/` or `build_sys/tests/`:
+Always run CTest from `build_sys/`, or run individual test executables from
+`build_sys/autobleem/tests/`:
 ```bash
 cd build_sys
-./tests/chd_reader_test
+ctest --output-on-failure
+
+cd autobleem/tests
+./chd_reader_test
 ```
 
 ## Notes

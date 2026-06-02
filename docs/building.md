@@ -86,7 +86,8 @@ make
 This runs `make build extract`, producing:
 - `build_arm/` - ARM binaries and payload assets for PlayStation Classic
 - `build_arm/libs.tar.gz` - Repacked SDL runtime archive
-- `autobleem/payload/Autobleem/lib/libs.tar.gz` - Updated payload archive
+- `build_arm/readelf` - ARM-native ELF inspection helper used by the deployed
+  runtime logging path
 
 ### Option 2: Docker Build Only
 
@@ -99,7 +100,10 @@ make build extract
 Output binaries are placed in `build_arm/`:
 - `autobleem-gui` - Main UI application
 - UI assets (fonts, images, configs) and language files
+- `readelf` - ARM-native ELF inspection helper
 - `libs.tar.gz` - SDL payload runtime archive
+
+Copy `build_arm/libs.tar.gz` into the payload when preparing a release package.
 
 **Prerequisites:**
 - Docker installed ([docker.com](https://docs.docker.com/get-docker/))
@@ -159,6 +163,28 @@ build_arm/              # ARM build (same structure)
 ├── libs.tar.gz         # PSC SDL runtime archive
 └── ...
 ```
+
+## Preparing a USB Package
+
+`build_arm/` is not a complete USB distribution by itself. It contains the
+AutoBleem-NG UI binary, UI assets, config templates, languages, the rebuilt
+runtime library archive, and helper tools produced by the build.
+
+When updating a deployed USB package, copy the ARM build outputs into the
+AutoBleem runtime area:
+
+| Build output | USB destination |
+| --- | --- |
+| `build_arm/autobleem-gui` | `Autobleem/bin/autobleem/autobleem-gui` |
+| `build_arm/readelf` | `Autobleem/bin/autobleem/readelf` |
+| `build_arm/libs.tar.gz` | `Autobleem/lib/libs.tar.gz` |
+| `build_arm/` UI assets and config files | `Autobleem/bin/autobleem/` |
+
+The full USB package can also contain `Apps/`, `Games/`, `System/`,
+`retroarch/`, `roms/`, and `themes/`. Those directories are part of the
+deployed runtime bundle and user data layout, not the direct CMake build output.
+See [USB Distribution Layout](distribution-layout.md) for the expected deployed
+structure.
 
 ## Bundled Libraries
 

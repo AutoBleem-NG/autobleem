@@ -10,9 +10,11 @@ Classic: a boot menu, game scanner, and launcher built around EvolutionUI.
 
 Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) with continued development, bug fixes, and new features.
 
-> **Scope note:** This project provides only the AutoBleem UI. It is not a full
-> distribution and does not include the underlying system software, RetroArch
-> binaries, or emulator cores needed to run on hardware.
+> **Scope note:** This source repository builds and maintains the AutoBleem-NG
+> UI, payload scripts, assets, themes, and support files. A prepared USB
+> distribution can also include RetroArch, emulator cores, ROM folders, user
+> games, saves, logs, and system backups that are not produced by the UI build
+> itself.
 
 ## Features
 
@@ -52,10 +54,15 @@ Building on [AKA-Axanar's AutoBleem](https://github.com/AKA-Axanar/AutoBleem) wi
 
 ## Documentation
 
+- [Bluetooth Controller Setup](docs/bluetooth-setup.md) - Experimental Bluetooth pairing notes
 - [Boot Process](docs/boot-process.md) - How AutoBleem boots on the PSC
 - [Building](docs/building.md) - Build targets, reproducible ARM builds, and prerequisites
+- [Credits](docs/credits.md) - Project lineage and bundled component credits
+- [Distribution Layout](docs/distribution-layout.md) - Expected deployed USB package structure
 - [Gamepad Compatibility](docs/gamepad-compatibility.md) - Controller support notes
 - [Kernel Installation](docs/kernel-installation.md) - Optional AutoBleem kernel setup
+- [Linting](docs/linting.md) - clang-tidy usage
+- [Menu Options](docs/menu-options.md) - User-facing menu controls and settings
 - [Testing](docs/testing.md) - Running unit tests
 - [Translation](docs/translation.md) - Localization guide
 

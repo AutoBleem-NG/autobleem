@@ -18,6 +18,6 @@
 | Nintendo Switch Pro Controller | Works well | Tested and recommended |
 | GameSir G3s | Works well | Press B and Home to pair |
 | PlayStation 4 Controller | Mostly works | Minor issues in EvoUI |
-| PlayStation 3 Controller | Not working | Being worked on |
+| PlayStation 3 Controller | Needs verification | Controller mappings are present, but Bluetooth pairing behavior should be tested on hardware |
 
 Support for additional controllers will follow in future releases.

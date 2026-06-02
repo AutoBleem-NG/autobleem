@@ -11,7 +11,7 @@ open-source components.
 
 ## Payload And Integration
 
-- Screemer and madmonkey - ABFlashkit kernel flasher tooling.
+- Screemer and madmonkey - ABFlashKit kernel flasher tooling.
 - genderbent - historical RetroArch integration for AutoBleem and the PlayStation Classic.
 
 ## Bundled Components

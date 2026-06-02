@@ -29,7 +29,7 @@ make lint
 
 ### Lint Single File
 ```bash
-clang-tidy -p build_sys autobleem/code/engine/cdreader.h
+clang-tidy -p build_sys autobleem/code/engine/cd_reader.h
 ```
 
 ### Lint During Build
@@ -41,7 +41,7 @@ make
 
 ### Auto-Fix Issues
 ```bash
-clang-tidy -p build_sys autobleem/code/engine/cdreader.h --fix
+clang-tidy -p build_sys autobleem/code/engine/cd_reader.h --fix
 ```
 ⚠️ Always review changes before committing!
 
@@ -96,11 +96,9 @@ Use sparingly!
 
 ## Configuration
 
-AutoBleem uses **Chromium's configuration** (37 battle-tested checks).
+AutoBleem uses a **Chromium-inspired configuration** with 42 enabled checks.
 
-See detailed info:
-- [CLANG_TIDY_CONFIG.md](CLANG_TIDY_CONFIG.md) - What's enabled and why
-- [clang-tidy-references.md](clang-tidy-references.md) - Compare with other configs
+See `.clang-tidy` in the repository root for the enabled checks and options.
 
 ## Resources
 

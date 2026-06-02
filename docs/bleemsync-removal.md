@@ -31,6 +31,6 @@ If you installed multiple versions of BleemSync on top of one another, uninstall
 1. During kernel installation, AutoBleem makes a backup of your kernel
 2. Place the `LBOOT.EPB` file created by AutoBleem on the root of your USB drive
 3. Boot AutoBleem on your PSC
-4. Navigate to Apps and run ABFlashkit
+4. Navigate to Apps and run Kernel Installer (ABFlashKit)
 5. Press **Triangle** to restore the `LBOOT.EPB` file to the PSC
 6. If you want to install the AutoBleem Kernel afterwards, press **X**
